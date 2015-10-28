@@ -6,7 +6,7 @@ var app = express();
 app.post('/recieveSMS', function(req, res) {
 	console.log(req.body.Body);
 	res.send(req.body.Body);
-	res.send("hello"));
+	res.send("hello");
 });
 
 app.get('/', function(req, res) {
