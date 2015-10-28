@@ -6,13 +6,11 @@ var app = express();
 app.post('/recieveSMS', function(req, res) {
 	console.log(req.body.Body);
 	res.send(req.body.Body);
-	res.send(" world");
+	res.send("hello"));
 });
 
 app.get('/', function(req, res) {
-	res.send("hello");
-	console.log("check");
-
+	res.send(":");
 });
 
 var port = process.env.PORT || 8080;
