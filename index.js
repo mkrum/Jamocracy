@@ -11,6 +11,8 @@ app.post('/recieveSMS', function(req, res) {
 
 app.get('/', function(req, res) {
 	res.send("hello");
+	console.log("check");
+
 });
 
 var port = process.env.PORT || 8080;
