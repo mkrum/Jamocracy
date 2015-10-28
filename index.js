@@ -1,6 +1,6 @@
 var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 var express = require('express');
-var compression = require('compression');
+//var compression = require('compression');
 var bodyParser = require('body-parser');
 var app = express();
 
