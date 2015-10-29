@@ -7,10 +7,14 @@ var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extend: true}));
 
-app.post('/recieveSMS', twilio.webhook({
-	host:'jamocracy.herokuapp.com',
-    protocol:'https'
-}), function(req, res) {
+app.post('/SMS', function(req, res) {
+	twilio.messages.create({
+		body: 'test',
+		to: '16304325433',
+		from: '630581347'
+	}, function(err, data){
+		console.log("error");
+	});
 	console.log(req.body.Body);
 	//res.send(req.body.Body);
 	res.send("hello");
