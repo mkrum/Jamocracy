@@ -8,6 +8,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extend: true}));
 
 app.post('/SMS', function(req, res) {
+	console.log(req.body.Body);
+	//res.send(req.body.Body);
+	res.send("hello");
+});
+
+app.get('/', function(req, res) {
 	twilio.messages.create({
 		body: 'test',
 		to: '16304325433',
@@ -15,12 +21,6 @@ app.post('/SMS', function(req, res) {
 	}, function(err, data){
 		console.log("error");
 	});
-	console.log(req.body.Body);
-	//res.send(req.body.Body);
-	res.send("hello");
-});
-
-app.get('/', function(req, res) {
 	res.send(":");
 });
 
