@@ -7,7 +7,7 @@ var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extend: true}));
 
-app.post('/SMS', function(req, res) {
+app.get('/SMS', function(req, res) {
 	console.log(req.body.Body);
 	//res.send(req.body.Body);
 	res.send("hello");
