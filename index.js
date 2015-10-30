@@ -10,21 +10,21 @@ app.use(bodyParser.urlencoded({extend: true}));
 
 
 app.get('/SMS', function(req, res) {
-	
+	twilio.messages.create({
+		to: '+16304325433',
+		from: '+16305818347',
+		body: req.body.Body;
+	}, function(err, data){
+		console.error(err);
+	});
+
 	console.log(req.body.Body);
-	//res.send(req.body.Body);
+	res.send(req.body.Body);
 	res.send("hello");
 });
 
 app.get('/', function(req, res) {
-		twilio.messages.create({
-		to: '+16304325433',
-		from: '+16305818347',
-		body: 'test'
-	}, function(err, data){
-		console.error(err);
-	});
-	res.send(":");
+		res.send(":");
 });
 
 var port = process.env.PORT || 8080;
