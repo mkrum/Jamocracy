@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({extend: true}));
 
 
 
-app.get('/SMS', function(req, res) {
+app.post('/SMS', function(req, res) {
 	twilio.messages.create({
 		to: '+16304325433',
 		from: '+16305818347',
