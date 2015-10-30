@@ -8,19 +8,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extend: true}));
 
 app.get('/SMS', function(req, res) {
-	wilio.messages.create({
-		to: '6304325433',
-		from: '630581347',
-		body: 'test'
-	}, function(err, data){
-		console.log("error");
-	});
+	
 	console.log(req.body.Body);
 	//res.send(req.body.Body);
 	res.send("hello");
 });
 
 app.get('/', function(req, res) {
+	twilio.messages.create({
+		to: '6304325433',
+		from: '630581347',
+		body: 'test'
+	}, function(err, data){
+		console.log("error");
+	});
 	res.send(":");
 });
 
