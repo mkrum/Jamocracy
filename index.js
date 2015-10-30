@@ -1,4 +1,4 @@
-var twilio = require('twilio')('AC4b9bc22f0815b2447d7b82ad5faf8102', '5bbd3357d6fe47a146ec77516d0555b2');
+var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 var express = require('express');
 //var compression = require('compression');
 var bodyParser = require('body-parser');
@@ -6,6 +6,8 @@ var app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extend: true}));
+
+
 
 app.get('/SMS', function(req, res) {
 	
@@ -15,12 +17,12 @@ app.get('/SMS', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-	twilio.messages.create({
-		to: '6304325433',
-		from: '630581347',
+		twilio.messages.create({
+		to: '+16304325433',
+		from: '+16305818347',
 		body: 'test'
 	}, function(err, data){
-		console.log("error");
+		console.error(err);
 	});
 	res.send(":");
 });
