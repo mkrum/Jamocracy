@@ -13,7 +13,7 @@ app.post('/SMS', function(req, res) {
 	twilio.messages.create({
 		to: '+16304325433',
 		from: '+16305818347',
-		body: 'test'
+		body: req.body.Body
 	}, function(err, data){
 		console.error(err);
 	});
