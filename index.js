@@ -18,10 +18,10 @@ app.get('/login', function(req, res) {
 	var scope = 'playlist-read-private playlist-read-colloborative playlist-modify-public playlist-modify-private user-read-private';
 	res.redirect('https://accounts.spotify.com/authorize?' +
 			queryString.stringify({
-				esponse_type: 'code',
-      client_id: client_id,
-      scope: scope,
-      redirect_uri: redirect_uri
+				response_type: 'code',
+				client_id: client_id,
+			    scope: scope,
+			    redirect_uri: redirect_uri
     }));
 });
 
