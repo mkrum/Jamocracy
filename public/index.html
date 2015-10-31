@@ -11,14 +11,13 @@
 						var redirect_uri = 'http://jamocracy.herokuapp.com/auth';
 						var scope = 'playlist-read-private playlist-read-colloborative playlist-modify-public playlist-modify-private user-read-private';
 						alert("test");
-						window.location.href = 'https://accounts.spotify.com/authorize?' +
+						window.location.assign('https://accounts.spotify.com/authorize?' +
 						queryString.stringify({
 							response_type: 'code',
 							client_id: client_id,
 							scope: scope,
 							redirect_uri: redirect_uri
-						});
-						return false;
+						}));
 				});
 			});
 		</script>
