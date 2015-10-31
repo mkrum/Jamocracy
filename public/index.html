@@ -7,14 +7,10 @@
 	<body>
 		<div>
 			<p>
+			<button>Log in</button>
 			<script>
-			var btn = document.createElement('BUTTON');
-			var text = document.createTextNode("Log in");
-			btn.appendChild(text);
-			document.body.appendChild(btn);
-			
 			$(document).ready(function() {
-				$(btn).click(function() {
+				$("button").click(function() {
 					alert("worked");
 				}
 			}
