@@ -10,7 +10,7 @@
 						var clientSecret = '967795bf432646f69797a1a7e7d97a0e';
 						var redirect_uri = 'http://jamocracy.herokuapp.com/auth';
 						var scope = 'playlist-read-private playlist-read-colloborative playlist-modify-public playlist-modify-private user-read-private';
-						res.redirect('https://accounts.spotify.com/authorize?' +
+						window.location.replace('https://accounts.spotify.com/authorize?' +
 						queryString.stringify({
 							response_type: 'code',
 							client_id: client_id,
