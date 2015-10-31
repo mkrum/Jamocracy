@@ -39,7 +39,7 @@ app.post('/SMS', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-		var btn = document.createElement('BUTTON");
+		var btn = document.createElement('BUTTON');
 		var text = document.createTextNode("Log in");
 		btn.appendChild(text);
 		document.body.appendChild(btn);
