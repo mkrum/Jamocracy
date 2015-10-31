@@ -11,7 +11,7 @@ var redirect_uri = 'http://jamocracy.herokuapp.com/auth';
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extend: true}));
-
+app.use(express.static(__dirname + '/public'));
 
 
 app.get('/login', function(req, res) {
