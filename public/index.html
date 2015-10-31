@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<title> Jamocracy aka the future </title>
 	</head>
 	<body>
@@ -11,6 +12,13 @@
 			var text = document.createTextNode("Log in");
 			btn.appendChild(text);
 			document.body.appendChild(btn);
+			
+			$(document).ready(function() {
+				$(btn).click(function() {
+					alert("worked");
+				}
+			}
+
 			</script>
 			</p>
 	</body>
