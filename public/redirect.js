@@ -23,7 +23,7 @@ function createURL() {
 		client_id: client_id,
 		scope: scope,
 		redirect_uri: redirect_uri
-	}));
+	});
 	window.location = url;
 };
 
