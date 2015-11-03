@@ -2,6 +2,7 @@ var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571d
 var express = require('express');
 var bodyParser = require('body-parser');
 var queryString = require('querystring');
+var path = require('path');
 var app = express();
 
 app.use(bodyParser.json());
@@ -10,7 +11,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get('/auth', function(req, res) {
-	res.sendFile(express.static(__dirname + '/public'));
+	res.sendFile(path.join(__dirname + '/public'));
 });
 
 
