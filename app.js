@@ -10,7 +10,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get('/auth', function(req, res) {
-	res.send("test");
+	res.sendFile(express.static(__dirname + '/public'));
 });
 
 
@@ -24,10 +24,6 @@ app.post('/SMS', function(req, res) {
 		console.error(err);
 	});
 
-});
-
-app.get('/', function(req, res) {
-		
 });
 
 var port = process.env.PORT || 8080;
