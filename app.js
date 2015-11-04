@@ -16,8 +16,8 @@ app.get('/auth', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-	res.render('index' function(req, res) {
-		res.send(html)
+	res.render('index', function(req, res) {
+		res.send(html);
 	});
 });
 
