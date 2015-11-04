@@ -14,6 +14,10 @@ app.get('/auth', function(req, res) {
 	res.send('test');
 });
 
+app.get('/', function(req, res) {
+	res.send('index.html');
+});
+
 
 
 app.post('/SMS', function(req, res) {
