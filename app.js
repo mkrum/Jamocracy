@@ -12,7 +12,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get('/auth', function(req, res) {
-	res.send('test');
+	res.sendFile(path.join(__dirname+'/public/info.html'));
 });
 
 app.get('/', function(req, res) {
