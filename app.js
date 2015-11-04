@@ -7,6 +7,7 @@ var app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extend: true}));
+
 app.use(express.static(__dirname + '/public'));
 
 
@@ -15,7 +16,9 @@ app.get('/auth', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-	res.send('index.html');
+	res.render('index' function(req, res) {
+		res.send(html)
+	});
 });
 
 
