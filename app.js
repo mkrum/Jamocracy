@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({extend: true}));
 app.use(express.static(__dirname + '/public'));
 
 
-app.get('/', function(req, res) {
+app.get('/test', function(req, res) {
 	res.send('test');
 
 });
