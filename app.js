@@ -7,11 +7,16 @@ var app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extend: true}));
+
 app.use(express.static(__dirname + '/public'));
 
 
 app.get('/auth', function(req, res) {
-	res.render('login.html');
+	res.sendFile(path.join(__dirname+'/public/info.html'));
+});
+
+app.get('/', function(req, res) {
+	res.sendFile(path.join(__dirname+'/public/index.html'));
 });
 
 
