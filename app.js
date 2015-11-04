@@ -10,8 +10,8 @@ app.use(bodyParser.urlencoded({extend: true}));
 app.use(express.static(__dirname + '/public'));
 
 
-app.get('/test', function(req, res) {
-	res.render('login.html');
+app.get('/auth', function(req, res) {
+	res.send('test');
 });
 
 
