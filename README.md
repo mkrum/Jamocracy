@@ -1,1 +1,3 @@
 # Jamocracy
+
+Dan is weak
