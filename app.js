@@ -11,8 +11,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get('/test', function(req, res) {
-	res.send('test');
-
+	res.render('login.html');
 });
 
 
