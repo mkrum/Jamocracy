@@ -11,6 +11,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get('/auth', function(req, res) {
+	res.send('test');
 
 });
 
