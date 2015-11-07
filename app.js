@@ -24,8 +24,12 @@ app.post('/SMS', function(req, res) {
 	console.log(req.body.Body);
 });
 
+app.get('/create', function(req, res) {
+	res.sendFile(path.join(__dirname+'/public/success.html'));
+});
+
+
 app.post('/create', function(req, res) {
-	console.log('test');
 });
 
 
