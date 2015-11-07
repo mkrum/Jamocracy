@@ -9,7 +9,9 @@
 				$("enter").click(function () {
 					var phoneNumber = document.getElementById("adminNumber").value;
 					var name = document.getElementById("playlistName").value;
-					createStream(phoneNumber, name);
+					var xhttp = new XMLHttpRequest();
+					xhttp.open("POST", "/create", true);
+					xhttp.send();
 				});
 			});
 		</script>
