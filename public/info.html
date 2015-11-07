@@ -6,7 +6,7 @@
 		<title> Info Page </title>
 		<script>
 			$(document).ready(function() {
-				$("button").click(function () {
+				$("enter").click(function () {
 					var phoneNumber = document.getElementById("adminNumber").value;
 					var name = document.getElementById("playlistName").value;
 					createStream(phoneNumber, name);
@@ -16,12 +16,12 @@
 	</head>
 	<body>				
 		<p>Admin Number</p>
-		<textarea name="adminNumber" rows="1" cols="50"></textarea>
+		<textarea id="adminNumber" rows="1" cols="50"></textarea>
 		</br></br>
 		<p>Playlist Name</p>
-		<textarea name="playlistName" rows="1" cols="50"></textarea>
+		<textarea id="playlistName" rows="1" cols="50"></textarea>
 		</br></br>
-		<button name="button">Enter</button>
+		<button name="enter">Enter</button>
 	</body>
 
 
