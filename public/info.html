@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
+		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
+		<script src = "createStream.js"></script>
 		<title> Info Page </title>
 		<script>
 			$(document).ready(function() {
 				$("button").click(function () {
-					
+					var phoneNumber = document.getElementbyId("adminNumber").value;
+					var name = document.getElementbyId("playlistName").value;
+					createStream(phoneNumber, name);
 				});
 			});
 		</script>
 	</head>
 	<body>				
 		<p>Admin Number</p>
-		<textarea name="textarea" rows="1" cols="50"></textarea>
+		<textarea name="adminNumber" rows="1" cols="50"></textarea>
 		</br></br>
 		<p>Playlist Name</p>
-		<textarea name="textarea" rows="1" cols="50"></textarea>
+		<textarea name="playlistName" rows="1" cols="50"></textarea>
 		</br></br>
 		<button name="button">Enter</button>
 	</body>
