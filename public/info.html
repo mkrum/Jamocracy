@@ -7,8 +7,8 @@
 		<script>
 			$(document).ready(function() {
 				$("button").click(function () {
-					var phoneNumber = document.getElementbyId("adminNumber").value;
-					var name = document.getElementbyId("playlistName").value;
+					var phoneNumber = document.getElementById("adminNumber").value;
+					var name = document.getElementById("playlistName").value;
 					createStream(phoneNumber, name);
 				});
 			});
