@@ -5,14 +5,14 @@
 		<title> Info Page </title>
 		<script>
 			$(document).ready(function() {
-				$("enter").click(function () {
+				$("button").click(function () {
 					var phoneNumber = document.getElementById("adminNumber").value;
 					var name = document.getElementById("playlistName").value;
 					var xhttp = new XMLHttpRequest();
 					xhttp.open("POST", '/create', true);
-					window.location = 'jamocracy.herokuapp.com/create';
 					xhttp.send();
-				});
+					window.location = 'https://www.jamocracy.herokuapp.com/create';
+					});
 			});
 		</script>
 	</head>
@@ -23,7 +23,7 @@
 		<p>Playlist Name</p>
 		<textarea id="playlistName" rows="1" cols="50"></textarea>
 		</br></br>
-		<button id="enter">Enter</button>
+		<button>Enter</button>
 	</body>
 
 
