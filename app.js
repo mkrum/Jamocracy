@@ -30,6 +30,13 @@ app.get('/create', function(req, res) {
 
 
 app.post('/create', function(req, res) {
+	twilio.messages.create({
+		to: "+16304325433",
+		from: "+16305818347",
+		body: 'test'
+	}) function(err, message) {
+		process.stdout.write(message.sid);
+	});
 });
 
 

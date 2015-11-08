@@ -10,7 +10,7 @@
 					var name = document.getElementById("playlistName").value;
 					var xhttp = new XMLHttpRequest();
 					xhttp.open("POST", '/create', true);
-					//xhttp.send();
+					xhttp.send();
 					window.location = 'https://jamocracy.herokuapp.com/create'
 					});
 			});
