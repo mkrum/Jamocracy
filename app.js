@@ -26,18 +26,17 @@ app.post('/SMS', function(req, res) {
 
 app.get('/create', function(req, res) {
 	res.sendFile(path.join(__dirname+'/public/success.html'));
-		twilio.messages.create({
-		to: "+16304325433",
-		from: "+16305818347",
-		body: 'test'
-	}, function(err, message) {
-		process.stdout.write(message.sid);
-	});
 });
 
 
 app.post('/create', function(req, res) {
-
+	twilio.messages.create({
+		to: "+16304325433",
+		from: "+16305818347",
+		body: req.body.playlist
+	}, function(err, message) {
+		process.stdout.write(message.sid);
+	});
 });
 
 
