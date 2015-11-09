@@ -31,7 +31,7 @@ app.get('/create', function(req, res) {
 
 app.post('/create', function(req, res) {
 	twilio.messages.create({
-		to: "+16304325433",
+		to: req.body.admin,
 		from: "+16305818347",
 		body: req.body.playlist
 	}, function(err, message) {
