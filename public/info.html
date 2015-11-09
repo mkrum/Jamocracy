@@ -19,8 +19,9 @@
 							window.location = 'https://jamocracy.herokuapp.com/create';
 							alert("s");
 						},
-						error: function (err){
-							alert(err.responseText)
+						error: function (xhr, status, error){
+							var err = eval("(" + xhr.responseText + ")");
+							alert(err.Message);						
 						}
 					});
 				});
