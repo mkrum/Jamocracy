@@ -8,7 +8,9 @@
 				$("button").click(function () {
 					var phoneNumber = document.getElementById("adminNumber").value;
 					var name = document.getElementById("playlistName").value;
-					$.post('https://jamocracy.herokuapp.com/create', {admin: phoneNumber, playlist: name});
+					$.post('https://jamocracy.herokuapp.com/create', {admin: phoneNumber, playlist: name}, function(){
+							alert("done");
+					});
 				});
 			});
 		</script>
