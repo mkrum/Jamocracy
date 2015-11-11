@@ -13,9 +13,9 @@ var client_id = '0095976fe9c24fc5a6e4a7559e01f37e'; // Your client id
 var client_secret = '967795bf432646f69797a1a7e7d97a0e'; // Your client secret
 var redirect_uri = 'http://jamocracy.herokuapp.com/callback'; // Your redirect uri
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extend: true}));
-app.use(express.static(__dirname + '/public'));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({extend: true}));
+// app.use(express.static(__dirname + '/public'));
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 /**
@@ -144,32 +144,32 @@ app.get('/refresh_token', function(req, res) {
 });
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-app.get('/auth', function(req, res) {
-	var code = req.query.code || null;
-	console.log(code);
-	res.sendFile(path.join(__dirname+'/public/info.html'));
-});
-
-app.get('/', function(req, res) {
-	res.sendFile(path.join(__dirname+'/public/index.html'));
-});
-
-app.post('/SMS', function(req, res) {
-	console.log(req.body.Body);
-});
-
-app.get('/create', function(req, res) {
-	res.sendFile(path.join(__dirname+'/public/success.html'));
-});
-
-
-app.post('/create', function(req, res) {
-	twilio.messages.create({
-		to: req.body.admin,
-		from: "+16305818347",
-		body: req.body.playlist
-	}, function(err, message) {
-		process.stdout.write(message.sid);
-	});
-
-});
+// app.get('/auth', function(req, res) {
+// 	var code = req.query.code || null;
+// 	console.log(code);
+// 	res.sendFile(path.join(__dirname+'/public/info.html'));
+// });
+//
+// app.get('/', function(req, res) {
+// 	res.sendFile(path.join(__dirname+'/public/index.html'));
+// });
+//
+// app.post('/SMS', function(req, res) {
+// 	console.log(req.body.Body);
+// });
+//
+// app.get('/create', function(req, res) {
+// 	res.sendFile(path.join(__dirname+'/public/success.html'));
+// });
+//
+//
+// app.post('/create', function(req, res) {
+// 	twilio.messages.create({
+// 		to: req.body.admin,
+// 		from: "+16305818347",
+// 		body: req.body.playlist
+// 	}, function(err, message) {
+// 		process.stdout.write(message.sid);
+// 	});
+//
+// });
