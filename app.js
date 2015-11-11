@@ -16,6 +16,7 @@ app.get('/auth', function(req, res) {
 	var code = req.query.code || null;
 	console.log(code);
 	res.sendFile(path.join(__dirname+'/public/info.html'));
+	console.log("**************: "+req.query.code);
 });
 
 app.get('/', function(req, res) {
@@ -41,5 +42,3 @@ app.post('/create', function(req, res) {
 	});
 
 });
-
-

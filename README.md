@@ -1,3 +1,3 @@
 # Jamocracy
 
-Dan is weak
+Menlo Park
