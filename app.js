@@ -40,8 +40,9 @@ var generateRandomString = function(length) {
 var stateKey = 'spotify_auth_state';
 
 var app = express();
-
-app.set('port', (process.env.PORT || 5000));
+var port = (process.env.PORT || 8080);
+//app.set('port', port);
+var server = app.listen(port);
 
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
