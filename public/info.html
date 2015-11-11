@@ -9,7 +9,7 @@
 					var phoneNumber = document.getElementById("adminNumber").value;
 					var name = document.getElementById("playlistName").value;
 					$.ajax({
-						type: "GET",
+						type: "POST",
 						async: true,
 						url: 'https://jamocracy.herokuapp.com/create',
 					   	data: {admin: phoneNumber, playlist: name},
