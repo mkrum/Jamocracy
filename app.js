@@ -14,6 +14,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/auth', function(req, res) {
 	res.sendFile(path.join(__dirname+'/public/info.html'));
+	console.log("**************: "+req.query.code);
 });
 
 app.get('/', function(req, res) {
@@ -39,5 +40,3 @@ app.post('/create', function(req, res) {
 	});
 
 });
-
-
