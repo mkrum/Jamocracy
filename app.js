@@ -14,7 +14,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/auth', function(req, res) {
 	res.sendFile(path.join(__dirname+'/public/info.html'));
-	alert(req.body);
+	console.log(req.body);
 });
 
 app.get('/', function(req, res) {
