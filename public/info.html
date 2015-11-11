@@ -8,14 +8,7 @@
 				$("button").click(function () {
 					var phoneNumber = document.getElementById("adminNumber").value;
 					var name = document.getElementById("playlistName").value;
-					$.ajax({
-						type: "POST",
-						async: true,
-						url: 'https://jamocracy.herokuapp.com/create',
-					   	data: {admin: phoneNumber, playlist: name},
-					    dataType: "json",
-						contentType: "application/json; charset=utf-8",
-					});
+					$.post('https://jamocracy.herokuapp.com/create', {admin: phoneNumber, playlist: name});
 				});
 			});
 		</script>
