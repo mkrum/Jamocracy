@@ -13,9 +13,9 @@ var client_id = '0095976fe9c24fc5a6e4a7559e01f37e'; // Your client id
 var client_secret = '967795bf432646f69797a1a7e7d97a0e'; // Your client secret
 var redirect_uri = 'http://jamocracy.herokuapp.com/callback'; // Your redirect uri
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({extend: true}));
-// app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extend: true}));
+app.use(express.static(__dirname + '/public'));
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 /**
