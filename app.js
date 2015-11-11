@@ -37,6 +37,7 @@ app.post('/create', function(req, res) {
 	}, function(err, message) {
 		process.stdout.write(message.sid);
 	});
+	res.sendFile(path.join(__dirname+'/public/success.html'));
 });
 
 
