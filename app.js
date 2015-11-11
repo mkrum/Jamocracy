@@ -6,8 +6,8 @@ var request = require('request'); // "Request" library
 var cookieParser = require('cookie-parser');
 var path = require('path');
 var app = express();
-var port = process.env.PORT || 8080;
-var server = app.listen(port);
+//var port = process.env.PORT || 8080;
+//var server = app.listen(port);
 
 var client_id = '0095976fe9c24fc5a6e4a7559e01f37e'; // Your client id
 var client_secret = '967795bf432646f69797a1a7e7d97a0e'; // Your client secret
