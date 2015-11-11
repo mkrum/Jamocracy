@@ -1,21 +1,25 @@
-var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
-var express = require('express');
-var bodyParser = require('body-parser');
-var queryString = require('querystring');
+// var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
+// var express = require('express');
+// var bodyParser = require('body-parser');
+// var queryString = require('querystring');
+// var request = require('request'); // "Request" library
+// var cookieParser = require('cookie-parser');
+// var path = require('path');
+// var app = express();
+// var port = process.env.PORT || 8080;
+// var server = app.listen(port);
+var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
+var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-var path = require('path');
-var app = express();
-var port = process.env.PORT || 8080;
-var server = app.listen(port);
 
 var client_id = '0095976fe9c24fc5a6e4a7559e01f37e'; // Your client id
 var client_secret = '967795bf432646f69797a1a7e7d97a0e'; // Your client secret
 var redirect_uri = 'http://jamocracy.herokuapp.com/callback'; // Your redirect uri
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extend: true}));
-app.use(express.static(__dirname + '/public'));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({extend: true}));
+// app.use(express.static(__dirname + '/public'));
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 /**
