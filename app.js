@@ -14,6 +14,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/auth', function(req, res) {
 	res.sendFile(path.join(__dirname+'/public/info.html'));
+	alert(req.body);
 });
 
 app.get('/', function(req, res) {
@@ -37,7 +38,7 @@ app.post('/create', function(req, res) {
 	}, function(err, message) {
 		process.stdout.write(message.sid);
 	});
-	res.sendFile(path.join(__dirname+'/public/success.html'));
+
 });
 
 
