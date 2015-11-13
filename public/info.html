@@ -1,37 +1,40 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
 		<title> Info Page </title>
-		<script>
-			$(document).ready(function() {
-				$("button").click(function () {
-					var phoneNumber = document.getElementById("adminNumber").value;
-					var name = document.getElementById("playlistName").value;
-					$.post('https://jamocracy.herokuapp.com/create', {admin: phoneNumber, playlist: name}, function(){
-							alert("done");
-					});
-				});
-			});
-		</script>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
+		<style type="text/css">
+			textarea {
+				resize: none;
+			}
+		</style>
 	</head>
 	<body>
-		<p>Admin Phone Number</p>
-		<textarea id="adminNumber" rows="1" cols="50"></textarea>
-		<br><br>
-		<p>Playlist Name</p>
-		<textarea id="playlistName" rows="1" cols="50"></textarea>
-		<br><br>
-		<button>Enter</button>
+		<div class="container">
+			<form>
+				<h2 class="form-signin-heading">Jamocracy</h2>
+				<div class="form-group">
+						<label for="phoneNumber">Phone Number</label>
+						<input type="text" class="form-control" id="phoneNumber" placeholder="5088675309">
+				</div>
+				<div class="form-group">
+						<label for="playlistName">Playlist Name</label>
+						<input type="text" class="form-control" id="playlistName" placeholder="Party">
+				</div>
+			</form>
+		</div>
 	</body>
-
 </html>
 
-
-<style type="text/css">
-
-textarea {
-	resize: none;
-}
-
-</style>
+<!--<script>
+	$(document).ready(function() {
+		$("button").click(function () {
+			var phoneNumber = document.getElementById("adminNumber").value;
+			var name = document.getElementById("playlistName").value;
+			$.post('https://jamocracy.herokuapp.com/create', {admin: phoneNumber, playlist: name}, function(){
+					alert("done");
+			});
+		});
+	});
+</script>-->
