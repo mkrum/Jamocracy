@@ -3,30 +3,25 @@
 	<head>
 		<title> Info Page </title>
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="style.css">
 		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
-		<style type="text/css">
-			body{
-				background-color: #eee;
-			}
-			.form-signin{
-				max-width: 330px;
-			}
-		</style>
 	</head>
 	<body>
 		<div class="container">
-			<form>
-				<h2 class="form-signin-heading">Jamocracy</h2>
-				<div class="form-group">
-						<label for="phoneNumber">Phone Number</label>
-						<input type="text" class="form-control" id="phoneNumber" placeholder="5088675309">
-				</div>
-				<div class="form-group">
-						<label for="playlistName">Playlist Name</label>
-						<input type="text" class="form-control" id="playlistName" placeholder="Party">
-				</div>
-			</form>
-			<button type="submit" class="btn btn-default">Submit</button>
+			<div class="jumbotron">
+				<form>
+					<h2 class="form-signin-heading">Jamocracy</h2>
+					<div class="form-group">
+							<!--<label for="phoneNumber">Phone Number</label>-->
+							<input type="text" class="form-control" id="phoneNumber" placeholder="Phone number">
+					</div>
+					<div class="form-group">
+							<!--<label for="playlistName">Playlist Name</label>-->
+							<input type="text" class="form-control" id="playlistName" placeholder="Playlist name">
+					</div>
+				</form>
+				<button type="submit" class="btn btn-success">Submit</button>
+			</div>
 		</div>
 	</body>
 </html>

@@ -1,0 +1,35 @@
+html, body{
+  height: 100%;
+  margin: 0;
+}
+html {
+  background: url('dj.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+body{
+  margin: auto;
+  text-align: center;
+}
+.container{
+  height: 100%;
+  position: relative;
+}
+.jumbotron{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+/*.container{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}*/
+/*.container{
+  display: table-cell;
+  vertical-align: middle;
+}*/
