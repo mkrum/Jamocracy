@@ -59,7 +59,7 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/callback', function(req, res) {
-
+  res.sendFile(path.join(__dirname+'/public/info.html'));
   // your application requests refresh and access tokens
   // after checking the state parameter
 
