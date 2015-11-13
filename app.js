@@ -18,7 +18,8 @@ var server = app.listen(port);
 
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({extend: true}));
 // app.use(express.static(__dirname + '/public'));
@@ -145,6 +146,16 @@ app.get('/refresh_token', function(req, res) {
 });
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+app.post('/callback', function(req, res) {
+    var phoneNumber = req.body.phoneNumber;
+    var playlistName = req.body.playlistName;
+    console.log("Phone number: "+phoneNumber);
+    console.log("Playlist name: "+playlistName);
+    res.sendFile(path.join(__dirname+'/public/success.html'));
+});
+
+
 // app.get('/auth', function(req, res) {
 // 	var code = req.query.code || null;
 // 	console.log(code);
@@ -162,7 +173,6 @@ app.get('/refresh_token', function(req, res) {
 // app.get('/create', function(req, res) {
 // 	res.sendFile(path.join(__dirname+'/public/success.html'));
 // });
-//
 //
 // app.post('/create', function(req, res) {
 // 	twilio.messages.create({

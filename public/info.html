@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title> Info Page </title>
+		<title>Jamocracy: Bring the Jams</title>
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
@@ -9,29 +9,17 @@
 	<body>
 		<div class="container">
 			<div class="jumbotron">
-				<form>
+				<form action="/callback" method="post">
 					<h2 class="form-signin-heading">Jamocracy</h2>
 					<div class="form-group">
-							<input type="text" class="form-control" id="phoneNumber" placeholder="Phone number">
+							<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number">
 					</div>
 					<div class="form-group">
-							<input type="text" class="form-control" id="playlistName" placeholder="Playlist name">
+							<input type="text" class="form-control" name="playlistName" placeholder="Playlist name">
 					</div>
+					<button type="submit" class="btn btn-success">Submit</button>
 				</form>
-				<button type="submit" class="btn btn-success">Submit</button>
 			</div>
 		</div>
 	</body>
 </html>
-
-<!--<script>
-	$(document).ready(function() {
-		$("button").click(function () {
-			var phoneNumber = document.getElementById("adminNumber").value;
-			var name = document.getElementById("playlistName").value;
-			$.post('https://jamocracy.herokuapp.com/create', {admin: phoneNumber, playlist: name}, function(){
-					alert("done");
-			});
-		});
-	});
-</script>-->
