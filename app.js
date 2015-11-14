@@ -152,7 +152,8 @@ app.post('/callback', function(req, res) {
     var playlistName = req.body.playlistName;
     console.log("Phone number: "+phoneNumber);
     console.log("Playlist name: "+playlistName);
-    res.sendFile(path.join(__dirname+'/public/success.html'));
+    //res.sendFile(path.join(__dirname+'/public/success.html'));
+    res.redirect('/info.html');
 });
 
 
