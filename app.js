@@ -126,10 +126,10 @@ app.get('/callback', function(req, res) {
   }
 });
 
-app.get('/info', funciton(req, res){
+app.get('/info', funciton(req, res{
 	res.render('info.html');
 	console.log(req.query.authToken);
-}
+});
 
 app.get('/refresh_token', function(req, res) {
   // requesting access token from refresh token
