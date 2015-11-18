@@ -127,7 +127,7 @@ app.get('/callback', function(req, res) {
 });
 
 app.get('/info', function(req, res) {
-	res.render('info.html');
+	res.redirect('info.html');
 	console.log(req.query.authToken);
 });
 
