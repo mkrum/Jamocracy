@@ -111,7 +111,7 @@ app.get('/callback', function(req, res) {
         //     refresh_token: refresh_token
         //   }));
 		
-        res.redirect('/info.html' + 
+        app.get('/info' + 
 				queryString.stringify({
 					access_token: access_token,
 					refresh_token: refresh_token
@@ -125,6 +125,11 @@ app.get('/callback', function(req, res) {
     });
   }
 });
+
+app.get('/info', funciton(req, res){
+	res.render('info.html');
+	console.log(req.query.authToken);
+}
 
 app.get('/refresh_token', function(req, res) {
   // requesting access token from refresh token
@@ -160,6 +165,7 @@ app.post('/callback', function(req, res) {
 			headers: {
 				'Authorization': 'Bearer' + authToken,
 				'Content-Type': 'applicaiton/json'
+			}
 			'name':playlistName,
 			'public':true
 		}
