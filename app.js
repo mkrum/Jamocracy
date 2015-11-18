@@ -126,7 +126,7 @@ app.get('/callback', function(req, res) {
   }
 });
 
-app.get('/info', funciton(req, res){
+app.get('/info', function(req, res){
 	res.render('info.html');
 	console.log(req.query.authToken);
 });
