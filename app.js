@@ -112,7 +112,7 @@ app.get('/callback', function(req, res) {
         //   }));
 		
         app.get('/info' + 
-				queryString.stringify({
+				querystring.stringify({
 					access_token: access_token,
 					refresh_token: refresh_token
 		}));
