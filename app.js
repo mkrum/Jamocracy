@@ -111,7 +111,7 @@ app.get('/callback', function(req, res) {
         //     refresh_token: refresh_token
         //   }));
 		
-        app.get('/info' + 
+        res.redirect('/info' + 
 				querystring.stringify({
 					access_token: access_token,
 					refresh_token: refresh_token
@@ -127,7 +127,6 @@ app.get('/callback', function(req, res) {
 });
 
 app.get('/info', function(req, res) {
-	res.redirect('/info.html');
 	console.log(req.query.authToken);
 });
 
