@@ -126,7 +126,7 @@ app.get('/callback', function(req, res) {
   }
 });
 
-app.get('/info', function(req, res){
+app.get('/info', function(req, res) {
 	res.render('info.html');
 	console.log(req.query.authToken);
 });
@@ -165,7 +165,7 @@ app.post('/callback', function(req, res) {
 			headers: {
 				'Authorization': 'Bearer' + authToken,
 				'Content-Type': 'applicaiton/json'
-			}
+			},
 			'name':playlistName,
 			'public':true
 		}
