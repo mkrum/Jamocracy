@@ -16,20 +16,17 @@ var app = express();
 var port = (process.env.PORT || 8080);
 var server = app.listen(port);
 
-app.use(express.static(__dirname + '/public'))
-   .use(cookieParser());
+app.use(express.static(__dirname + '/public')).use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({extend: true}));
-// app.use(express.static(__dirname + '/public'));
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * Generates a random string containing numbers and letters
- * @param  {number} length The length of the string
- * @return {string} The generated string
- */
+* Generates a random string containing numbers and letters
+* @param  {number} length The length of the string
+* @return {string} The generated string
+*/
 var generateRandomString = function(length) {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -49,13 +46,13 @@ app.get('/login', function(req, res) {
   // your application requests authorization
   var scope = 'playlist-read-private playlist-modify-public playlist-modify-private user-read-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      response_type: 'code',
-      client_id: client_id,
-      scope: scope,
-      redirect_uri: redirect_uri,
-      state: state
-    }));
+  querystring.stringify({
+    response_type: 'code',
+    client_id: client_id,
+    scope: scope,
+    redirect_uri: redirect_uri,
+    state: state
+  }));
 });
 
 app.get('/callback', function(req, res) {
@@ -69,9 +66,9 @@ app.get('/callback', function(req, res) {
 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
-      querystring.stringify({
-        error: 'state_mismatch'
-      }));
+    querystring.stringify({
+      error: 'state_mismatch'
+    }));
   } else {
     res.clearCookie(stateKey);
     var authOptions = {
@@ -91,7 +88,7 @@ app.get('/callback', function(req, res) {
       if (!error && response.statusCode === 200) {
 
         var access_token = body.access_token,
-            refresh_token = body.refresh_token;
+        refresh_token = body.refresh_token;
 
         var options = {
           url: 'https://api.spotify.com/v1/me',
@@ -110,24 +107,24 @@ app.get('/callback', function(req, res) {
         //     access_token: access_token,
         //     refresh_token: refresh_token
         //   }));
-		
-        res.redirect('/info/' + 
-				querystring.stringify({
-					access_token: access_token,
-					refresh_token: refresh_token
-		}));
+
+        res.redirect('/info/' +
+        querystring.stringify({
+          access_token: access_token,
+          refresh_token: refresh_token
+        }));
       } else {
         res.redirect('/#' +
-          querystring.stringify({
-            error: 'invalid_token'
-          }));
+        querystring.stringify({
+          error: 'invalid_token'
+        }));
       }
     });
   }
 });
 
 app.get('/info', function(req, res) {
-	console.log(req.query.authToken);
+  console.log(req.query.authToken);
 });
 
 app.get('/refresh_token', function(req, res) {
@@ -154,27 +151,27 @@ app.get('/refresh_token', function(req, res) {
 });
 
 app.post('/callback', function(req, res) {
-    var phoneNumber = req.body.phoneNumber;
-    var playlistName = req.body.playlistName;
-    var authToken = req.body.authToken;
-	var userId = req.body.userId;
-	var url = 'https://api.spotify.com/v1/users/'+userId+'/playlists';
-	request.post(url, {form:
-		{
-			headers: {
-				'Authorization': 'Bearer' + authToken,
-				'Content-Type': 'applicaiton/json'
-			},
-			'name':playlistName,
-			'public':true
-		}
-	}, function(err, response, body){
-		if (err){
-			alert('There was an error. Try again.');
-		} else {
-			 res.redirect('/success.html');
-		}
-	});
+  var phoneNumber = req.body.phoneNumber;
+  var playlistName = req.body.playlistName;
+  var authToken = req.body.authToken;
+  var userId = req.body.userId;
+  var url = 'https://api.spotify.com/v1/users/'+userId+'/playlists';
+  request.post(url, {form:
+    {
+      headers: {
+        'Authorization': 'Bearer' + authToken,
+        'Content-Type': 'applicaiton/json'
+      },
+      'name':playlistName,
+      'public':true
+    }
+  }, function(err, response, body){
+    if (err){
+      alert('There was an error. Try again.');
+    } else {
+      res.redirect('/success.html');
+    }
+  });
 
 });
 
