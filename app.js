@@ -2,13 +2,13 @@
 var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 var bodyParser = require('body-parser');
 var path = require('path');
-var express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
+var express = require('express');
+var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 
-// Set credentials
+// Set credentials, scope, and state
 var credentials = {
   clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
   clientSecret : '967795bf432646f69797a1a7e7d97a0e',
@@ -58,9 +58,7 @@ app.post('/callback', function(req, res) {
     .then(function(data) {
       spotifyApi.getMe()
       .then(function(data) {
-        //console.log('Some information about the authenticated user', data.body);
-        console.log("ID: "+data.body.user_id);
-        spotifyApi.createPlaylist(data.body.user_id, playlistName, { 'public' : false })
+        spotifyApi.createPlaylist(data.body.id, playlistName, { 'public' : false })
           .then(function(data) {
             console.log('Created playlist!');
             res.redirect('/success.html');
