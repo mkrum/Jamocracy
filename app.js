@@ -108,11 +108,12 @@ app.get('/callback', function(req, res) {
         //     refresh_token: refresh_token
         //   }));
 
-        res.redirect('/info/' +
-        querystring.stringify({
-          access_token: access_token,
-          refresh_token: refresh_token
-        }));
+        // res.redirect('/info/' +
+        // querystring.stringify({
+        //   access_token: access_token,
+        //   refresh_token: refresh_token
+        // }));
+        res.redirect('/info.html');
       } else {
         res.redirect('/#' +
         querystring.stringify({
