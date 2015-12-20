@@ -16,7 +16,7 @@ var spotifyApi = new SpotifyWebApi(credentials);
 // Create the authorization URL
 var scope = 'playlist-read-private playlist-modify-public playlist-modify-private user-read-private';
 var stateKey = 'spotify_auth_state';
-var authorizeURL = spotifyApi.createAuthorizeURL(scope, state);
+var authorizeURL = spotifyApi.createAuthorizeURL(scope, stateKey);
 
 var app = express();
 var port = (process.env.PORT || 8080);
