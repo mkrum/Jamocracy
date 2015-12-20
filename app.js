@@ -5,7 +5,7 @@ var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-
+var SpotifyWebApi = require('spotify-web-api-node');
 // Set credentials
 var credentials = {
   clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
