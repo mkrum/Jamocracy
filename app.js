@@ -42,6 +42,13 @@ app.get('/callback', function(req, res) {
       // Set the access token on the API object to use it in later calls
       spotifyApi.setAccessToken(data.body.access_token);
       spotifyApi.setRefreshToken(data.body.refresh_token);
+      console.log("\nExpires in: "+data.body.expires_in);
+      spotifyApi.createPlaylist('krrgn3', 'test playlisy', { 'public' : false })
+        .then(function(data) {
+          console.log('Created playlist!');
+        }, function(err) {
+          console.log('error: ', err);
+        });
       res.redirect('/info.html');
   }, function(err) {
     console.log('Something went wrong in callback get!', err);
@@ -57,7 +64,7 @@ app.post('/callback', function(req, res) {
     .then(function(data) {
       spotifyApi.getMe()
       .then(function(data) {
-        console.log('Some information about the authenticated user', data.body);
+        //console.log('Some information about the authenticated user', data.body);
         spotifyApi.createPlaylist(data.body.user_id, playlistName, { 'public' : false })
           .then(function(data) {
             console.log('Created playlist!');
