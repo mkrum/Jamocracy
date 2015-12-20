@@ -44,7 +44,7 @@ app.get('/callback', function(req, res) {
       spotifyApi.setRefreshToken(data.body.refresh_token);
       res.redirect('/info.html');
   }, function(err) {
-    console.log('Something went wrong!', err);
+    console.log('Something went wrong in callback get!', err);
   });
 });
 
@@ -53,17 +53,24 @@ app.get('/callback', function(req, res) {
 app.post('/callback', function(req, res) {
   var phoneNumber = req.body.phoneNumber;
   var playlistName = req.body.playlistName;
-  spotifyApi.getMe()
+  spotifyApi.refreshAccessToken()
     .then(function(data) {
-      console.log('Some information about the authenticated user', data.body);
-      spotifyApi.createPlaylist(data.body.user_id, playlistName, { 'public' : false })
-        .then(function(data) {
-          console.log('Created playlist!');
-          res.redirect('/success.html');
+      spotifyApi.setAccessToken(data.body.access_token);
+      if (data.body.refresh_token) {
+        spotifyApi.setRefreshToken(data.body.refresh_token);
+      }
+      spotifyApi.getMe()
+      .then(function(data) {
+        console.log('Some information about the authenticated user', data.body);
+        spotifyApi.createPlaylist(data.body.user_id, playlistName, { 'public' : false })
+          .then(function(data) {
+            console.log('Created playlist!');
+            res.redirect('/success.html');
+          }, function(err) {
+            console.log('Something went wrong in create playlist!', err);
+          });
         }, function(err) {
-          console.log('Something went wrong!', err);
+          console.log('Something went wrong in callback post!', err);
         });
-    }, function(err) {
-      console.log('Something went wrong!', err);
-    });
+      });
 });
