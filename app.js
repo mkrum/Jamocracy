@@ -32,7 +32,7 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/callback', function(req, res) {
-  spotifyApi.authorizationCodeGrant(code)
+  spotifyApi.authorizationCodeGrant(req.query.code)
     .then(function(data) {
       // Set the access token on the API object to use it in later calls
       spotifyApi.setAccessToken(data.body.access_token);
