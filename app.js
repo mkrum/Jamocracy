@@ -42,7 +42,6 @@ app.get('/callback', function(req, res) {
       // Set the access token on the API object to use it in later calls
       spotifyApi.setAccessToken(data.body.access_token);
       spotifyApi.setRefreshToken(data.body.refresh_token);
-      console.log("Refresh token: "+spotifyApi.getRefreshToken());
       res.redirect('/info.html');
   }, function(err) {
     console.log('Something went wrong in callback get!', err);
@@ -56,10 +55,6 @@ app.post('/callback', function(req, res) {
   var playlistName = req.body.playlistName;
   spotifyApi.refreshAccessToken()
     .then(function(data) {
-      spotifyApi.setAccessToken(data.body.access_token);
-      if (data.body.refresh_token) {
-        spotifyApi.setRefreshToken(data.body.refresh_token);
-      }
       spotifyApi.getMe()
       .then(function(data) {
         console.log('Some information about the authenticated user', data.body);
