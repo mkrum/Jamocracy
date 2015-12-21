@@ -76,7 +76,7 @@ app.post('/callback', function(req, res) {
 
 app.post('/success', function(req, res) {
 	twilio.messages.create({ 
-		to: req.body.phoneNumber, 
+		to: req.body.number, 
 		from: "+16305818347", 
 		body: "This is your Jamocracy Number! Have your friends text their suggestions here!" 
 	}, function(err, message) { 
