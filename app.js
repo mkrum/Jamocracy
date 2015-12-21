@@ -86,14 +86,23 @@ app.post('/success', function(req, res) {
 });
 
 app.post('/SMS', function(req, res) {
-	searchList = request.get('https://api.spotify.com/v1/search?q='+encodeURIComponent(req.body.Body)+'&type=song');
-	twilio.messages.create({ 
-		to: "16304325433", 
-		from: "+16305818347", 
-		body: searchList[0]
-	}, function(err, message) { 
-		console.log(message.sid); 
-	});
+	request('https://api.spotify.com/v1/search?q='+encodeURIComponent(req.body.Body)+'&type=song', function(error, response, body) {
+			if(error){
+				twilio.messages.create({ 
+					to: '16304325433', 
+					from: "+16305818347", 
+					body: "Sorry! There was an error" 
+				}, function(err, message) { 
+					console.log(message.sid); 
+				});
+			} else {
+				twilio.messages.create({ 
+					to: '16304325433', 
+					from: "+16305818347", 
+					body: body 
+				}, function(err, message) { 
+					console.log(message.sid); 
+				});
 
 
 });
