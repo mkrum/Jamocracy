@@ -103,6 +103,8 @@ app.post('/SMS', function(req, res) {
 				}, function(err, message) { 
 					console.log(message.sid); 
 				});
+			}
+	});
 
 
 });
