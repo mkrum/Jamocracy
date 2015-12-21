@@ -97,7 +97,7 @@ app.post('/SMS', function(req, res) {
 				});
 			} else {
 				var songObj = JSON.parse(body);
-				console.log(songObj.tracks.item.name);
+				console.log(songObj.tracks.items.album);
 				twilio.messages.create({ 
 					to: '16304325433', 
 					from: "+16305818347", 
