@@ -62,7 +62,7 @@ app.post('/callback', function(req, res) {
         spotifyApi.createPlaylist(data.body.id, playlistName, { 'public' : false })
           .then(function(data) {
             console.log('Created playlist!');
-            app.post('/success');
+            res.redirect('/success.html');
           }, function(err) {
             console.log('Something went wrong in create playlist!', err);
           });
@@ -73,7 +73,7 @@ app.post('/callback', function(req, res) {
 });
 
 
-app.post('/success', function(req, res) {
+app.get('/success', function(req, res) {
 	twilio.messages.create({ 
 		to: "+16304325433", 
 		from: "+16305818347", 
@@ -81,6 +81,5 @@ app.post('/success', function(req, res) {
 	}, function(err, message) { 
 		console.log(message.sid); 
 	});
-	res.redirect('/success.html');
 });
 
