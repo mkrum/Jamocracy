@@ -82,6 +82,16 @@ app.post('/success', function(req, res) {
 	}, function(err, message) { 
 		console.log(message.sid); 
 	});
-	
+
+});
+
+app.post('/SMS', function(req, res)){
+	twilio.messages.create({ 
+		to: "16304325433", 
+		from: "+16305818347", 
+		body: "recieve sms" 
+	}, function(err, message) { 
+		console.log(message.sid); 
+	});
 });
 
