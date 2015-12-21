@@ -14,6 +14,7 @@ var credentials = {
   clientSecret : '967795bf432646f69797a1a7e7d97a0e',
   redirectUri : 'http://jamocracy.herokuapp.com/callback'
 };
+
 var scopes = ['playlist-read-private', 'playlist-modify-public', 'playlist-modify-private', 'user-read-private'];
 var stateKey = 'spotify_auth_state';
 
@@ -50,7 +51,7 @@ app.get('/callback', function(req, res) {
 });
 
 // When the user sumbits the form, create the new playlist and redirect user
-// tothe success page
+// to the success page
 app.post('/callback', function(req, res) {
   var phoneNumber = req.body.phoneNumber;
   var playlistName = req.body.playlistName;
@@ -70,3 +71,13 @@ app.post('/callback', function(req, res) {
         });
       });
 });
+
+app.post('/success', function(req, res) {
+	twilio.messages.create({ 
+    to: "+16304325433", 
+    from: "+16305818347", 
+    body: "This is your Jamocracy Number! Have your friends text their suggestions here!" 
+}, function(err, message) { 
+    console.log(message.sid); 
+});
+
