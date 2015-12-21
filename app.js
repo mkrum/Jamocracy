@@ -96,7 +96,11 @@ app.post('/SMS', function(req, res) {
 					console.log(message.sid); 
 				});
 			} else {
-				console.log(body);
+				JSON.parse(body, function(key, value) {
+					if (key === "name") {
+						console.log(value);
+					}
+				});
 			}
 	});
 });
