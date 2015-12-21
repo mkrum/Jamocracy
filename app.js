@@ -62,7 +62,7 @@ app.post('/callback', function(req, res) {
         spotifyApi.createPlaylist(data.body.id, playlistName, { 'public' : false })
           .then(function(data) {
             console.log('Created playlist!');
-			requests.post("jamocracy.herokuapp.com/success");			
+			requests.post('http://jamocracy.herokuapp.com/success', {form:{number:phoneNumber}});			
             }, function(err) {
             console.log('Something went wrong in create playlist!', err);
           });
