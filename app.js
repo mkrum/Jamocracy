@@ -72,7 +72,8 @@ app.post('/callback', function(req, res) {
       });
 });
 
-app.post('/success.html', function(req, res) {
+
+app.get('/success', function(req, res) {
 	twilio.messages.create({ 
 		to: "+16304325433", 
 		from: "+16305818347", 
