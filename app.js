@@ -98,7 +98,13 @@ app.post('/SMS', function(req, res) {
 			} else {
 				JSON.parse(body, function(key, value) {
 					if (key === "name") {
-						console.log(value);
+						twilio.messages.create({ 
+							to: '16304325433', 
+							from: "+16305818347", 
+							body: "Song added:"+value 
+						}, function(err, message) { 
+							console.log(message.sid); 
+						});
 					}
 					if (key === "uri"){
 						request.post('https://api.spotify.com/v1/users/mkrum/playlist/3jZ6xswvvHnsGk69q5vgcw/tracks/?uris='+encodeURIComponent(value));
