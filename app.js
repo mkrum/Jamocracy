@@ -102,6 +102,7 @@ app.post('/SMS', function(req, res) {
 					}
 					if (key === "uri"){
 						request.post('https://api.spotify.com/v1/users/mkrum/playlist/3jZ6xswvvHnsGk69q5vgcw/tracks/?uris='+encodeURIComponent(value));
+					}
 				});
 			}
 	});
