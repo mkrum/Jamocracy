@@ -86,12 +86,15 @@ app.post('/success', function(req, res) {
 });
 
 app.post('/SMS', function(req, res) {
+	searchList = request.get('https://api.spotify.com/v1/search?q='+encodeURIComponent(req.body.Body)+'&type=song');
 	twilio.messages.create({ 
 		to: "16304325433", 
 		from: "+16305818347", 
-		body: req.body.Body
+		body: searchList[0]
 	}, function(err, message) { 
 		console.log(message.sid); 
 	});
+
+
 });
 
