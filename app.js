@@ -96,20 +96,15 @@ app.post('/SMS', function(req, res) {
 					console.log(message.sid); 
 				});
 			} else {
-				JSON.parse(body, function(key, value) {
-					if (key === "name") {
-						twilio.messages.create({ 
-							to: '16304325433', 
-							from: "+16305818347", 
-							body: "Song added:"+value 
-						}, function(err, message) { 
-							console.log(message.sid); 
-						});
-					}
-					if (key === "uri"){
-						request.post('https://api.spotify.com/v1/users/mkrum/playlist/3jZ6xswvvHnsGk69q5vgcw/tracks/?uris='+encodeURIComponent(value));
-					}
+				var songObj = JSON.parse(body);
+				twilio.messages.create({ 
+					to: '16304325433', 
+					from: "+16305818347", 
+					body: "Song added: "+songObj.tracks.items.name
+				}, function(err, message) { 
+					console.log(message.sid); 
 				});
+			
 			}
 	});
 });
