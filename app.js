@@ -13,7 +13,7 @@ var redisclient = redis.createClient();
 
 redisclient.on('connect', function() {
 	console.log('connected to Database');
-}
+});
 
 // Set credentials, scope, and state
 var credentials = {
