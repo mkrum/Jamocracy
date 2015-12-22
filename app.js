@@ -7,6 +7,9 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
+var redis = require('redis');
+
+var redisclient = redis.createClient();
 
 // Set credentials, scope, and state
 var credentials = {
@@ -30,10 +33,12 @@ app.use(express.static(__dirname + '/public')).use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+
 // Redirect to Spotify authortization when user presses login
 app.get('/login', function(req, res) {
   res.redirect(authorizeURL);
 });
+
 
 // After the user logs in through Spotify, save access and refresh tokens and
 // redirect user to info.html, which contains the form
@@ -43,12 +48,12 @@ app.get('/callback', function(req, res) {
       // Set the access token on the API object to use it in later calls
       spotifyApi.setAccessToken(data.body.access_token);
       spotifyApi.setRefreshToken(data.body.refresh_token);
-
       res.redirect('/info.html');
   }, function(err) {
     console.log('Something went wrong in callback get!', err);
   });
 });
+
 
 // When the user sumbits the form, create the new playlist and redirect user
 // to the success page
@@ -75,21 +80,24 @@ app.post('/callback', function(req, res) {
 
 
 app.post('/success', function(req, res) {
+	var randString = 'QWER';
 	twilio.messages.create({ 
 		to: req.body.number, 
 		from: "+16305818347", 
-		body: "This is your Jamocracy Number! Have your friends text their suggestions here!" 
+		body: "This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:"+randString
 	}, function(err, message) { 
 		console.log(message.sid); 
 	});
-
+	redisclient.sadd(randString, req.body.number);
 });
 
+
 app.post('/SMS', function(req, res) {
+
 	request('https://api.spotify.com/v1/search?type=track&limit=1&q='+encodeURIComponent(req.body.Body), function(error, response, body) {
 			if(error){
 				twilio.messages.create({ 
-					to: '16304325433', 
+					to: req.body.From, 
 					from: "+16305818347", 
 					body: "Sorry! There was an error" 
 				}, function(err, message) { 
@@ -97,15 +105,13 @@ app.post('/SMS', function(req, res) {
 				});
 			} else {
 				var songObj = JSON.parse(body);
-				console.log(songObj.tracks.items.album);
 				twilio.messages.create({ 
-					to: '16304325433', 
+					to: req.body.From, 
 					from: "+16305818347", 
 					body: "Song added: "+songObj.tracks.items.name
 				}, function(err, message) { 
 					console.log(message.sid); 
 				});
-			
 			}
 	});
 });
