@@ -9,7 +9,7 @@ var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 var redis = require('redis');
 
-var redisclient = redis.createClient('50.129.125.139');
+var redisclient = redis.createClient('50.129.125.139', 6379);
 
 redisclient.on('connect', function() {
 	console.log('connected to Database');
