@@ -11,9 +11,9 @@ var redis = require('redis');
 
 //var client = require('redis').createClient();
 
-client.on('connect', function() {
-	console.log('connected to Database');
-});
+//client.on('connect', function() {
+//	console.log('connected to Database');
+//});
 
 // Set credentials, scope, and state
 var credentials = {
