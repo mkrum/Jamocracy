@@ -9,7 +9,7 @@ var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 var redis = require('redis');
 
-var client = require('redis').createClient(process.env.REDIS_URL);
+//var client = require('redis').createClient();
 
 client.on('connect', function() {
 	console.log('connected to Database');
@@ -92,7 +92,7 @@ app.post('/success', function(req, res) {
 	}, function(err, message) { 
 		console.log(message.sid); 
 	});
-	client.sadd(randString, req.body.number);
+//	client.sadd(randString, req.body.number);
 });
 
 
