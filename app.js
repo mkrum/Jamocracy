@@ -73,7 +73,12 @@ app.post('/callback', function(req, res) {
         spotifyApi.createPlaylist(data.body.id, playlistName, { 'public' : false })
           .then(function(data) {
             console.log('Created playlist!');
-			request.post('https://jamocracy.herokuapp.com/success', {form:{number:phoneNumber}});
+			request.post('https://jamocracy.herokuapp.com/success', {
+					form: {
+						number:phoneNumber,
+						playlist:playlistName
+					}
+			});
 			res.redirect('/success.html');		
             }, function(err) {
             console.log('Something went wrong in create playlist!', err);
@@ -103,13 +108,11 @@ app.post('/success', function(req, res) {
 	}, function(err, message) { 
 		console.log('Twilio Error'); 
 	});
-	db.put('numbers', partyCode, {
-		'number' : req.body.number,
-		'Ban' : 1
+	db.put('Parties', partyCode, {
+		'admin' : req.body.number,
+		'Playlist' : req.body.playlist
 	}, false).fail(function(err) {
 		console.log('Database fail');
-	}).then(function(){
-		console.log(partyCode);
 	});
 });
 
