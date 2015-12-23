@@ -118,7 +118,7 @@ app.post('/success', function(req, res) {
 app.post('/SMS', function(req, res){
 	db.search('numbers', req.body.From)
 		.then(function(result) {
-			console.log('found');
+			console.log(result);
 		})
 		.fail(function(result) {
 			console.log('not found');
