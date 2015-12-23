@@ -119,8 +119,11 @@ app.post('/SMS', function(req, res){
 	db.newSearchBuilder()
 		.collection('numbers')
 		.query(req.body.From)
-		.then(function(result) {
-			console.log(result.results);
+		.then(function() {
+			db.get('numbers', req.body.From, 'party')
+				.then(function (result) {
+					console.log(result);
+				});
 		})
 		.fail(function(result) {
 			console.log('not found');
