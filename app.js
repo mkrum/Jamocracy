@@ -131,7 +131,7 @@ app.post('/SMS', function(req, res){
             twilio.messages.create({
                 to: req.body.From,
                 from: "+16305818347",
-                body: "Song added: "+song.name
+                body: "Song added: "+song.name" by "+song.artist
             }, function(err, message) {
                 console.log(message.sid);
             });
