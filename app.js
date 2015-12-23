@@ -84,29 +84,36 @@ app.post('/callback', function(req, res) {
       });
 });
 
+//Generates a random string of four capital letters
+function randomString(){
+	letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var string;
+	for(var i = 0; i < 4;i++){
+		string += letters[Math.floor(Math.random() * 27)];
+	}
+	return string;
+}
+
 
 app.post('/success', function(req, res) {
-	var randString = 'QWER';
+	var partyCode = randomString();
 	twilio.messages.create({ 
 		to: req.body.number, 
 		from: "+16305818347", 
-		body: "This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:"+randString
+		body: "This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:"+partyCode
 	}, function(err, message) { 
 		console.log(message.sid); 
 	});
-//	client.sadd(randString, req.body.number);
+	db.put('numbers', partyCode, {
+		'number' : req.body.number,
+		'Ban' : 1
+	}, false).fail(function(err) {
+		console.log('Database fail');
+	});
 });
 
 
 app.post('/SMS', function(req, res) {
-	db.put('numbers', 'QWER', {
-		'number' : req.body.From,
-		'Ban' : 1
-	}, false)
-		.fail(function(err) {
-			console.log('Database fail');
-		});
-
 	request('https://api.spotify.com/v1/search?type=track&limit=1&q='+encodeURIComponent(req.body.Body), function(error, response, body) {
 			if(error){
 				twilio.messages.create({ 
