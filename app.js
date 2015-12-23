@@ -98,6 +98,7 @@ function randomString(){
     return string;
 }
 
+// Create playlist code, store playlist in database
 app.post('/success', function(req, res) {
     var partyCode = randomString();
     twilio.messages.create({
@@ -106,6 +107,8 @@ app.post('/success', function(req, res) {
         body: 'This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:'+partyCode
     }, function(err, message) {
         console.log('Twilio Error');
+        console.log("Error: "+err);
+        console.log("Message: "+message);
     });
     db.put('Parties', partyCode, {
         'admin' : req.body.number,
@@ -116,6 +119,7 @@ app.post('/success', function(req, res) {
     });
 });
 
+// This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
     spotifyApi.searchTracks(req.body.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
