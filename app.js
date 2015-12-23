@@ -9,14 +9,6 @@ var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 var db = require('orchestrate')('63adc436-2df9-4d06-b285-6b240315ef2a');
 
-//var redis = require('redis');
-
-//var client = require('redis').createClient();
-
-//client.on('connect', function() {
-//	console.log('connected to Database');
-//});
-
 // Set credentials, scope, and state
 var credentials = {
     clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
@@ -98,6 +90,7 @@ function randomString(){
     return string;
 }
 
+// Create playlist code, store playlist in database
 app.post('/success', function(req, res) {
     var partyCode = randomString();
     twilio.messages.create({
@@ -106,6 +99,7 @@ app.post('/success', function(req, res) {
         body: 'This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:'+partyCode
     }, function(err, message) {
         console.log('Twilio Error');
+        console.log("Error: "+JSON.stringify(err));
     });
     db.put('Parties', partyCode, {
         'admin' : req.body.number,
@@ -116,6 +110,7 @@ app.post('/success', function(req, res) {
     });
 });
 
+// This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
     spotifyApi.searchTracks(req.body.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
