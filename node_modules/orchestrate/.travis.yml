@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "0.10"
+  - "0.11"
+  - "0.12"
+
+notifications:
+  email:
+    - steve@bowery.io
+    - benji.smith@ctl.io
+
+after_success:
+- npm run coveralls
+
+env:
+  global:
+    - secure: "BkIl3hef8o+XaQttxWedcRITufGDjvENbnhFl7UNSLb9HnkFApa2XdjmpszjyHYYrKz9ElgOsaUBwOPdJJi1F/KUb5LRzozO5BzaWkLTrsZq1q/yQG4Zied4gUyUwEsHTLMA+b2LzGfM0/XIklaiiqP5HYi13/oGQyUmbbtPWYQ="
