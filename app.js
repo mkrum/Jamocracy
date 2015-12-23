@@ -107,8 +107,9 @@ app.post('/success', function(req, res) {
         body: 'This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:'+partyCode
     }, function(err, message) {
         console.log('Twilio Error');
-        console.log("Error: "+err);
-        console.log("Message: "+message);
+        console.log("Number: "+req.body.number);
+        console.log("Error: "+JSON.stringify(err));
+        console.log("Message: "+message.sid);
     });
     db.put('Parties', partyCode, {
         'admin' : req.body.number,
