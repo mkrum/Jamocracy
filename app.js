@@ -102,7 +102,7 @@ app.post('/success', function(req, res) {
 		from: "+16305818347", 
 		body: "This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:"+partyCode
 	}, function(err, message) { 
-		console.log(message.sid); 
+		console.log('Twilio Error'); 
 	});
 	db.put('numbers', partyCode, {
 		'number' : req.body.number,
