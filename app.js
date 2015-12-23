@@ -107,7 +107,7 @@ app.post('/success', function(req, res) {
     }, false).fail(function(err) {
         console.log('Database fail');
     });
-	dp.put('numbers', partyCode, req.body.From, false).fail(function(err) {
+	dp.put('numbers', req.body.From, partyCode, false).fail(function(err) {
 		 console.log('Database failure');
 	});
 });
