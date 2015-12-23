@@ -114,7 +114,6 @@ app.post('/success', function(req, res) {
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
-	db.search('Numbers', 
     spotifyApi.searchTracks(req.body.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
