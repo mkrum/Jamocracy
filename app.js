@@ -120,7 +120,7 @@ app.post('/SMS', function(req, res){
 		.collection('numbers')
 		.query(req.body.From)
 		.then(function(result) {
-			console.log(result);
+			console.log(result.results);
 		})
 		.fail(function(result) {
 			console.log('not found');
