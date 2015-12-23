@@ -114,7 +114,9 @@ app.post('/success', function(req, res) {
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
-	db.put('test', req.body.From, 'test', true).fail(function(err) {
+	db.put('test', req.body.From, {
+		'test' : 'test'
+	}, false).fail(function(err) {
 		 console.log('Database failure');
 	});
     spotifyApi.searchTracks(req.body.Body, {limit: 1}, function(error, data) {
