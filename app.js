@@ -87,13 +87,12 @@ app.post('/callback', function(req, res) {
 //Generates a random string of four capital letters
 function randomString(){
 	letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var string;
+	var string = '';
 	for(var i = 0; i < 4;i++){
 		string += letters[Math.floor(Math.random() * 27)];
 	}
 	return string;
 }
-
 
 app.post('/success', function(req, res) {
 	var partyCode = randomString();
