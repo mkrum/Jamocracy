@@ -110,7 +110,7 @@ app.post('/success', function(req, res) {
 	});
 	db.put('Parties', partyCode, {
 		'admin' : req.body.number,
-		'Playlist' : req.body.playlist
+		'playlist' : req.body.playlist
 	}, false).fail(function(err) {
 		console.log('Database fail');
 	});
