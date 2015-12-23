@@ -116,9 +116,11 @@ app.post('/success', function(req, res) {
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
-	db.search('numbers', req.body.From)
+	db.newSearchBuilder()
+		.collection('numbers')
+		.query(req.body.From)
 		.then(function(result) {
-			console.log(result[0]);
+			console.log(result);
 		})
 		.fail(function(result) {
 			console.log('not found');
