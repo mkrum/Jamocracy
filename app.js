@@ -109,6 +109,8 @@ app.post('/success', function(req, res) {
 		'Ban' : 1
 	}, false).fail(function(err) {
 		console.log('Database fail');
+	}).then(function(){
+		console.log(partyCode);
 	});
 });
 
