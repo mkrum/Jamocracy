@@ -99,10 +99,14 @@ app.post('/success', function(req, res) {
 
 
 app.post('/SMS', function(req, res) {
-	db.put('numbers', 'number', req.body.From)
+	db.put('numbers', 'QWER', {
+		'number' : req.body.From,
+		'Ban' : 1
+	}, false)
 		.fail(function(err) {
 			console.log('Database fail');
 		});
+
 	request('https://api.spotify.com/v1/search?type=track&limit=1&q='+encodeURIComponent(req.body.Body), function(error, response, body) {
 			if(error){
 				twilio.messages.create({ 
