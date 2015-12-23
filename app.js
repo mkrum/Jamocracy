@@ -103,15 +103,18 @@ app.post('/success', function(req, res) {
     });
     db.put('Parties', partyCode, {
         'admin' : req.body.number,
-        'playlist' : req.body.playlist,
-        'numbers': [req.body.number]
+        'playlist' : req.body.playlist
     }, false).fail(function(err) {
         console.log('Database fail');
     });
+	dp.put('Numbers', partyCode, req.body.From, false).fail(function(err) {
+		 console.log('Database failure');
+	});
 });
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
+	db.search('Numbers', 
     spotifyApi.searchTracks(req.body.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
