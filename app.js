@@ -101,6 +101,7 @@ function randomString(){
 // Create playlist code, store playlist in database
 app.post('/success', function(req, res) {
     var partyCode = randomString();
+    console.log(JSONS.stringify(req.body));
     twilio.messages.create({
         to: req.body.number,
         from: "+16305818347",
