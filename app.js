@@ -134,7 +134,6 @@ app.post('/SMS', function(req, res){
             });
         } else {
             var song = data.body.tracks.items[0];
-			console.log(song);
             twilio.messages.create({
                 to: req.body.From,
                 from: "+16305818347",
