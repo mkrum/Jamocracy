@@ -75,7 +75,7 @@ app.post('/callback', function(req, res) {
                 request.post('https://jamocracy.herokuapp.com/success', {
                     form: {
                             number:phoneNumber,
-                            playlist:playlistName
+                            playlist:data.body.id
                         }
                 });
                 res.redirect('/success.html');
