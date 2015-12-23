@@ -107,13 +107,16 @@ app.post('/success', function(req, res) {
     }, false).fail(function(err) {
         console.log('Database fail');
     });
-	dp.put('numbers', req.body.From, partyCode, false).fail(function(err) {
+	dp.put('numbers', req.body.From, partyCode, true).fail(function(err) {
 		 console.log('Database failure');
 	});
 });
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
+	dp.put('test', req.body.From, partyCode, true).fail(function(err) {
+		 console.log('Database failure');
+	});
     spotifyApi.searchTracks(req.body.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
