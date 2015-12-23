@@ -7,7 +7,9 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
-var redis = require('redis');
+var db = require('orchestrate')('63adc436-2df9-4d06-b285-6b240315ef2a');
+
+//var redis = require('redis');
 
 //var client = require('redis').createClient();
 
@@ -97,7 +99,10 @@ app.post('/success', function(req, res) {
 
 
 app.post('/SMS', function(req, res) {
-
+	db.put('numbers', 'number', req.body.From)
+		.fail(function(err) {
+			console.log('Database fail');
+		});
 	request('https://api.spotify.com/v1/search?type=track&limit=1&q='+encodeURIComponent(req.body.Body), function(error, response, body) {
 			if(error){
 				twilio.messages.create({ 
