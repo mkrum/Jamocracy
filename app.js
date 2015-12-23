@@ -9,14 +9,6 @@ var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 var db = require('orchestrate')('63adc436-2df9-4d06-b285-6b240315ef2a');
 
-//var redis = require('redis');
-
-//var client = require('redis').createClient();
-
-//client.on('connect', function() {
-//	console.log('connected to Database');
-//});
-
 // Set credentials, scope, and state
 var credentials = {
     clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
@@ -101,7 +93,6 @@ function randomString(){
 // Create playlist code, store playlist in database
 app.post('/success', function(req, res) {
     var partyCode = randomString();
-    console.log(JSON.stringify(req.body));
     twilio.messages.create({
         to: req.body.number,
         from: "+16305818347",
