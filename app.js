@@ -100,7 +100,7 @@ app.post('/success', function(req, res) {
 	twilio.messages.create({ 
 		to: req.body.number, 
 		from: "+16305818347", 
-		body: "This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:"+partyCode
+		body: 'This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:'+partyCode
 	}, function(err, message) { 
 		console.log('Twilio Error'); 
 	});
