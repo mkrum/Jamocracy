@@ -1,3 +1,18 @@
+// db.newSearchBuilder()
+// 	.collection('numbers')
+// 	.query(req.body.From)
+// 	.then(function() {
+// 		console.log('found');
+// 		db.get('numbers', req.body.From)
+// 			.then(function (result) {
+// 				console.log('found');
+// 				console.log(result);
+// 			});
+// 	})
+// 	.fail(function(result) {
+// 		console.log('not found');
+// 	});
+
 var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 var bodyParser = require('body-parser');
 var path = require('path');

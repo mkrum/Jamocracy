@@ -7,7 +7,7 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
-var db = require('orchestrate')('63adc436-2df9-4d06-b285-6b240315ef2a');
+var db = require('orchestrate')('f61515c7-8df9-4003-ab45-2f3e259610ff');
 
 // Set credentials, scope, and state
 var credentials = {
@@ -70,7 +70,6 @@ app.post('/callback', function(req, res) {
                             playlist:data.body.id
                         }
                 });
-                res.redirect('/success.html');
             }, function(err) {
                 console.log('Something went wrong in create playlist!', err);
             });
@@ -93,6 +92,7 @@ function randomString(){
 // Create playlist code, store playlist in database
 app.post('/success', function(req, res) {
     var partyCode = randomString();
+    //  send text response to playlist creator
     twilio.messages.create({
         to: req.body.number,
         from: "+16305818347",
@@ -101,39 +101,42 @@ app.post('/success', function(req, res) {
         console.log('Twilio Error');
         console.log("Error: "+JSON.stringify(err));
     });
-    db.put('Parties', partyCode, {
+    // add party code to parties collection in database
+    db.put('parties', partyCode, {
         'admin' : req.body.number,
         'playlist' : req.body.playlist
     }, false).fail(function(err) {
         console.log('Database fail');
     });
+    // add creator's number to numbers collection in database
 	dp.put('numbers', req.body.From,{
 	   'party' : partyCode
 	}, true).fail(function(err) {
 		 console.log('Database failure');
 	});
+    // redirect to the success page
+    res.redirect('/success.html');
 });
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
-	db.newSearchBuilder()
-		.collection('numbers')
-		.query(req.body.From)
-		.then(function() {
-			console.log('found');
-			db.get('numbers', req.body.From)
-				.then(function (result) {
-					console.log('found');
-					console.log(result);
-				});
-		})
-		.fail(function(result) {
-			console.log('not found');
-		});
-    spotifyApi.searchTracks(req.body.Body, {limit: 1}, function(error, data) {
+    // check if sender is in numbers collection
+    db.get('numbers', req.body.From)
+    .then(function(res){
+        console.log("found");
+        console.log(res.body);
+    })
+    .fail(function(err){
+        console.log("not found");
+    });
+    getSong(req.body);
+});
+
+function getSong(text){
+    spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
-                to: req.body.From,
+                to: text.From,
                 from: "+16305818347",
                 body: "Sorry! There was an error"
             }, function(err, message) {
@@ -142,7 +145,7 @@ app.post('/SMS', function(req, res){
         } else {
             var song = data.body.tracks.items[0];
             twilio.messages.create({
-                to: req.body.From,
+                to: text.From,
                 from: "+16305818347",
                 body: "Song added: "+song.name+" by "+song.artists[0].name
             }, function(err, message) {
@@ -150,4 +153,4 @@ app.post('/SMS', function(req, res){
             });
         }
     });
-});
+}
