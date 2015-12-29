@@ -64,6 +64,8 @@ app.post('/callback', function(req, res) {
             spotifyApi.createPlaylist(data.body.id, playlistName, { 'public' : false })
             .then(function(data) {
                 console.log('Created playlist!');
+                // redirect to the success page
+                res.redirect('/success.html');
                 request.post('https://jamocracy.herokuapp.com/success', {
                     form: {
                             number:phoneNumber,
@@ -77,7 +79,6 @@ app.post('/callback', function(req, res) {
             console.log('Something went wrong in callback post!', err);
         });
     });
-    res.end();
 });
 
 //Generates a random string of four capital letters
@@ -117,8 +118,6 @@ app.post('/success', function(req, res) {
 	}, true).fail(function(err) {
 		 console.log('Database failure');
 	});
-    // redirect to the success page
-    res.redirect('/success.html');
 });
 
 // This is executed when the twilio number receives a text
