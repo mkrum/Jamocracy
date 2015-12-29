@@ -111,7 +111,7 @@ app.post('/success', function(req, res) {
         console.log('Database fail');
     });
     // add creator's number to numbers collection in database
-	db.put('numbers', req.body.From,{
+	db.put('numbers', req.body.number, {
 	   'party' : partyCode
 	}, true).fail(function(err) {
 		 console.log('Database failure');
