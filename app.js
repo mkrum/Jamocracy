@@ -77,6 +77,7 @@ app.post('/callback', function(req, res) {
             console.log('Something went wrong in callback post!', err);
         });
     });
+    res.end();
 });
 
 //Generates a random string of four capital letters
