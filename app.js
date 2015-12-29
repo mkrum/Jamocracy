@@ -98,8 +98,10 @@ app.post('/success', function(req, res) {
         from: "+16305818347",
         body: 'This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:'+partyCode
     }, function(err, message) {
-        console.log('Twilio Error');
-        console.log("Error: "+JSON.stringify(err));
+        if(err){
+            console.log('Twilio Error');
+            console.log("Error: "+JSON.stringify(err));
+        }
     });
     // add party code to parties collection in database
     db.put('parties', partyCode, {
@@ -109,7 +111,7 @@ app.post('/success', function(req, res) {
         console.log('Database fail');
     });
     // add creator's number to numbers collection in database
-	dp.put('numbers', req.body.From,{
+	db.put('numbers', req.body.From,{
 	   'party' : partyCode
 	}, true).fail(function(err) {
 		 console.log('Database failure');
@@ -124,7 +126,7 @@ app.post('/SMS', function(req, res){
     db.get('numbers', req.body.From)
     .then(function(res){
         console.log("found");
-        console.log(res.body);
+        console.log(JSON.stringify(res.body));
     })
     .fail(function(err){
         console.log("not found");
