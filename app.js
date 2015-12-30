@@ -137,6 +137,7 @@ app.post('/SMS', function(req, res){
         db.get('parties', partyCode)
         .then(function(data){
             playlist = data;
+            console.log(JSON.stringify(data));
         })
         .fail(function(err){
             console.log("party not found");
