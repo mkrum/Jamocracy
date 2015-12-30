@@ -65,8 +65,8 @@ app.post('/callback', function(req, res) {
             spotifyApi.createPlaylist(name, playlistName, { 'public' : false })
             .then(function(data) {
                 console.log('Created playlist!');
-                // redirect to the success page
-                res.redirect('/success.html');
+                res.redirect('/success.html'); // show success page on screen
+                // send number, name, and playlist id to app.post('/success')
                 request.post('https://jamocracy.herokuapp.com/success', {
                     form: {
                             number:phoneNumber,
@@ -127,17 +127,15 @@ app.post('/success', function(req, res) {
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
-    // check if sender is in numbers collection
     var playlist, partyCode;
+    // check if sender is in numbers collection
     db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
-    .then(function(res){
+    .then(function(res){ // if it is found in numbers
         console.log("found");
-        console.log(JSON.stringify(res.body));
         partyCode = res.body.party;
-        db.get('parties', partyCode)
+        db.get('parties', partyCode) // search the parties collection for this code
         .then(function(data){
-            playlist = data.body;
-            console.log(JSON.stringify(data));
+            playlist = data.body; // get the playlist for this party
             getSong(req.body, playlist);
         })
         .fail(function(err){
@@ -148,11 +146,8 @@ app.post('/SMS', function(req, res){
         console.log("not found");
     });
 });
-
+// getSong from text message, calls addSong
 function getSong(text, playlist){
-    console.log("From: "+text.From);
-    console.log("playist");
-    console.log(JSON.stringify(playlist));
     spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
@@ -175,7 +170,7 @@ function getSong(text, playlist){
         }
     });
 }
-
+// add song to playlist
 function addSong(song, playlist){
     spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
     .then(function(data) {
