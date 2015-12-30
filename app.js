@@ -61,7 +61,8 @@ app.post('/callback', function(req, res) {
     .then(function(data) {
         spotifyApi.getMe()
         .then(function(data) {
-            spotifyApi.createPlaylist(data.body.id, playlistName, { 'public' : false })
+            var name = data.body.id;
+            spotifyApi.createPlaylist(name, playlistName, { 'public' : false })
             .then(function(data) {
                 console.log('Created playlist!');
                 // redirect to the success page
@@ -69,6 +70,7 @@ app.post('/callback', function(req, res) {
                 request.post('https://jamocracy.herokuapp.com/success', {
                     form: {
                             number:phoneNumber,
+                            name:name,
                             playlist:data.body.id
                         }
                 });
@@ -107,8 +109,9 @@ app.post('/success', function(req, res) {
     });
     // add party code to parties collection in database
     db.put('parties', partyCode, {
-        'admin' : req.body.number,
-        'playlist' : req.body.playlist
+        'creatorNumber' : req.body.number,
+        'creatorName' : req.body.name,
+        'id' : req.body.playlist
     }, false).fail(function(err) {
         console.log('Database fail');
     });
@@ -118,23 +121,36 @@ app.post('/success', function(req, res) {
 	}, true).fail(function(err) {
 		 console.log('Database failure');
 	});
+
+    res.end();
 });
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
     // check if sender is in numbers collection
+    var playlist, partyCode;
     db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
     .then(function(res){
         console.log("found");
         console.log(JSON.stringify(res.body));
+        partyCode = res.body.party;
+        db.get('parties', partyCode)
+        .then(function(res){
+            playlist = res.body;
+        })
+        .fail(function(err){
+            console.log("party not found");
+        });
     })
     .fail(function(err){
         console.log("not found");
     });
-    getSong(req.body);
+    getSong(req.body, playlist);
+
+    res.end();
 });
 
-function getSong(text){
+function getSong(text, playlist){
     spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
@@ -146,6 +162,7 @@ function getSong(text){
             });
         } else {
             var song = data.body.tracks.items[0];
+            addSong(song, playlist);
             twilio.messages.create({
                 to: text.From,
                 from: "+16305818347",
@@ -154,5 +171,14 @@ function getSong(text){
                 console.log(message.sid);
             });
         }
+    });
+}
+
+function addSong(song, playlist){
+    spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song])
+    .then(function(data) {
+        console.log('Added tracks to playlist!');
+    }, function(err) {
+        console.log('Something went wrong!', err);
     });
 }
