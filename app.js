@@ -123,10 +123,7 @@ app.post('/success', function(req, res) {
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
     // check if sender is in numbers collection
-    console.log("req.body");
-    console.log(JSON.stringify(req.body));
-    console.log("From: "+req.body.From);
-    db.get('numbers', req.body.From)
+    db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
     .then(function(res){
         console.log("found");
         console.log(JSON.stringify(res.body));
