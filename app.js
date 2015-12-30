@@ -138,6 +138,7 @@ app.post('/SMS', function(req, res){
         .then(function(data){
             playlist = data.body;
             console.log(JSON.stringify(data));
+            getSong(req.body, playlist);
         })
         .fail(function(err){
             console.log("party not found");
@@ -146,7 +147,6 @@ app.post('/SMS', function(req, res){
     .fail(function(err){
         console.log("not found");
     });
-    getSong(req.body, playlist);
 });
 
 function getSong(text, playlist){
