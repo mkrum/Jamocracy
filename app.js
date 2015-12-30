@@ -135,8 +135,8 @@ app.post('/SMS', function(req, res){
         console.log(JSON.stringify(res.body));
         partyCode = res.body.party;
         db.get('parties', partyCode)
-        .then(function(res){
-            playlist = res.body;
+        .then(function(data){
+            playlist = data.body;
         })
         .fail(function(err){
             console.log("party not found");
@@ -149,6 +149,9 @@ app.post('/SMS', function(req, res){
 });
 
 function getSong(text, playlist){
+    console.log("From: "+text.From);
+    console.log("playist");
+    console.log(JSON.stringify(playlist));
     spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
