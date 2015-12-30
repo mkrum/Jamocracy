@@ -86,7 +86,7 @@ function randomString(){
     letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var string = '';
     for(var i = 0; i < 4;i++){
-        string += letters[Math.floor(Math.random() * 27)];
+        string += letters[Math.floor(Math.random() * 26)];
     }
     return string;
 }
@@ -125,6 +125,7 @@ app.post('/SMS', function(req, res){
     // check if sender is in numbers collection
     console.log("req.body");
     console.log(JSON.stringify(req.body));
+    console.log("From: "+req.body.From);
     db.get('numbers', req.body.From)
     .then(function(res){
         console.log("found");
