@@ -146,8 +146,6 @@ app.post('/SMS', function(req, res){
         console.log("not found");
     });
     getSong(req.body, playlist);
-
-    res.end();
 });
 
 function getSong(text, playlist){
