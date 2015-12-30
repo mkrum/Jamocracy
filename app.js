@@ -136,7 +136,7 @@ app.post('/SMS', function(req, res){
         partyCode = res.body.party;
         db.get('parties', partyCode)
         .then(function(data){
-            playlist = data;
+            playlist = data.body;
             console.log(JSON.stringify(data));
         })
         .fail(function(err){
@@ -177,10 +177,10 @@ function getSong(text, playlist){
 }
 
 function addSong(song, playlist){
-    spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song])
+    spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
     .then(function(data) {
         console.log('Added tracks to playlist!');
     }, function(err) {
-        console.log('Something went wrong!', err);
+        console.log('Something went wrong!'+err);
     });
 }
