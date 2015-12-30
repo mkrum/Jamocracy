@@ -183,11 +183,21 @@ function addSong(song, playlist){
 app.get('/playlists', function(req, res) {
   spotifyApi.getMe()
   .then(function(data) {
-      spotifyApi.getUserPlaylists(data.body.id)
+      var user = data.body.id;
+      spotifyApi.getUserPlaylists(user)
       .then(function(data) {
-          console.log("playlists:");
-          console.log(JSON.stringify(data.body));
-          res.send(data.body);
+          var userPlaylistsNamesAndIds = [];
+          var playlists = data.body.items;
+          playlists = playlists.filter(function(element){
+              return element.owner.id === user;
+          });
+          for(var i = 0; i < playlists.length; i++){
+              userPlaylistsNamesAndIds.push({
+                  name: playlists[i].name,
+                  id: playlists[i].id
+              });
+          }
+          res.send(userPlaylists);
       },function(err) {
           console.log('Something went wrong in getting playlists!', err);
       });
