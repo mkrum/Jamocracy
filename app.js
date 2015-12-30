@@ -123,6 +123,8 @@ app.post('/success', function(req, res) {
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
     // check if sender is in numbers collection
+    console.log("req.body");
+    console.log(JSON.stringify(req.body));
     db.get('numbers', req.body.From)
     .then(function(res){
         console.log("found");
