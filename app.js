@@ -179,3 +179,19 @@ function addSong(song, playlist){
         console.log('Something went wrong!'+err);
     });
 }
+
+app.get('/playlists', function(req, res) {
+  spotifyApi.getMe()
+  .then(function(data) {
+      spotifyApi.getUserPlaylists(data.body.id)
+      .then(function(data) {
+          console.log("playlists:");
+          console.log(JSON.stringify(data.body));
+          res.send(data.body);
+      },function(err) {
+          console.log('Something went wrong in getting playlists!', err);
+      });
+  }, function(err) {
+    console.log('Something went wrong in getting user!', err);
+  });
+});

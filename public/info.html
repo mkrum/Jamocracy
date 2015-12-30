@@ -23,3 +23,8 @@
 		</div>
 	</body>
 </html>
+<script>
+	$.getJSON( "/playlists", function( data ) {
+		console.log(JSON.stringify(data));
+	});
+</script>
