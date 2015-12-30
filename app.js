@@ -197,7 +197,7 @@ app.get('/playlists', function(req, res) {
                   id: playlists[i].id
               });
           }
-          res.send(userPlaylists);
+          res.send(userPlaylistsNamesAndIds);
       },function(err) {
           console.log('Something went wrong in getting playlists!', err);
       });
