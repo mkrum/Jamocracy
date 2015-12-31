@@ -30,12 +30,12 @@
 		console.log(playlists);
 		for(var i = 0; i < playlists.length; i++){
 			var radioButton = $("
-				<div class='radio'>
-  					<label>
-    					<input type='radio' name='playlist' value='"+playlists[i].id+"'>
-    						"+playlists[i].name+"
-  					</label>
-				</div>
+				<div class='radio'>\
+  					<label>\
+    					<input type='radio' name='playlist' value='"+playlists[i].id+"'>\
+    						"+playlists[i].name+"\
+  					</label>\
+				</div>\
 			");
 			$('#radios').append(radioButton);
 		}
