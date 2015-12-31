@@ -12,6 +12,10 @@ html, body{
 }*/
 body{
   margin: auto;
+  text-align: center;
+}
+form{
+  text-align: left;
 }
 .container{
   height: 100%;

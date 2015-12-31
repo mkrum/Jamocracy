@@ -56,32 +56,41 @@ app.get('/callback', function(req, res) {
 // to the success page
 app.post('/callback', function(req, res) {
     var phoneNumber = req.body.phoneNumber;
-    var playlistName = req.body.playlistName;
+    var playlistName = req.body.newPlaylistName;
+    var existingPlaylistId = req.body.existingPlaylistId;
     spotifyApi.refreshAccessToken()
     .then(function(data) {
         spotifyApi.getMe()
         .then(function(data) {
             var name = data.body.id;
-            spotifyApi.createPlaylist(name, playlistName, { 'public' : false })
-            .then(function(data) {
-                console.log('Created playlist!');
-                res.redirect('/success.html'); // show success page on screen
-                // send number, name, and playlist id to app.post('/success')
-                request.post('https://jamocracy.herokuapp.com/success', {
-                    form: {
-                            number:phoneNumber,
-                            name:name,
-                            playlist:data.body.id
-                        }
+            if(playlistName.length !== 0){ // if the user entered a new playlist
+                spotifyApi.createPlaylist(name, playlistName, { 'public' : false })
+                .then(function(data) {
+                    console.log('Created playlist!');
+                    res.redirect('/success.html'); // show success page on screen
+                    postToSuccess(phoneNumber, name, data.body.id);
+                }, function(err) {
+                    console.log('Something went wrong in create playlist!', err);
                 });
-            }, function(err) {
-                console.log('Something went wrong in create playlist!', err);
-            });
+            } else { // the user chose an existing playlist
+                res.redirect('/success.html'); // show success page on screen
+                postToSuccess(phoneNumber, name, existingPlaylistId);
+            }
         }, function(err) {
             console.log('Something went wrong in callback post!', err);
         });
     });
 });
+// send number, name, and playlist id to app.post('/success')
+function postToSuccess(phoneNumber, username, playlistId){
+    request.post('https://jamocracy.herokuapp.com/success', {
+        form: {
+                number:phoneNumber,
+                name:username,
+                playlist:playlistId
+            }
+    });
+}
 
 //Generates a random string of four capital letters
 function randomString(){

@@ -15,7 +15,7 @@
 							<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number">
 					</div>
 					<div class="form-group">
-							<input type="text" class="form-control" name="playlistName" placeholder="New playlist name">
+							<input type="text" id="newPlaylistName" class="form-control" name="playlistName" placeholder="New playlist name">
 					</div>
 					<div id="radios">
 						<label>Or choose one of your playlists:</label>
@@ -27,16 +27,16 @@
 	</body>
 </html>
 <script>
-	$.getJSON( "/playlists", function( playlists ) {
-		console.log(playlists);
-		if(playlist.length === 0){
+	$.getJSON( "/playlists", function(playlists) {
+		if(playlists.length === 0){
 			$("#radios").remove();
 		}
+
 		for(var i = 0; i < playlists.length; i++){
-			var radioButton = $("
+			var radioButton = $("\
 				<div class='radio'>\
   					<label>\
-    					<input type='radio' name='playlist' value='"+playlists[i].id+"'>\
+    					<input type='radio' name='existingPlaylist' value='"+playlists[i].id+"'>\
     						"+playlists[i].name+"\
   					</label>\
 				</div>\
