@@ -9,7 +9,7 @@
 	<body>
 		<div class="container">
 			<div class="jumbotron">
-				<form action="/callback" method="post">
+				<form action="/callback" method="post" class="form-signin">
 					<h2 class="form-signin-heading">Jamocracy</h2>
 					<div class="form-group">
 							<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number">
@@ -18,8 +18,9 @@
 							<input type="text" class="form-control" name="playlistName" placeholder="New playlist name">
 					</div>
 					<div id="radios">
+						<label>Or choose one of your playlists:</label>
 					</div>
-					<button type="submit" class="btn btn-success">Submit</button>
+					<button type="submit" class="btn btn-lg btn-success btn-block">Submit</button>
 				</form>
 			</div>
 		</div>
@@ -28,6 +29,9 @@
 <script>
 	$.getJSON( "/playlists", function( playlists ) {
 		console.log(playlists);
+		if(playlist.length === 0){
+			$("#radios").remove();
+		}
 		for(var i = 0; i < playlists.length; i++){
 			var radioButton = $("
 				<div class='radio'>\
