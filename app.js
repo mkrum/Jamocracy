@@ -56,6 +56,8 @@ app.get('/callback', function(req, res) {
 // When the user sumbits the form, create the new playlist and redirect user
 // to the success page
 app.post('/callback', function(req, res) {
+    console.log('req body');
+    console.log(JSON.stringify(req.body));
     var phoneNumber = req.body.phoneNumber;
     var playlistName = req.body.newPlaylistName;
     var existingPlaylistId = req.body.existingPlaylistId;
@@ -65,8 +67,8 @@ app.post('/callback', function(req, res) {
         console.log("after refresh");
         spotifyApi.getMe()
         .then(function(data) {
-            console.log("after me");
             var name = data.body.id;
+            console.log("after me. name: "+name);
             if(playlistName.length !== 0) { // if the user entered a new playlist
                 console.log("name length not zero -"+playlistName+"-");
                 spotifyApi.createPlaylist(name, playlistName, { 'public' : false })
