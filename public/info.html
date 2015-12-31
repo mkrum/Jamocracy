@@ -15,7 +15,9 @@
 							<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number">
 					</div>
 					<div class="form-group">
-							<input type="text" class="form-control" name="playlistName" placeholder="Playlist name">
+							<input type="text" class="form-control" name="playlistName" placeholder="New playlist name">
+					</div>
+					<div id="radios">
 					</div>
 					<button type="submit" class="btn btn-success">Submit</button>
 				</form>
@@ -24,9 +26,18 @@
 	</body>
 </html>
 <script>
-	$.getJSON( "/playlists", function( data ) {
-		console.log(data);
-		console.log("*******************")
-		console.log(JSON.stringify(data));
+	$.getJSON( "/playlists", function( playlists ) {
+		console.log(playlists);
+		for(var i = 0; i < playlists.length, i++){
+			var radioButton = $('
+				<div class="radio">
+  					<label>
+    					<input type="radio" name="playlist" value="'+playlists[i].id+'">
+    						'+playlists[i].name+'
+  					</label>
+				</div>
+			');
+			$('#radios').append(radioButton);
+		}
 	});
 </script>
