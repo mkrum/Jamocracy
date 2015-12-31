@@ -47,7 +47,8 @@ app.get('/callback', function(req, res) {
         spotifyApi.setRefreshToken(data.body.refresh_token);
         res.redirect('/info.html');
     }, function(err) {
-        console.log('Something went wrong in callback get!', err);
+        console.log('Something went wrong in callback get!');
+        console.log(JSON.stringify(err));
     });
 });
 
@@ -58,12 +59,16 @@ app.post('/callback', function(req, res) {
     var phoneNumber = req.body.phoneNumber;
     var playlistName = req.body.newPlaylistName;
     var existingPlaylistId = req.body.existingPlaylistId;
+    console.log("before refresh");
     spotifyApi.refreshAccessToken()
     .then(function(data) {
+        console.log("after refresh");
         spotifyApi.getMe()
         .then(function(data) {
+            console.log("after me");
             var name = data.body.id;
-            if(playlistName.length !== 0){ // if the user entered a new playlist
+            if(playlistName.length !== 0) { // if the user entered a new playlist
+                console.log("name length not zero -"+playlistName+"-");
                 spotifyApi.createPlaylist(name, playlistName, { 'public' : false })
                 .then(function(data) {
                     console.log('Created playlist!');
@@ -73,6 +78,7 @@ app.post('/callback', function(req, res) {
                     console.log('Something went wrong in create playlist!', err);
                 });
             } else { // the user chose an existing playlist
+                console.log("name length zero -"+playlistName+"-");
                 res.redirect('/success.html'); // show success page on screen
                 postToSuccess(phoneNumber, name, existingPlaylistId);
             }
@@ -83,6 +89,7 @@ app.post('/callback', function(req, res) {
 });
 // send number, name, and playlist id to app.post('/success')
 function postToSuccess(phoneNumber, username, playlistId){
+    console.log("posting to success");
     request.post('https://jamocracy.herokuapp.com/success', {
         form: {
                 number:phoneNumber,
