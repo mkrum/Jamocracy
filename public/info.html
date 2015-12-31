@@ -15,7 +15,7 @@
 							<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number">
 					</div>
 					<div class="form-group">
-							<input type="text" id="newPlaylistName" class="form-control" name="playlistName" placeholder="New playlist name">
+							<input type="text" id="newPlaylistName" class="form-control" name="newPlaylistName" placeholder="New playlist name">
 					</div>
 					<div id="radios">
 						<label>Or choose one of your playlists:</label>
@@ -36,7 +36,7 @@
 			var radioButton = $("\
 				<div class='radio'>\
   					<label>\
-    					<input type='radio' name='existingPlaylist' value='"+playlists[i].id+"'>\
+    					<input type='radio' name='existingPlaylistId' value='"+playlists[i].id+"'>\
     						"+playlists[i].name+"\
   					</label>\
 				</div>\
