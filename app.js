@@ -55,34 +55,26 @@ app.get('/callback', function(req, res) {
 
 // When the user sumbits the form, create the new playlist and redirect user
 // to the success page
-app.post('/callback', function(req, res) {
-    console.log('req body');
-    console.log(JSON.stringify(req.body));
+app.post('/submit', function(req, res) {
     var phoneNumber = req.body.phoneNumber;
-    var playlistName = req.body.newPlaylistName;
+    var newPlaylistName = req.body.newPlaylistName;
     var existingPlaylistId = req.body.existingPlaylistId;
-    console.log("before refresh");
     spotifyApi.refreshAccessToken()
     .then(function(data) {
-        console.log("after refresh");
         spotifyApi.getMe()
         .then(function(data) {
-            var name = data.body.id;
-            console.log("after me. name: "+name);
-            if(playlistName.length !== 0) { // if the user entered a new playlist
-                console.log("name length not zero -"+playlistName+"-");
-                spotifyApi.createPlaylist(name, playlistName, { 'public' : false })
+            var username = data.body.id;
+            if(newPlaylistName.length !== 0) { // if the user entered a new playlist
+                spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
                 .then(function(data) {
-                    console.log('Created playlist!');
                     res.redirect('/success.html'); // show success page on screen
-                    postToSuccess(phoneNumber, name, data.body.id);
+                    postToSuccess(phoneNumber, username, data.body.id);
                 }, function(err) {
                     console.log('Something went wrong in create playlist!', err);
                 });
             } else { // the user chose an existing playlist
-                console.log("name length zero -"+playlistName+"-");
                 res.redirect('/success.html'); // show success page on screen
-                postToSuccess(phoneNumber, name, existingPlaylistId);
+                postToSuccess(phoneNumber, username, existingPlaylistId);
             }
         }, function(err) {
             console.log('Something went wrong in callback post!', err);
