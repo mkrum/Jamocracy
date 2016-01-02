@@ -8,12 +8,20 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 var db = require('orchestrate')('f61515c7-8df9-4003-ab45-2f3e259610ff');
+// Set up node app and server
+var app = express();
+var port = (process.env.PORT || 5000);
+var server = app.listen(port);
+app.use(express.static(__dirname + '/public')).use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 // Set credentials, scope, and state
+var redirectUri = process.env.PORT ? 'http://jamocracy.herokuapp.com/callback' : 'http://localhost:5000/callback';
 var credentials = {
     clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
     clientSecret : '967795bf432646f69797a1a7e7d97a0e',
-    redirectUri : 'http://jamocracy.herokuapp.com/callback'
+    redirectUri : redirectUri
 };
 
 var scopes = ['playlist-read-private', 'playlist-modify-public', 'playlist-modify-private', 'user-read-private'];
@@ -22,14 +30,6 @@ var stateKey = 'spotify_auth_state';
 // Create the spotifyApi object and theauthorization URL
 var spotifyApi = new SpotifyWebApi(credentials);
 var authorizeURL = spotifyApi.createAuthorizeURL(scopes, stateKey);
-
-// Set up node app and server
-var app = express();
-var port = (process.env.PORT || 8080);
-var server = app.listen(port);
-app.use(express.static(__dirname + '/public')).use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
 
 // Redirect to Spotify authortization when user presses login
 app.get('/login', function(req, res) {
