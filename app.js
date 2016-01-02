@@ -84,7 +84,8 @@ app.post('/submit', function(req, res) {
 // send number, name, and playlist id to app.post('/success')
 function postToSuccess(phoneNumber, username, playlistId){
     console.log("posting to success");
-    request.post('https://jamocracy.herokuapp.com/success', {
+    var success = process.env.PORT ? 'http://jamocracy.herokuapp.com/success' : 'http://localhost:5000/success';
+    request.post(success, {
         form: {
                 number:phoneNumber,
                 name:username,
