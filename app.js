@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 // Set credentials, scope, and state
-var redirectUri = process.env.PORT ? 'http://jamocracy.herokuapp.com/callback' : 'http://localhost:5000/callback';
+var redirectUri = port === '5000' ? 'http://127.0.0.1:5000/callback':'http://jamocracy.herokuapp.com/callback';
 var credentials = {
     clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
     clientSecret : '967795bf432646f69797a1a7e7d97a0e',
@@ -84,7 +84,7 @@ app.post('/submit', function(req, res) {
 // send number, name, and playlist id to app.post('/success')
 function postToSuccess(phoneNumber, username, playlistId){
     console.log("posting to success");
-    var success = process.env.PORT ? 'http://jamocracy.herokuapp.com/success' : 'http://localhost:5000/success';
+    var success = port === '5000' ? 'http://127.0.0.1:5000/callback':'http://jamocracy.herokuapp.com/success';
     request.post(success, {
         form: {
                 number:phoneNumber,
