@@ -46,7 +46,7 @@ app.get('/auth', function(req, res) {
         spotifyApi.setAccessToken(data.body.access_token);
         spotifyApi.setRefreshToken(data.body.refresh_token);
         res.cookie('access',  data.body.access_token, {httpOnly: true});
-        res.cookie('refresh', data.body.access_token, {httpOnly: true});
+        res.cookie('refresh', data.body.refresh_token, {httpOnly: true});
         res.redirect('/info.html');
     }, function(err) {
         console.log('Something went wrong in callback get!');
@@ -83,8 +83,10 @@ app.post('/submit', function(req, res) {
                 postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token);
             }
         }, function(err) {
-            console.log('Something went wrong in callback post!', err);
+            console.log('Something went wrong in submit getme!', err);
         });
+    }, function(err) {
+        console.log('Something went wrong in submit refresh token!', err);
     });
 });
 
