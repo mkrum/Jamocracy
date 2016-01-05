@@ -119,7 +119,6 @@ app.post('/success', function(req, res) {
     var partyCode = randomString();
     //  send text response to playlist creator
 	sendText('This is your Jamocracy Number! Party Code:'+partyCode, req.body.number);
-    });
     // add party code to parties collection in database
     db.put('parties', partyCode, {
         'creatorNumber' : req.body.number,
@@ -260,4 +259,11 @@ app.get('/playlists', function(req, res) {
 });
 
 function sendText(textMessage, number){
+	twilio.messages.create({
+		to: number,
+		from: "+16305818347",
+		body: textMessage
+	}, function(err, message) {
+		console.log(JSON.stringify(err));
+	});
 }
