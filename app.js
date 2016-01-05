@@ -118,15 +118,7 @@ function randomString(){
 app.post('/success', function(req, res) {
     var partyCode = randomString();
     //  send text response to playlist creator
-    twilio.messages.create({
-        to: req.body.number,
-        from: "+16305818347",
-        body: 'This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:'+partyCode
-    }, function(err, message) {
-        if(err){
-            console.log('Twilio Error');
-            console.log("Error: "+JSON.stringify(err));
-        }
+	sendText('This is your Jamocracy Number! Party Code:'+partyCode, req.body.number);
     });
     // add party code to parties collection in database
     db.put('parties', partyCode, {
@@ -183,7 +175,7 @@ app.post('/SMS', function(req, res){
     					}, function(err, message) {
     						console.log(err);
     					});
-    				})
+    		})
             .fail(function(err) {
                 console.log(err);
                 error = true;
@@ -266,3 +258,15 @@ app.get('/playlists', function(req, res) {
     console.log('Something went wrong in getting user!', err);
   });
 });
+
+function sendText(textMessage, number) {
+	twilio.messages.create({
+		to: number,
+		from: "+16305818347",
+		body: textMessage
+	}, function(err, message) {
+		console.log(JSON.stringify(err));
+	});
+}
+
+
