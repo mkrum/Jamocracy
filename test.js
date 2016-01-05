@@ -1,5 +1,4 @@
 // include node modules
-//var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
 var bodyParser = require('body-parser');
 var path = require('path');
@@ -121,7 +120,6 @@ app.post('/success', function(req, res) {
     //  send text response to playlist creator
     twilio.messages.create({
         to: req.body.number,
-        //from: "+16305818347",
         from: "+19784010087",
         body: 'This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:'+partyCode
     }, function(err, message) {
@@ -164,7 +162,7 @@ app.post('/SMS', function(req, res){
             getSong(req.body, playlist);
         })
         .fail(function(err){
-            console.log("party not found");
+			       console.log('error conecting to playlist');
         });
     })
     // the number is not in the collection
@@ -174,10 +172,19 @@ app.post('/SMS', function(req, res){
         var error = false;
         db.get('parties', partyCode) // search for this party
         .then(function(data){
-            playlistId = data.body.id;
             db.put('numbers', req.body.From.substring(2), { // link the number
           	   'party' : partyCode
-          	},true).fail(function(err) {
+          	},true)
+            .then(function(data) {
+    					twilio.messages.create({
+    						to: req.body.From,
+    						from: "+19784010087",
+    						body: "Connected."
+    					}, function(err, message) {
+    						console.log(err);
+    					});
+    				})
+            .fail(function(err) {
                 console.log(err);
                 error = true;
           	});
@@ -190,7 +197,6 @@ app.post('/SMS', function(req, res){
           console.log("Error linking to playlist");
           twilio.messages.create({
               to: req.body.From,
-              //from: "+16305818347",
               from: "+19784010087",
               body: "Sorry! There was an error. Try submitting the party code again."
           }, function(err, message) {
@@ -206,7 +212,6 @@ function getSong(text, playlist){
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
                 to: text.From,
-                //from: "+16305818347",
                 from: "+19784010087",
                 body: "Sorry! There was an error"
             }, function(err, message) {
@@ -217,7 +222,6 @@ function getSong(text, playlist){
             addSong(song, playlist);
             twilio.messages.create({
                 to: text.From,
-                //from: "+16305818347",
                 from: "+19784010087",
                 body: "Song added: "+song.name+" by "+song.artists[0].name
             }, function(err, message) {

@@ -162,7 +162,7 @@ app.post('/SMS', function(req, res){
             getSong(req.body, playlist);
         })
         .fail(function(err){
-            console.log("party not found");
+			       console.log('error conecting to playlist');
         });
     })
     // the number is not in the collection
@@ -172,10 +172,19 @@ app.post('/SMS', function(req, res){
         var error = false;
         db.get('parties', partyCode) // search for this party
         .then(function(data){
-            playlistId = data.body.id;
             db.put('numbers', req.body.From.substring(2), { // link the number
           	   'party' : partyCode
-          	},true).fail(function(err) {
+          	},true)
+            .then(function(data) {
+    					twilio.messages.create({
+    						to: req.body.From,
+    						from: "+16305818347",
+    						body: "Connected."
+    					}, function(err, message) {
+    						console.log(err);
+    					});
+    				})
+            .fail(function(err) {
                 console.log(err);
                 error = true;
           	});
