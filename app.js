@@ -162,11 +162,28 @@ app.post('/SMS', function(req, res){
             getSong(req.body, playlist);
         })
         .fail(function(err){
-            console.log("party not found");
-        });
+			console.log('error conecting to playlist');
+		});
     })
     .fail(function(err){
-        console.log("not found");
+		//check if the text is a party code
+		db.get('parties', req.body)
+			.then(function(data) {
+				db.put('numbers', req.body.number, {
+					 'party' : partyCode
+				}, true).fail(function(err) {
+					 console.log('Database failure');
+				});
+				twilio.messages.create({
+					to: req.body.From,
+					from: "+16305818347",
+					body: "Connected."
+				}, function(err, message) {
+					console.log(message.sid);
+				});
+			}
+			.fail(function(data) {
+			}
     });
 });
 
