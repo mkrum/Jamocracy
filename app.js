@@ -80,7 +80,7 @@ app.post('/submit', function(req, res) {
                 });
             } else { // the user chose an existing playlist
                 res.redirect('/success.html'); // show success page on screen
-                postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token);
+                postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token);
             }
         }, function(err) {
             console.log('Something went wrong in submit getme!', err);
@@ -162,32 +162,47 @@ app.post('/SMS', function(req, res){
             getSong(req.body, playlist);
         })
         .fail(function(err){
-			console.log('error conecting to playlist');
-		});
+			       console.log('error conecting to playlist');
+        });
     })
+    // the number is not in the collection
     .fail(function(err){
-		//check if the text is a party code
-		db.get('parties', req.body.Body)
-			.then(function(data) {
-				db.put('numbers', req.body.number, {
-					 'party' : partyCode
-				}, true)
-				.then(function(data) {
-					twilio.messages.create({
-						to: req.body.From,
-						from: "+16305818347",
-						body: "Connected."
-					}, function(err, message) {
-						console.log(message.sid);
-					});
-				})
-				.fail(function(err) {
-					 console.log('Database failure');
-				});
-			})
-			.fail(function(data) {
-				console.log('Not connected');
-			})
+        // get the first four characters, which is the party code
+        partyCode = (req.body.Body).toUpperCase().substring(0,4);
+        var error = false;
+        db.get('parties', partyCode) // search for this party
+        .then(function(data){
+            db.put('numbers', req.body.From.substring(2), { // link the number
+          	   'party' : partyCode
+          	},true)
+            .then(function(data) {
+    					twilio.messages.create({
+    						to: req.body.From,
+    						from: "+16305818347",
+    						body: "Connected."
+    					}, function(err, message) {
+    						console.log(err);
+    					});
+    				})
+            .fail(function(err) {
+                console.log(err);
+                error = true;
+          	});
+        })
+        .fail(function(err){
+            error = true;
+            console.log(err);
+        });
+        if(error){ // if there was an error adding the number or finding the party code
+          console.log("Error linking to playlist");
+          twilio.messages.create({
+              to: req.body.From,
+              from: "+16305818347",
+              body: "Sorry! There was an error. Try submitting the party code again."
+          }, function(err, message) {
+              console.log(JSON.stringify(err));
+          });
+        }
     });
 });
 
@@ -200,7 +215,7 @@ function getSong(text, playlist){
                 from: "+16305818347",
                 body: "Sorry! There was an error"
             }, function(err, message) {
-                console.log(message.sid);
+                console.log(JSON.stringify(err));
             });
         } else {
             var song = data.body.tracks.items[0];
@@ -210,7 +225,7 @@ function getSong(text, playlist){
                 from: "+16305818347",
                 body: "Song added: "+song.name+" by "+song.artists[0].name
             }, function(err, message) {
-                console.log(message.sid);
+                console.log(JSON.stringify(err));
             });
         }
     });
@@ -221,7 +236,7 @@ function addSong(song, playlist){
     .then(function(data) {
         console.log('Added tracks to playlist!');
     }, function(err) {
-        console.log('Something went wrong!'+err);
+        console.log('Something went wrong! '+err);
     });
 }
 
