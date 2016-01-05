@@ -259,7 +259,7 @@ app.get('/playlists', function(req, res) {
   });
 });
 
-function sendText(textMessage, number) {
+function sendText(textMessage, number){
 	twilio.messages.create({
 		to: number,
 		from: "+16305818347",
