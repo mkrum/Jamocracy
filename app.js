@@ -171,15 +171,18 @@ app.post('/SMS', function(req, res){
 			.then(function(data) {
 				db.put('numbers', req.body.number, {
 					 'party' : partyCode
-				}, true).fail(function(err) {
+				}, true)
+				.then(function(data) {
+					twilio.messages.create({
+						to: req.body.From,
+						from: "+16305818347",
+						body: "Connected."
+					}, function(err, message) {
+						console.log(message.sid);
+					});
+				}
+				.fail(function(err) {
 					 console.log('Database failure');
-				});
-				twilio.messages.create({
-					to: req.body.From,
-					from: "+16305818347",
-					body: "Connected."
-				}, function(err, message) {
-					console.log(message.sid);
 				});
 			})
 			.fail(function(data) {
