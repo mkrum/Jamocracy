@@ -167,13 +167,7 @@ app.post('/SMS', function(req, res){
           	   'party' : partyCode
           	},true)
             .then(function(data) {
-    					twilio.messages.create({
-    						to: req.body.From,
-    						from: "+16305818347",
-    						body: "Connected."
-    					}, function(err, message) {
-    						console.log(err);
-    					});
+				sendText("Connected", req.body.From);
     		})
             .fail(function(err) {
                 console.log(err);
@@ -185,14 +179,8 @@ app.post('/SMS', function(req, res){
             console.log(err);
         });
         if(error){ // if there was an error adding the number or finding the party code
-          console.log("Error linking to playlist");
-          twilio.messages.create({
-              to: req.body.From,
-              from: "+16305818347",
-              body: "Sorry! There was an error. Try submitting the party code again."
-          }, function(err, message) {
-              console.log(JSON.stringify(err));
-          });
+			console.log("Error linking to playlist");
+			sendText("Sorry! There was an error. Try submitting the party code again.", req.body.From);
         }
     });
 });
@@ -211,13 +199,7 @@ function getSong(text, playlist){
         } else {
             var song = data.body.tracks.items[0];
             addSong(song, playlist);
-            twilio.messages.create({
-                to: text.From,
-                from: "+16305818347",
-                body: "Song added: "+song.name+" by "+song.artists[0].name
-            }, function(err, message) {
-                console.log(JSON.stringify(err));
-            });
+			sendText("Song added: "+song.name+" by "+song.artists[0].name, text.From);
         }
     });
 }
