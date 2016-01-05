@@ -268,5 +268,3 @@ function sendText(textMessage, number){
 		console.log(JSON.stringify(err));
 	});
 }
-
-
