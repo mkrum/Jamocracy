@@ -1,5 +1,6 @@
 // include node modules
-var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
+//var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
+var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -8,12 +9,21 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 var db = require('orchestrate')('f61515c7-8df9-4003-ab45-2f3e259610ff');
+// Set up node app and server
+var app = express();
+var port = (process.env.PORT || 5000);
+var server = app.listen(port);
+app.use(express.static(__dirname + '/public'));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 // Set credentials, scope, and state
+var redirectUri = port === '5000' ? 'http://127.0.0.1:5000/auth':'http://jamocracy.herokuapp.com/auth';
 var credentials = {
     clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
     clientSecret : '967795bf432646f69797a1a7e7d97a0e',
-    redirectUri : 'http://jamocracy.herokuapp.com/callback'
+    redirectUri : redirectUri
 };
 
 var scopes = ['playlist-read-private', 'playlist-modify-public', 'playlist-modify-private', 'user-read-private'];
@@ -23,28 +33,21 @@ var stateKey = 'spotify_auth_state';
 var spotifyApi = new SpotifyWebApi(credentials);
 var authorizeURL = spotifyApi.createAuthorizeURL(scopes, stateKey);
 
-// Set up node app and server
-var app = express();
-var port = (process.env.PORT || 8080);
-var server = app.listen(port);
-app.use(express.static(__dirname + '/public')).use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
 // Redirect to Spotify authortization when user presses login
 app.get('/login', function(req, res) {
     res.redirect(authorizeURL);
 });
 
-
 // After the user logs in through Spotify, save access and refresh tokens and
 // redirect user to info.html, which contains the form
-app.get('/callback', function(req, res) {
+app.get('/auth', function(req, res) {
     spotifyApi.authorizationCodeGrant(req.query.code)
     .then(function(data) {
         // Set the access token on the API object to use it in later calls
         spotifyApi.setAccessToken(data.body.access_token);
         spotifyApi.setRefreshToken(data.body.refresh_token);
+        res.cookie('access',  data.body.access_token, {httpOnly: true});
+        res.cookie('refresh', data.body.refresh_token, {httpOnly: true});
         res.redirect('/info.html');
     }, function(err) {
         console.log('Something went wrong in callback get!');
@@ -52,43 +55,52 @@ app.get('/callback', function(req, res) {
     });
 });
 
-
 // When the user sumbits the form, create the new playlist and redirect user
 // to the success page
 app.post('/submit', function(req, res) {
     var phoneNumber = req.body.phoneNumber;
     var newPlaylistName = req.body.newPlaylistName;
     var existingPlaylistId = req.body.existingPlaylistId;
+    var access_token = req.cookies.access;
+    var refresh_token = req.cookies.refresh;
+    spotifyApi.setAccessToken(access_token);
+    spotifyApi.setRefreshToken(refresh_token);
     spotifyApi.refreshAccessToken()
     .then(function(data) {
         spotifyApi.getMe()
         .then(function(data) {
             var username = data.body.id;
+            console.log(username);
             if(newPlaylistName.length !== 0) { // if the user entered a new playlist
                 spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
                 .then(function(data) {
                     res.redirect('/success.html'); // show success page on screen
-                    postToSuccess(phoneNumber, username, data.body.id);
+                    postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token);
                 }, function(err) {
                     console.log('Something went wrong in create playlist!', err);
                 });
             } else { // the user chose an existing playlist
                 res.redirect('/success.html'); // show success page on screen
-                postToSuccess(phoneNumber, username, existingPlaylistId);
+                postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token);
             }
         }, function(err) {
-            console.log('Something went wrong in callback post!', err);
+            console.log('Something went wrong in submit getme!', err);
         });
+    }, function(err) {
+        console.log('Something went wrong in submit refresh token!', err);
     });
 });
+
 // send number, name, and playlist id to app.post('/success')
-function postToSuccess(phoneNumber, username, playlistId){
-    console.log("posting to success");
-    request.post('https://jamocracy.herokuapp.com/success', {
+function postToSuccess(phoneNumber, username, playlistId, access, refresh){
+    var success = port === '5000' ? 'http://127.0.0.1:5000/success':'http://jamocracy.herokuapp.com/success';
+    request.post(success, {
         form: {
                 number:phoneNumber,
                 name:username,
-                playlist:playlistId
+                playlist:playlistId,
+                access_token: access,
+                refresh_token: refresh
             }
     });
 }
@@ -109,7 +121,8 @@ app.post('/success', function(req, res) {
     //  send text response to playlist creator
     twilio.messages.create({
         to: req.body.number,
-        from: "+16305818347",
+        //from: "+16305818347",
+        from: "+19784010087",
         body: 'This is your Jamocracy Number! Have your friends text their suggestions here! Party Code:'+partyCode
     }, function(err, message) {
         if(err){
@@ -121,7 +134,9 @@ app.post('/success', function(req, res) {
     db.put('parties', partyCode, {
         'creatorNumber' : req.body.number,
         'creatorName' : req.body.name,
-        'id' : req.body.playlist
+        'id' : req.body.playlist,
+        'access_token': req.body.access_token,
+        'refresh_token': req.body.refresh_token
     }, false).fail(function(err) {
         console.log('Database fail');
     });
@@ -152,30 +167,61 @@ app.post('/SMS', function(req, res){
             console.log("party not found");
         });
     })
+    // the number is not in the collection
     .fail(function(err){
-        console.log("not found");
+        // get the first four characters, which is the party code
+        partyCode = (req.body.Body).toUpperCase().substring(0,4);
+        var error = false;
+        db.get('parties', partyCode) // search for this party
+        .then(function(data){
+            playlistId = data.body.id;
+            db.put('numbers', req.body.From.substring(2), { // link the number
+          	   'party' : partyCode
+          	},true).fail(function(err) {
+                console.log(err);
+                error = true;
+          	});
+        })
+        .fail(function(err){
+            error = true;
+            console.log(err);
+        });
+        if(error){ // if there was an error adding the number or finding the party code
+          console.log("Error linking to playlist");
+          twilio.messages.create({
+              to: req.body.From,
+              //from: "+16305818347",
+              from: "+19784010087",
+              body: "Sorry! There was an error. Try submitting the party code again."
+          }, function(err, message) {
+              console.log(JSON.stringify(err));
+          });
+        }
     });
 });
+
 // getSong from text message, calls addSong
 function getSong(text, playlist){
     spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             twilio.messages.create({
                 to: text.From,
-                from: "+16305818347",
+                //from: "+16305818347",
+                from: "+19784010087",
                 body: "Sorry! There was an error"
             }, function(err, message) {
-                console.log(message.sid);
+                console.log(JSON.stringify(err));
             });
         } else {
             var song = data.body.tracks.items[0];
             addSong(song, playlist);
             twilio.messages.create({
                 to: text.From,
-                from: "+16305818347",
+                //from: "+16305818347",
+                from: "+19784010087",
                 body: "Song added: "+song.name+" by "+song.artists[0].name
             }, function(err, message) {
-                console.log(message.sid);
+                console.log(JSON.stringify(err));
             });
         }
     });
@@ -186,10 +232,11 @@ function addSong(song, playlist){
     .then(function(data) {
         console.log('Added tracks to playlist!');
     }, function(err) {
-        console.log('Something went wrong!'+err);
+        console.log('Something went wrong! '+err);
     });
 }
 
+// called client side to get user's playlists
 app.get('/playlists', function(req, res) {
   spotifyApi.getMe()
   .then(function(data) {

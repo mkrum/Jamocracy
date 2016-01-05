@@ -80,7 +80,7 @@ app.post('/submit', function(req, res) {
                 });
             } else { // the user chose an existing playlist
                 res.redirect('/success.html'); // show success page on screen
-                postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token);
+                postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token);
             }
         }, function(err) {
             console.log('Something went wrong in submit getme!', err);
@@ -165,8 +165,35 @@ app.post('/SMS', function(req, res){
             console.log("party not found");
         });
     })
+    // the number is not in the collection
     .fail(function(err){
-        console.log("not found");
+        // get the first four characters, which is the party code
+        partyCode = (req.body.Body).toUpperCase().substring(0,4);
+        var error = false;
+        db.get('parties', partyCode) // search for this party
+        .then(function(data){
+            playlistId = data.body.id;
+            db.put('numbers', req.body.From.substring(2), { // link the number
+          	   'party' : partyCode
+          	},true).fail(function(err) {
+                console.log(err);
+                error = true;
+          	});
+        })
+        .fail(function(err){
+            error = true;
+            console.log(err);
+        });
+        if(error){ // if there was an error adding the number or finding the party code
+          console.log("Error linking to playlist");
+          twilio.messages.create({
+              to: req.body.From,
+              from: "+16305818347",
+              body: "Sorry! There was an error. Try submitting the party code again."
+          }, function(err, message) {
+              console.log(JSON.stringify(err));
+          });
+        }
     });
 });
 
@@ -179,7 +206,7 @@ function getSong(text, playlist){
                 from: "+16305818347",
                 body: "Sorry! There was an error"
             }, function(err, message) {
-                console.log(message.sid);
+                console.log(JSON.stringify(err));
             });
         } else {
             var song = data.body.tracks.items[0];
@@ -189,7 +216,7 @@ function getSong(text, playlist){
                 from: "+16305818347",
                 body: "Song added: "+song.name+" by "+song.artists[0].name
             }, function(err, message) {
-                console.log(message.sid);
+                console.log(JSON.stringify(err));
             });
         }
     });
@@ -200,7 +227,7 @@ function addSong(song, playlist){
     .then(function(data) {
         console.log('Added tracks to playlist!');
     }, function(err) {
-        console.log('Something went wrong!'+err);
+        console.log('Something went wrong! '+err);
     });
 }
 
