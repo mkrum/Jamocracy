@@ -167,7 +167,7 @@ app.post('/SMS', function(req, res){
     })
     .fail(function(err){
 		//check if the text is a party code
-		db.get('parties', req.body)
+		db.get('parties', req.body.Body)
 			.then(function(data) {
 				db.put('numbers', req.body.number, {
 					 'party' : partyCode
