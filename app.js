@@ -157,6 +157,7 @@ app.post('/SMS', function(req, res){
 					sendText("Playlist exit error", req.body.From);
 				});
 		} else {
+			sendText("Here actually", req.body.From);
 			partyCode = res.body.party;
 			db.get('parties', partyCode) // search the parties collection for this code
 			.then(function(data){
