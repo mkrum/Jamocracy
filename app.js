@@ -155,16 +155,17 @@ app.post('/SMS', function(req, res){
 					console.log(err);
 					sendText("Playlist exit error", req.body.From);
 				});
+		} else {
+			partyCode = res.body.party;
+			db.get('parties', partyCode) // search the parties collection for this code
+			.then(function(data){
+				playlist = data.body; // get the playlist for this party
+				getSong(req.body, playlist);
+			})
+			.fail(function(err){
+				console.log('error conecting to playlist');
+			});
 		}
-        partyCode = res.body.party;
-        db.get('parties', partyCode) // search the parties collection for this code
-        .then(function(data){
-            playlist = data.body; // get the playlist for this party
-            getSong(req.body, playlist);
-        })
-        .fail(function(err){
-			console.log('error conecting to playlist');
-        });
     })
     // the number is not in the collection
     .fail(function(err){
