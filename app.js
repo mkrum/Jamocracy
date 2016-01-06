@@ -1,5 +1,7 @@
 // include node modules
 var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
+// Dan's twilio info, used for testing
+//var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -95,12 +97,12 @@ function postToSuccess(phoneNumber, username, playlistId, access, refresh){
     var success = port === '5000' ? 'http://127.0.0.1:5000/success':'http://jamocracy.herokuapp.com/success';
     request.post(success, {
         form: {
-                number:phoneNumber,
-                name:username,
-                playlist:playlistId,
-                access_token: access,
-                refresh_token: refresh
-            }
+            number:phoneNumber,
+            name:username,
+            playlist:playlistId,
+            access_token: access,
+            refresh_token: refresh
+        }
     });
 }
 
@@ -118,7 +120,7 @@ function randomString(){
 app.post('/success', function(req, res) {
     var partyCode = randomString();
     //  send text response to playlist creator
-	sendText('This is your Jamocracy Number! Party Code: '+partyCode, req.body.number);
+    sendText('This is your Jamocracy Number! Party Code: '+partyCode, req.body.number);
     // add party code to parties collection in database
     db.put('parties', partyCode, {
         'creatorNumber' : req.body.number,
@@ -130,11 +132,11 @@ app.post('/success', function(req, res) {
         console.log('Database fail');
     });
     // add creator's number to numbers collection in database
-	db.put('numbers', req.body.number, {
-	   'party' : partyCode
-	}, true).fail(function(err) {
-		 console.log('Database failure');
-	});
+    db.put('numbers', req.body.number, {
+        'party' : partyCode
+    }, true).fail(function(err) {
+        console.log('Database failure');
+    });
 
     res.end();
 });
@@ -145,27 +147,26 @@ app.post('/SMS', function(req, res){
     // check if sender is in numbers collection
     db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
     .then(function(res){ // if it is found in numbers
-        console.log("found");
-		if(req.body.Body[0] === '!'){
-			db.remove('numbers', req.body.From.substring(2))
-				.then(function(data) {
-					sendText("Playlist exited", req.body.From);
-				})
-				.fail(function(err) {
-					console.log(err);
-					sendText("Playlist exit error", req.body.From);
-				});
-		} else {
-			partyCode = res.body.party;
-			db.get('parties', partyCode) // search the parties collection for this code
-			.then(function(data){
-				playlist = data.body; // get the playlist for this party
-				getSong(req.body, playlist);
-			})
-			.fail(function(err){
-				console.log('error conecting to playlist');
-			});
-		}
+        if(req.body.Body[0] === '!'){ // leave playlist with exclamation point
+            db.remove('numbers', req.body.From.substring(2))
+            .then(function(data) {
+                sendText("Playlist exited", req.body.From);
+            })
+            .fail(function(err) {
+                console.log(err);
+                sendText("Playlist exit error", req.body.From);
+            });
+        } else {
+            partyCode = res.body.party;
+            db.get('parties', partyCode) // search the parties collection for this code
+            .then(function(data){
+                playlist = data.body; // get the playlist for this party
+                getSong(req.body, playlist);
+            })
+            .fail(function(err){
+                console.log('error conecting to playlist');
+            });
+        }
     })
     // the number is not in the collection
     .fail(function(err){
@@ -175,23 +176,23 @@ app.post('/SMS', function(req, res){
         db.get('parties', partyCode) // search for this party
         .then(function(data){
             db.put('numbers', req.body.From.substring(2), { // link the number
-          	   'party' : partyCode
-          	},true)
+                'party' : partyCode
+            },true)
             .then(function(data) {
-				sendText("Connected", req.body.From);
-    		})
+                sendText("Connected", req.body.From);
+            })
             .fail(function(err) {
                 console.log(err);
                 error = true;
-          	});
+            });
         })
         .fail(function(err){
             error = true;
             console.log(err);
         });
         if(error){ // if there was an error adding the number or finding the party code
-			console.log("Error linking to playlist");
-			sendText("Sorry! There was an error. Try submitting the party code again.", req.body.From);
+            console.log("Error linking to playlist");
+            sendText("Sorry! There was an error. Try submitting the party code again.", req.body.From);
         }
     });
 });
@@ -200,11 +201,11 @@ app.post('/SMS', function(req, res){
 function getSong(text, playlist){
     spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
-			sendText("Sorry, there was an error", text.From);
+            sendText("Sorry, there was an error", text.From);
         } else {
             var song = data.body.tracks.items[0];
             addSong(song, playlist);
-			sendText("Song added: "+song.name+" by "+song.artists[0].name, text.From);
+            sendText("Song added: "+song.name+" by "+song.artists[0].name, text.From);
         }
     });
 }
@@ -220,37 +221,41 @@ function addSong(song, playlist){
 
 // called client side to get user's playlists
 app.get('/playlists', function(req, res) {
-  spotifyApi.getMe()
-  .then(function(data) {
-      var user = data.body.id;
-      spotifyApi.getUserPlaylists(user)
-      .then(function(data) {
-          var userPlaylistsNamesAndIds = [];
-          var playlists = data.body.items;
-          playlists = playlists.filter(function(element){
-              return element.owner.id === user;
-          });
-          for(var i = 0; i < playlists.length; i++){
-              userPlaylistsNamesAndIds.push({
-                  name: playlists[i].name,
-                  id: playlists[i].id
-              });
-          }
-          res.send(userPlaylistsNamesAndIds);
-      },function(err) {
-          console.log('Something went wrong in getting playlists!', err);
-      });
-  }, function(err) {
-    console.log('Something went wrong in getting user!', err);
-  });
+    spotifyApi.getMe()
+    .then(function(data) {
+        var user = data.body.id;
+        spotifyApi.getUserPlaylists(user)
+        .then(function(data) {
+            var userPlaylistsNamesAndIds = [];
+            var playlists = data.body.items;
+            // remove playlists that the user does not own
+            playlists = playlists.filter(function(element){
+                return element.owner.id === user;
+            });
+            // add playlist names and ids to new array
+            for(var i = 0; i < playlists.length; i++){
+                userPlaylistsNamesAndIds.push({
+                    name: playlists[i].name,
+                    id: playlists[i].id
+                });
+            }
+            res.send(userPlaylistsNamesAndIds);
+        },function(err) {
+            console.log('Something went wrong in getting playlists!', err);
+        });
+    }, function(err) {
+        console.log('Something went wrong in getting user!', err);
+    });
 });
 
 function sendText(textMessage, number){
-	twilio.messages.create({
-		to: number,
-		from: "+16305818347",
-		body: textMessage
-	}, function(err, message) {
-		console.log(JSON.stringify(err));
-	});
+    twilio.messages.create({
+        to: number,
+        from: "+16305818347",
+        // Dan's twilio number, used for testing
+        //from: "+19784010087",
+        body: textMessage
+    }, function(err, message) {
+        console.log(JSON.stringify(err));
+    });
 }
