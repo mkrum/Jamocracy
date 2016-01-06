@@ -118,7 +118,7 @@ function randomString(){
 app.post('/success', function(req, res) {
     var partyCode = randomString();
     //  send text response to playlist creator
-	sendText('This is your Jamocracy Number! Party Code:'+partyCode, req.body.number);
+	sendText('This is your Jamocracy Number! Party Code: '+partyCode, req.body.number);
     // add party code to parties collection in database
     db.put('parties', partyCode, {
         'creatorNumber' : req.body.number,
@@ -146,6 +146,16 @@ app.post('/SMS', function(req, res){
     db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
     .then(function(res){ // if it is found in numbers
         console.log("found");
+		if(req.body.Body[0] === '!'){
+			db.remove('numbers', req.body.From.substring(2))
+				.then(function(data) {
+					sendText("Playlist exited", req.body.From);
+				})
+				.fail(function(err) {
+					console.log(err);
+					sendText("Playlist exit error", req.body.From);
+				});
+		}
         partyCode = res.body.party;
         db.get('parties', partyCode) // search the parties collection for this code
         .then(function(data){
@@ -153,7 +163,7 @@ app.post('/SMS', function(req, res){
             getSong(req.body, playlist);
         })
         .fail(function(err){
-			       console.log('error conecting to playlist');
+			console.log('error conecting to playlist');
         });
     })
     // the number is not in the collection
