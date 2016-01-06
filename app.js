@@ -146,7 +146,7 @@ app.post('/SMS', function(req, res){
     db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
     .then(function(res){ // if it is found in numbers
         console.log("found");
-		if(req.body.Body === '!'){
+		if(req.body.Body[0] === '!'){
 			db.remove('numbers', req.body.From.substring(2))
 				.then(function(data) {
 					sendText("Playlist exited", req.body.From);
@@ -156,15 +156,15 @@ app.post('/SMS', function(req, res){
 					sendText("Playlist exit error", req.body.From);
 				});
 		} else {
-			partyCode = res.body.party;
-			db.get('parties', partyCode) // search the parties collection for this code
-			.then(function(data){
-				playlist = data.body; // get the playlist for this party
-				getSong(req.body, playlist);
-			})
-			.fail(function(err){
-				console.log('error conecting to playlist');
-			});
+			//partyCode = res.body.party;
+			//db.get('parties', partyCode) // search the parties collection for this code
+			//.then(function(data){
+			//	playlist = data.body; // get the playlist for this party
+			//	getSong(req.body, playlist);
+			//})
+			//.fail(function(err){
+			//	console.log('error conecting to playlist');
+			//});
 		}
     })
     // the number is not in the collection
