@@ -76,13 +76,13 @@ app.post('/submit', function(req, res) {
                 spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
                 .then(function(data) {
                     res.redirect('/success.html'); // show success page on screen
-                    postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token);
+                    postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
                 }, function(err) {
                     console.log('Something went wrong in create playlist!', err);
                 });
             } else { // the user chose an existing playlist
                 res.redirect('/success.html'); // show success page on screen
-                postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token);
+                postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token, false);
             }
         }, function(err) {
             console.log('Something went wrong in submit getme!', err);
@@ -93,7 +93,7 @@ app.post('/submit', function(req, res) {
 });
 
 // send number, name, and playlist id to app.post('/success')
-function postToSuccess(phoneNumber, username, playlistId, access, refresh){
+function postToSuccess(phoneNumber, username, playlistId, access, refresh, isNew){
     var success = port === '5000' ? 'http://127.0.0.1:5000/success':'http://jamocracy.herokuapp.com/success';
     request.post(success, {
         form: {
@@ -101,7 +101,8 @@ function postToSuccess(phoneNumber, username, playlistId, access, refresh){
             name:username,
             playlist:playlistId,
             access_token: access,
-            refresh_token: refresh
+            refresh_token: refresh,
+            isNewPlaylist: isNew
         }
     });
 }
@@ -117,29 +118,58 @@ function randomString(){
 }
 
 // Create playlist code, store playlist in database
+// TODO: Refractor this. I really don't like how I wrote this, but I don't
+// know enough about closures and scope in order to properly write it.
 app.post('/success', function(req, res) {
-    var partyCode = randomString();
+    // check to see if this playlist already has a party code
+    if(req.body.isNewPlaylist === 'false'){
+         // check to see if this playlist exits in the parties collection
+        db.newSearchBuilder()
+        .collection('parties')
+        .limit(1)
+        .query(req.body.playlist)
+        .then(function (data) {
+            if(data.body.count !== 0){
+                partyCode = data.body.results[0].path.key;
+                putNumberAndPartyInCollections(req, partyCode);
+            } else {
+                putNumberAndPartyInCollections(req, randomString());
+            }
+        })
+        .fail(function (err) {
+            console.log("Error in search: "+err);
+            putNumberAndPartyInCollections(req, randomString());
+        });
+    } else { // default party code is 4 random letters
+        putNumberAndPartyInCollections(req, randomString());
+    }
+    res.end();
+});
+
+
+// Generates party code
+function putNumberAndPartyInCollections(req, partyCode){
     //  send text response to playlist creator
     sendText('This is your Jamocracy Number! Party Code: '+partyCode, req.body.number);
-    // add party code to parties collection in database
+
+    // create or update party in parties collection in database
     db.put('parties', partyCode, {
         'creatorNumber' : req.body.number,
         'creatorName' : req.body.name,
         'id' : req.body.playlist,
         'access_token': req.body.access_token,
         'refresh_token': req.body.refresh_token
-    }, false).fail(function(err) {
-        console.log('Database fail');
+    }).fail(function(err) {
+        console.log('Database failure: '+JSON.stringify(err));
     });
+
     // add creator's number to numbers collection in database
     db.put('numbers', req.body.number, {
         'party' : partyCode
-    }, true).fail(function(err) {
-        console.log('Database failure');
+    }).fail(function(err) {
+        console.log('Database failure: '+JSON.stringify(err));
     });
-
-    res.end();
-});
+}
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
@@ -156,7 +186,7 @@ app.post('/SMS', function(req, res){
                 console.log(err);
                 sendText("Playlist exit error", req.body.From);
             });
-        } else {
+        } else { // if not !, then it is a song
             partyCode = res.body.party;
             db.get('parties', partyCode) // search the parties collection for this code
             .then(function(data){
@@ -182,13 +212,13 @@ app.post('/SMS', function(req, res){
                 sendText("Connected", req.body.From);
             })
             .fail(function(err) {
-                console.log(err);
+                console.log("Error putting number: "+err);
                 error = true;
             });
         })
         .fail(function(err){
+            console.log("Error getting party: "+err);
             error = true;
-            console.log(err);
         });
         if(error){ // if there was an error adding the number or finding the party code
             console.log("Error linking to playlist");
@@ -211,40 +241,58 @@ function getSong(text, playlist){
 }
 // add song to playlist
 function addSong(song, playlist){
-    spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
+    // set the credentials for the right playlist
+    spotifyApi.setAccessToken(playlist.access_token);
+    spotifyApi.setRefreshToken(playlist.refresh_token);
+    spotifyApi.refreshAccessToken()
     .then(function(data) {
-        console.log('Added tracks to playlist!');
+        spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
+        .then(function(data) {
+            console.log('Added tracks to playlist!');
+        }, function(err) {
+            console.log('Something went wrong! '+err);
+        });
     }, function(err) {
-        console.log('Something went wrong! '+err);
+        console.log('Something went wrong in refreshing token ', err);
     });
 }
 
 // called client side to get user's playlists
 app.get('/playlists', function(req, res) {
-    spotifyApi.getMe()
+    // set the credentials for the right playlist
+    var access_token = req.cookies.access;
+    var refresh_token = req.cookies.refresh;
+    spotifyApi.setAccessToken(access_token);
+    spotifyApi.setRefreshToken(refresh_token);
+    spotifyApi.refreshAccessToken()
     .then(function(data) {
-        var user = data.body.id;
-        spotifyApi.getUserPlaylists(user)
+        spotifyApi.getMe()
         .then(function(data) {
-            var userPlaylistsNamesAndIds = [];
-            var playlists = data.body.items;
-            // remove playlists that the user does not own
-            playlists = playlists.filter(function(element){
-                return element.owner.id === user;
-            });
-            // add playlist names and ids to new array
-            for(var i = 0; i < playlists.length; i++){
-                userPlaylistsNamesAndIds.push({
-                    name: playlists[i].name,
-                    id: playlists[i].id
+            var user = data.body.id;
+            spotifyApi.getUserPlaylists(user)
+            .then(function(data) {
+                var userPlaylistsNamesAndIds = [];
+                var playlists = data.body.items;
+                // remove playlists that the user does not own
+                playlists = playlists.filter(function(element){
+                    return element.owner.id === user;
                 });
-            }
-            res.send(userPlaylistsNamesAndIds);
-        },function(err) {
-            console.log('Something went wrong in getting playlists!', err);
+                // add playlist names and ids to new array
+                for(var i = 0; i < playlists.length; i++){
+                    userPlaylistsNamesAndIds.push({
+                        name: playlists[i].name,
+                        id: playlists[i].id
+                    });
+                }
+                res.send(userPlaylistsNamesAndIds);
+            },function(err) {
+                console.log('Something went wrong in getting playlists! ', err);
+            });
+        }, function(err) {
+            console.log('Something went wrong in getting user! ', err);
         });
     }, function(err) {
-        console.log('Something went wrong in getting user!', err);
+        console.log('Something went wrong in refreshing token ', err);
     });
 });
 
@@ -256,6 +304,8 @@ function sendText(textMessage, number){
         //from: "+19784010087",
         body: textMessage
     }, function(err, message) {
-        console.log(JSON.stringify(err));
+        if(err){
+            console.log("error: "+JSON.stringify(err));
+        }
     });
 }
