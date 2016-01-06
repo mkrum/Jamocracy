@@ -143,9 +143,9 @@ app.post('/success', function(req, res) {
 app.post('/SMS', function(req, res){
     var playlist, partyCode;
     // check if sender is in numbers collection
-	sendText("Here", req.body.From);
     db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
     .then(function(res){ // if it is found in numbers
+		sendText("Here", req.body.From);
         console.log("found");
 		if(req.body.Body[0] === '!'){
 			db.remove('numbers', req.body.From.substring(2))
