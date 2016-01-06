@@ -143,10 +143,8 @@ app.post('/success', function(req, res) {
 app.post('/SMS', function(req, res){
     var playlist, partyCode;
     // check if sender is in numbers collection
-	sendText("First", req.body.From);
     db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
     .then(function(res){ // if it is found in numbers
-		sendText("Here", req.body.From);
         console.log("found");
 		if(req.body.Body[0] === '!'){
 			db.remove('numbers', req.body.From.substring(2))
@@ -158,7 +156,6 @@ app.post('/SMS', function(req, res){
 					sendText("Playlist exit error", req.body.From);
 				});
 		} else {
-			sendText("Here actually", req.body.From);
 			partyCode = res.body.party;
 			db.get('parties', partyCode) // search the parties collection for this code
 			.then(function(data){
