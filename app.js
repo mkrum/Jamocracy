@@ -69,7 +69,7 @@ app.post('/submit', function(req, res) {
         spotifyApi.getMe()
         .then(function(data) {
             var username = data.body.id;
-            console.log(username);
+            //console.log(username);
             if(newPlaylistName.length !== 0) { // if the user entered a new playlist
                 spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
                 .then(function(data) {
@@ -200,13 +200,7 @@ app.post('/SMS', function(req, res){
 function getSong(text, playlist){
     spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
-            twilio.messages.create({
-                to: text.From,
-                from: "+16305818347",
-                body: "Sorry! There was an error"
-            }, function(err, message) {
-                console.log(JSON.stringify(err));
-            });
+			sendText("Sorry, there was an error", text.From);
         } else {
             var song = data.body.tracks.items[0];
             addSong(song, playlist);
