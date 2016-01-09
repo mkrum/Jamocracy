@@ -147,7 +147,7 @@ app.post('/success', function(req, res) {
 });
 
 
-// Generates party code
+// add number and party to database
 function putNumberAndPartyInCollections(req, partyCode){
     //  send text response to playlist creator
     sendText('This is your Jamocracy Number! Party Code: '+partyCode, req.body.number);
@@ -227,33 +227,44 @@ app.post('/SMS', function(req, res){
     });
 });
 
-// getSong from text message, calls addSong
+// getSong from text message, calls addSongToPlayList
 function getSong(text, playlist){
     spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             sendText("Sorry, there was an error", text.From);
         } else {
             var song = data.body.tracks.items[0];
-            addSong(song, playlist);
-            sendText("Song added: "+song.name+" by "+song.artists[0].name, text.From);
+            addSongToPlaylist(song, playlist, text.From);
         }
     });
 }
-// add song to playlist
-function addSong(song, playlist){
+
+function addSongToPlaylist(song, playlist, number){
     // set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
     spotifyApi.refreshAccessToken()
-    .then(function(data) {
-        spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
-        .then(function(data) {
-            console.log('Added tracks to playlist!');
-        }, function(err) {
-            console.log('Something went wrong! '+err);
-        });
-    }, function(err) {
-        console.log('Something went wrong in refreshing token ', err);
+    .then(function(data){
+        return spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'});
+    })
+    .then(function(playlistTracks){
+        return playlistTracks.body.items.map(function(item){return item.track.id;});
+    })
+    .then(function(trackIds){
+        if(trackIds.indexOf(song.id) === -1){
+            spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
+            .then(function(data) {
+                console.log('Added track to playlist!');
+                sendText("Song added: "+song.name+" by "+song.artists[0].name, number);
+            }, function(err) {
+                console.log('Something went wrong! '+err);
+            });
+        } else {
+            sendText("Playlist already contains "+song.name+" by "+song.artists[0].name, number);
+        }
+    })
+    .catch(function(err){
+        console.log(err.messsage);
     });
 }
 
