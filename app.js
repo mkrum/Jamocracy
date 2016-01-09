@@ -276,34 +276,32 @@ app.get('/playlists', function(req, res) {
     spotifyApi.setAccessToken(access_token);
     spotifyApi.setRefreshToken(refresh_token);
     spotifyApi.refreshAccessToken()
-    .then(function(data) {
-        spotifyApi.getMe()
-        .then(function(data) {
-            var user = data.body.id;
-            spotifyApi.getUserPlaylists(user)
-            .then(function(data) {
-                var userPlaylistsNamesAndIds = [];
-                var playlists = data.body.items;
-                // remove playlists that the user does not own
-                playlists = playlists.filter(function(element){
-                    return element.owner.id === user;
-                });
-                // add playlist names and ids to new array
-                for(var i = 0; i < playlists.length; i++){
-                    userPlaylistsNamesAndIds.push({
-                        name: playlists[i].name,
-                        id: playlists[i].id
-                    });
-                }
-                res.send(userPlaylistsNamesAndIds);
-            },function(err) {
-                console.log('Something went wrong in getting playlists! ', err);
+    .then(function(data){
+        return spotifyApi.getMe();
+    })
+    .then(function(me){
+        var user = me.body.id;
+        spotifyApi.getUserPlaylists(user)
+        .then(function(data){
+            var playlists = data.body.items;
+            // remove playlists that the user does not own
+            // only save playlist name and id
+            playlists = playlists.filter(function(element){
+                return element.owner.id === user;
+            }).map(function(playlist){
+                return {
+                    name:  playlist.name,
+                    id: playlist.id
+                };
             });
-        }, function(err) {
-            console.log('Something went wrong in getting user! ', err);
+            res.send(playlists);
+        })
+        .catch(function(err){
+            console.log(err);
         });
-    }, function(err) {
-        console.log('Something went wrong in refreshing token ', err);
+    })
+    .catch(function(err){
+        console.log(err);
     });
 });
 
