@@ -49,6 +49,7 @@ app.get('/auth', function(req, res) {
         spotifyApi.setRefreshToken(data.body.refresh_token);
         res.cookie('access',  data.body.access_token, {httpOnly: true});
         res.cookie('refresh', data.body.refresh_token, {httpOnly: true});
+		createSimilar('vitalic', 'artist', 'aaa');
         res.redirect('/info.html');
     }, function(err) {
         console.log('Something went wrong in callback get!');
@@ -318,3 +319,13 @@ function sendText(textMessage, number){
         }
     });
 }
+
+function createSimilar(item, type, partyCode) {
+	var API_KEY = 'QJKQ71MJKFV2OJMIQ';
+	var url = "http://developer.echonest.com/api/v4/"+type+"/search?api_key="+API_KEY+"name="+item;
+	request(url, function(error, response, body) {
+		if(!err) {
+			console.log(body);
+		}
+}
+
