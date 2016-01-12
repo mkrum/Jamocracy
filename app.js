@@ -135,7 +135,6 @@ app.post('/success', function(req, res) {
 	}, true).fail(function(err) {
 		 console.log('Database failure');
 	});
-
     res.end();
 });
 
@@ -212,6 +211,17 @@ function getSong(text, playlist){
 function addSong(song, playlist){
     spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
     .then(function(data) {
+		db.get('songs', song.name)
+			.then(function(res) {
+				res.playCount++;
+			}
+			.fail(function(err) {
+				db.put('songs', req.body.number, {
+				   'playCount' : 1
+				}, true).fail(function(err) {
+					 console.log('Database failure');
+				});
+			});
         console.log('Added tracks to playlist!');
     }, function(err) {
         console.log('Something went wrong! '+err);
