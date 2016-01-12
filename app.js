@@ -1,7 +1,7 @@
 // include node modules
-//var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
+var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 // Dan's twilio info, used for testing
-var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
+//var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -162,16 +162,6 @@ function putNumberAndPartyInCollections(req, partyCode){
     }).fail(function(err) {
         console.log('Database failure: '+JSON.stringify(err));
     });
-<<<<<<< HEAD
-    // add creator's number to numbers collection in database
-	db.put('numbers', req.body.number, {
-	   'party' : partyCode
-	}, true).fail(function(err) {
-		 console.log('Database failure');
-	});
-    res.end();
-});
-=======
 
     // add creator's number to numbers collection in database
     db.put('numbers', req.body.number, {
@@ -180,7 +170,6 @@ function putNumberAndPartyInCollections(req, partyCode){
         console.log('Database failure: '+JSON.stringify(err));
     });
 }
->>>>>>> aa85db6eb012e6ce2a87abc4a2f30ae19e776016
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
@@ -249,26 +238,6 @@ function getSong(text, playlist){
         }
     });
 }
-<<<<<<< HEAD
-// add song to playlist
-function addSong(song, playlist){
-    spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
-    .then(function(data) {
-		db.get('songs', song.name)
-			.then(function(res) {
-				res.playCount++;
-			}
-			.fail(function(err) {
-				db.put('songs', req.body.number, {
-				   'playCount' : 1
-				}, true).fail(function(err) {
-					 console.log('Database failure');
-				});
-			});
-        console.log('Added tracks to playlist!');
-    }, function(err) {
-        console.log('Something went wrong! '+err);
-=======
 
 function addSongToPlaylist(song, playlist, number){
     // set the credentials for the right playlist
@@ -296,7 +265,6 @@ function addSongToPlaylist(song, playlist, number){
     })
     .catch(function(err){
         console.log(err.messsage);
->>>>>>> aa85db6eb012e6ce2a87abc4a2f30ae19e776016
     });
 }
 
@@ -340,9 +308,9 @@ app.get('/playlists', function(req, res) {
 function sendText(textMessage, number){
     twilio.messages.create({
         to: number,
-        //from: "+16305818347",
+        from: "+16305818347",
         // Dan's twilio number, used for testing
-        from: "+19784010087",
+        //from: "+19784010087",
         body: textMessage
     }, function(err, message) {
         if(err){
