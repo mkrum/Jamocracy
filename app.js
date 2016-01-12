@@ -327,5 +327,6 @@ function createSimilar(item, type, partyCode) {
 		if(!err) {
 			console.log(body);
 		}
+	});
 }
 
