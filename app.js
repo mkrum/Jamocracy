@@ -162,7 +162,6 @@ function putNumberAndPartyInCollections(req, partyCode){
     }).fail(function(err) {
         console.log('Database failure: '+JSON.stringify(err));
     });
-<<<<<<< HEAD
     // add creator's number to numbers collection in database
 	db.put('numbers', req.body.number, {
 	   'party' : partyCode
@@ -171,7 +170,6 @@ function putNumberAndPartyInCollections(req, partyCode){
 	});
     res.end();
 });
-=======
 
     // add creator's number to numbers collection in database
     db.put('numbers', req.body.number, {
@@ -180,7 +178,6 @@ function putNumberAndPartyInCollections(req, partyCode){
         console.log('Database failure: '+JSON.stringify(err));
     });
 }
->>>>>>> aa85db6eb012e6ce2a87abc4a2f30ae19e776016
 
 // This is executed when the twilio number receives a text
 app.post('/SMS', function(req, res){
@@ -249,7 +246,6 @@ function getSong(text, playlist){
         }
     });
 }
-<<<<<<< HEAD
 // add song to playlist
 function addSong(song, playlist){
     spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
@@ -268,7 +264,6 @@ function addSong(song, playlist){
         console.log('Added tracks to playlist!');
     }, function(err) {
         console.log('Something went wrong! '+err);
-=======
 
 function addSongToPlaylist(song, playlist, number){
     // set the credentials for the right playlist
@@ -296,7 +291,6 @@ function addSongToPlaylist(song, playlist, number){
     })
     .catch(function(err){
         console.log(err.messsage);
->>>>>>> aa85db6eb012e6ce2a87abc4a2f30ae19e776016
     });
 }
 
