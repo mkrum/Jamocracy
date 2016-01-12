@@ -169,8 +169,6 @@ function putNumberAndPartyInCollections(req, partyCode){
     }).fail(function(err) {
         console.log('Database failure: '+JSON.stringify(err));
     });
-
-    res.end();
 }
 
 // This is executed when the twilio number receives a text
