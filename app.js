@@ -322,11 +322,10 @@ function sendText(textMessage, number){
 
 function createSimilar(item, type, partyCode) {
 	var API_KEY = 'QJKQ71MJKFV2OJMIQ';
-	var url = "http://developer.echonest.com/api/v4/"+type+"/search?api_key="+API_KEY+"&name="+item;
+	var url = "http://developer.echonest.com/api/v4/"+type+"/similar?api_key="+API_KEY+"&name="+item;
 	request(url, function(error, response, body) {
 		if(!error) {
 			console.log(body);
 		}
 	});
 }
-
