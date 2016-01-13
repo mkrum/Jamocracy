@@ -49,7 +49,7 @@ app.get('/auth', function(req, res) {
         spotifyApi.setRefreshToken(data.body.refresh_token);
         res.cookie('access',  data.body.access_token, {httpOnly: true});
         res.cookie('refresh', data.body.refresh_token, {httpOnly: true});
-		createSimilar('jump', 'song', 'aaa');
+		createSimilar('jump', 'artist', 'aaa');
         res.redirect('/info.html');
     }, function(err) {
         console.log('Something went wrong in callback get!');
