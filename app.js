@@ -248,10 +248,11 @@ function addSongToPlaylist(song, playlist, number){
 			.fail(function(err) {
 				db.put('songs', req.body.number, {
 				   'playCount' : 1
-				}, true).fail(function(err) {
+				}, true)
+				.fail(function(err) {
 					 console.log('Database failure');
 				});
-			});
+			}); //here?
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
