@@ -240,7 +240,18 @@ function getSong(text, playlist){
 }
 
 function addSongToPlaylist(song, playlist, number){
-    // set the credentials for the right playlist
+	db.get('songs', song.name)
+			.then(function(res) {
+				res.playCount++;
+			}
+			.fail(function(err) {
+				db.put('songs', req.body.number, {
+				   'playCount' : 1
+				}, true).fail(function(err) {
+					 console.log('Database failure');
+				});
+			});
+	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
     spotifyApi.refreshAccessToken()
