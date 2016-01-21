@@ -244,7 +244,7 @@ function addSongToPlaylist(song, playlist, number){
 	db.get('songs', song.name)
 			.then(function(res) {
 				res.playCount++;
-			}
+			})
 			.fail(function(err) {
 				db.put('songs', req.body.number, {
 				   'playCount' : 1
