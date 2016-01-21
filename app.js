@@ -337,7 +337,7 @@ function createSimilar(item, type, partyCode) {
 	var url = "http://developer.echonest.com/api/v4/"+type+"/similar?api_key="+API_KEY+"&name="+item;
 	request(url, function(error, response, body) {
 		if(!error) {
-			console.log(body);
+			console.log(response);
 		}
 	});
 }
