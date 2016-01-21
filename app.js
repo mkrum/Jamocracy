@@ -252,7 +252,7 @@ function addSongToPlaylist(song, playlist, number){
 				.fail(function(err) {
 					 console.log('Database failure');
 				});
-			}); //here?
+			}); 
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
