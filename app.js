@@ -242,19 +242,19 @@ function getSong(text, playlist){
 
 function addSongToPlaylist(song, playlist, number){
 
-    db.newPatchBuilder('songs', song.name)
-    .inc('playCount', 1)
-    .append('numbers', number)
-    .then(function(result){
-        // success
-        console.log("successful patch");
-    })
-    .fail(function(err){
-        db.put('songs', song.name, {
-            'playCount' : 1,
-            'numbers' : [number]
-        });
-    });
+    // db.newPatchBuilder('songs', song.name)
+    // .inc('playCount', 1)
+    // .append('numbers', number)
+    // .then(function(result){
+    //     // success
+    //     console.log("successful patch");
+    // })
+    // .fail(function(err){
+    //     db.put('songs', song.name, {
+    //         'playCount' : 1,
+    //         'numbers' : [number]
+    //     });
+    // });
 
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
