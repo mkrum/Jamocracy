@@ -241,18 +241,20 @@ function getSong(text, playlist){
 }
 
 function addSongToPlaylist(song, playlist, number){
-	db.get('songs', song.name)
-			.then(function(res) {
-				res.playCount++;
-			})
-			.fail(function(err) {
-				db.put('songs', req.body.number, {
-				   'playCount' : 1
-				}, true)
-				.fail(function(err) {
-					 console.log('Database failure');
-				});
-			}); 
+    db.newPatchBuilder('songs', song.name)
+    .inc('playCount', 1)
+    .append('numbers', number)
+    .then(function(result){
+        // success
+        console.log("successful patch");
+    })
+    .fail(function(err){
+        db.put('songs', song.name, {
+            'playCount' : 1,
+            'numbers' : [number]
+        });
+    });
+
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
