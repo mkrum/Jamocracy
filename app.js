@@ -1,7 +1,7 @@
 // include node modules
-var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
+//var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 // Dan's twilio info, used for testing
-//var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
+var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -49,7 +49,7 @@ app.get('/auth', function(req, res) {
         spotifyApi.setRefreshToken(data.body.refresh_token);
         res.cookie('access',  data.body.access_token, {httpOnly: true});
         res.cookie('refresh', data.body.refresh_token, {httpOnly: true});
-		createSimilar('jump', 'artist', 'aaa');
+		//createSimilar('jump', 'artist', 'aaa');
         res.redirect('/info.html');
     }, function(err) {
         console.log('Something went wrong in callback get!');
@@ -241,6 +241,7 @@ function getSong(text, playlist){
 }
 
 function addSongToPlaylist(song, playlist, number){
+
     db.newPatchBuilder('songs', song.name)
     .inc('playCount', 1)
     .append('numbers', number)
@@ -323,9 +324,9 @@ app.get('/playlists', function(req, res) {
 function sendText(textMessage, number){
     twilio.messages.create({
         to: number,
-        from: "+16305818347",
+        //from: "+16305818347",
         // Dan's twilio number, used for testing
-        //from: "+19784010087",
+        from: "+19784010087",
         body: textMessage
     }, function(err, message) {
         if(err){
@@ -334,12 +335,12 @@ function sendText(textMessage, number){
     });
 }
 
-function createSimilar(item, type, partyCode) {
-	var API_KEY = 'QJKQ71MJKFV2OJMIQ';
-	var url = "http://developer.echonest.com/api/v4/"+type+"/similar?api_key="+API_KEY+"&name="+item;
-	request(url, function(error, response, body) {
-		if(!error) {
-			console.log(response);
-		}
-	});
-}
+// function createSimilar(item, type, partyCode) {
+// 	var API_KEY = 'QJKQ71MJKFV2OJMIQ';
+// 	var url = "http://developer.echonest.com/api/v4/"+type+"/similar?api_key="+API_KEY+"&name="+item;
+// 	request(url, function(error, response, body) {
+// 		if(!error) {
+// 			console.log(response);
+// 		}
+// 	});
+// }
