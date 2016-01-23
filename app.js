@@ -1,7 +1,7 @@
 // include node modules
-//var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
+var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 // Dan's twilio info, used for testing
-var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
+// var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -182,10 +182,12 @@ app.post('/SMS', function(req, res){
             db.remove('numbers', req.body.From.substring(2))
             .then(function(data) {
                 sendText("Playlist exited", req.body.From);
+                res.end();
             })
             .fail(function(err) {
                 console.log(err);
                 sendText("Playlist exit error", req.body.From);
+                res.end();
             });
         } else { // if not !, then it is a song
             partyCode = res.body.party;
@@ -203,7 +205,6 @@ app.post('/SMS', function(req, res){
     .fail(function(err){
         // get the first four characters, which is the party code
         partyCode = (req.body.Body).toUpperCase().substring(0,4);
-        var error = false;
         db.get('parties', partyCode) // search for this party
         .then(function(data){
             db.put('numbers', req.body.From.substring(2), { // link the number
@@ -211,20 +212,18 @@ app.post('/SMS', function(req, res){
             },true)
             .then(function(data) {
                 sendText("Connected", req.body.From);
+                res.end();
             })
             .fail(function(err) {
                 console.log("Error putting number: "+err);
-                error = true;
+                sendText("Sorry! There was an error. Try submitting the party code again.", req.body.From);
+                res.end();
             });
         })
         .fail(function(err){
             console.log("Error getting party: "+JSON.stringify(err));
-            error = true;
+            res.end();
         });
-        if(error){ // if there was an error adding the number or finding the party code
-            console.log("Error linking to playlist");
-            sendText("Sorry! There was an error. Try submitting the party code again.", req.body.From);
-        }
     });
 });
 
@@ -234,6 +233,7 @@ function getSong(text, playlist){
     spotifyApi.setRefreshToken(playlist.refresh_token);
     spotifyApi.refreshAccessToken()
     .then(function(data){
+        console.log("Refresh acces token data: "+JSON.stringify(data));
         spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
             if(error || data.body.tracks.items.length === 0){
                 sendText("Sorry, there was an error", text.From);
@@ -331,9 +331,9 @@ app.get('/playlists', function(req, res) {
 function sendText(textMessage, number){
     twilio.messages.create({
         to: number,
-        //from: "+16305818347",
+        from: "+16305818347",
         // Dan's twilio number, used for testing
-        from: "+19784010087",
+        //from: "+19784010087",
         body: textMessage
     }, function(err, message) {
         if(err){
