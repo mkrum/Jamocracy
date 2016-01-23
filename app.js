@@ -67,29 +67,24 @@ app.post('/submit', function(req, res) {
     var refresh_token = req.cookies.refresh;
     spotifyApi.setAccessToken(access_token);
     spotifyApi.setRefreshToken(refresh_token);
-    spotifyApi.refreshAccessToken()
+    spotifyApi.getMe()
     .then(function(data) {
-        spotifyApi.getMe()
-        .then(function(data) {
-            var username = data.body.id;
-            //console.log(username);
-            if(newPlaylistName.length !== 0) { // if the user entered a new playlist
-                spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
-                .then(function(data) {
-                    res.redirect('/success.html'); // show success page on screen
-                    postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
-                }, function(err) {
-                    console.log('Something went wrong in create playlist!', err);
-                });
-            } else { // the user chose an existing playlist
+        var username = data.body.id;
+        //console.log(username);
+        if(newPlaylistName.length !== 0) { // if the user entered a new playlist
+            spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
+            .then(function(data) {
                 res.redirect('/success.html'); // show success page on screen
-                postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token, false);
-            }
-        }, function(err) {
-            console.log('Something went wrong in submit getme!', err);
-        });
+                postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
+            }, function(err) {
+                console.log('Something went wrong in create playlist!', err);
+            });
+        } else { // the user chose an existing playlist
+            res.redirect('/success.html'); // show success page on screen
+            postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token, false);
+        }
     }, function(err) {
-        console.log('Something went wrong in submit refresh token!', err);
+        console.log('Something went wrong in submit getme!', err);
     });
 });
 
@@ -233,8 +228,13 @@ function getSong(text, playlist){
     spotifyApi.setRefreshToken(playlist.refresh_token);
     spotifyApi.refreshAccessToken()
     .then(function(data){
-        console.log("Refresh acces token data: "+JSON.stringify(data.body.access_token));
-        console.log("Access token: "+spotifyApi.getAccessToken());
+        spotifyApi.setAccessToken(data.body.access_token);
+        playlist.access_token = data.body.access_token;
+        console.log("******************************************");
+        console.log(spotifyApi.getAccessToken());
+        console.log(playlist.access_token);
+        console.log(JSON.stringify(playlist));
+        console.log("******************************************");
         spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
             if(error || data.body.tracks.items.length === 0){
                 sendText("Sorry, there was an error", text.From);
@@ -267,10 +267,6 @@ function addSongToPlaylist(song, playlist, number){
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
-    // spotifyApi.refreshAccessToken()
-    // .then(function(data){
-    //     return spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'});
-    // })
     spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'})
     .then(function(playlistTracks){
         return playlistTracks.body.items.map(function(item){return item.track.id;});
@@ -300,10 +296,7 @@ app.get('/playlists', function(req, res) {
     var refresh_token = req.cookies.refresh;
     spotifyApi.setAccessToken(access_token);
     spotifyApi.setRefreshToken(refresh_token);
-    spotifyApi.refreshAccessToken()
-    .then(function(data){
-        return spotifyApi.getMe();
-    })
+    spotifyApi.getMe()
     .then(function(me){
         var user = me.body.id;
         spotifyApi.getUserPlaylists(user)
