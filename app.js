@@ -233,7 +233,8 @@ function getSong(text, playlist){
     spotifyApi.setRefreshToken(playlist.refresh_token);
     spotifyApi.refreshAccessToken()
     .then(function(data){
-        console.log("Refresh acces token data: "+JSON.stringify(data));
+        console.log("Refresh acces token data: "+JSON.stringify(data.body.access_token));
+        console.log("Access token: "+spotifyApi.getAccessToken());
         spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
             if(error || data.body.tracks.items.length === 0){
                 sendText("Sorry, there was an error", text.From);
@@ -266,10 +267,11 @@ function addSongToPlaylist(song, playlist, number){
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
-    spotifyApi.refreshAccessToken()
-    .then(function(data){
-        return spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'});
-    })
+    // spotifyApi.refreshAccessToken()
+    // .then(function(data){
+    //     return spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'});
+    // })
+    spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'})
     .then(function(playlistTracks){
         return playlistTracks.body.items.map(function(item){return item.track.id;});
     })
