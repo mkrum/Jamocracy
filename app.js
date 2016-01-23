@@ -233,6 +233,7 @@ function getSong(text, playlist){
     spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
         if(error || data.body.tracks.items.length === 0){
             sendText("Sorry, there was an error", text.From);
+            console.log("*********   "+error+" ***********");
         } else {
             var song = data.body.tracks.items[0];
             addSongToPlaylist(song, playlist, text.From);
