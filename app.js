@@ -218,7 +218,7 @@ app.post('/SMS', function(req, res){
             });
         })
         .fail(function(err){
-            console.log("Error getting party: "+err);
+            console.log("Error getting party: "+JSON.stringify(err));
             error = true;
         });
         if(error){ // if there was an error adding the number or finding the party code
@@ -230,14 +230,19 @@ app.post('/SMS', function(req, res){
 
 // getSong from text message, calls addSongToPlayList
 function getSong(text, playlist){
-    spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
-        if(error || data.body.tracks.items.length === 0){
-            sendText("Sorry, there was an error", text.From);
-            console.log("*********   "+error+" ***********");
-        } else {
-            var song = data.body.tracks.items[0];
-            addSongToPlaylist(song, playlist, text.From);
-        }
+    spotifyApi.setAccessToken(playlist.access_token);
+    spotifyApi.setRefreshToken(playlist.refresh_token);
+    spotifyApi.refreshAccessToken()
+    .then(function(data){
+        spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
+            if(error || data.body.tracks.items.length === 0){
+                sendText("Sorry, there was an error", text.From);
+                console.log("*********   "+error+" ***********");
+            } else {
+                var song = data.body.tracks.items[0];
+                addSongToPlaylist(song, playlist, text.From);
+            }
+        });
     });
 }
 
