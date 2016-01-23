@@ -189,7 +189,7 @@ app.post('/SMS', function(req, res){
             db.get('parties', partyCode) // search the parties collection for this code
             .then(function(data){
                 playlist = data.body; // get the playlist for this party
-                getSong(req.body, playlist);
+                getSong(req.body, playlist, partyCode);
             })
             .fail(function(err){
                 console.log('error conecting to playlist');
@@ -223,18 +223,25 @@ app.post('/SMS', function(req, res){
 });
 
 // getSong from text message, calls addSongToPlayList
-function getSong(text, playlist){
+function getSong(text, playlist, partyCode){
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
     spotifyApi.refreshAccessToken()
     .then(function(data){
+        // saving new access token for spotifyApi
         spotifyApi.setAccessToken(data.body.access_token);
         playlist.access_token = data.body.access_token;
-        console.log("******************************************");
-        console.log(spotifyApi.getAccessToken());
-        console.log(playlist.access_token);
-        console.log(JSON.stringify(playlist));
-        console.log("******************************************");
+        // saving new access token in database
+        db.newPatchBuilder('parties', partyCode)
+        .replace('access_token', data.body.access_token)
+        .apply()
+        .then(function(result){
+            console.log("Successful reset of access_token");
+        })
+        .fail(function(err){
+            console.log("Error: "+err);
+        });
+
         spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
             if(error || data.body.tracks.items.length === 0){
                 sendText("Sorry, there was an error", text.From);
