@@ -331,9 +331,9 @@ app.get('/playlists', function(req, res) {
 function sendText(textMessage, number){
     twilio.messages.create({
         to: number,
-        from: "+16305818347",
+        //from: "+16305818347",
         // Dan's twilio number, used for testing
-        //from: "+19784010087",
+        from: "+19784010087",
         body: textMessage
     }, function(err, message) {
         if(err){
