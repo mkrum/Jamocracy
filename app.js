@@ -177,12 +177,10 @@ app.post('/SMS', function(req, res){
             db.remove('numbers', req.body.From.substring(2))
             .then(function(data) {
                 sendText("Playlist exited", req.body.From);
-                res.end();
             })
             .fail(function(err) {
                 console.log(err);
                 sendText("Playlist exit error", req.body.From);
-                res.end();
             });
         } else { // if not !, then it is a song
             partyCode = res.body.party;
@@ -243,9 +241,11 @@ function getSong(text, playlist, partyCode){
         });
 
         spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
-            if(error || data.body.tracks.items.length === 0){
+            if(error){
                 sendText("Sorry, there was an error", text.From);
-                console.log("*********   "+error+" ***********");
+                console.log("********* "+error+" *********");
+            } else if(data.body.tracks.items.length === 0){
+                sendText("No song found.", text.From);
             } else {
                 var song = data.body.tracks.items[0];
                 addSongToPlaylist(song, playlist, text.From);
