@@ -1,7 +1,7 @@
 // include node modules
-var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
+//var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
 // Dan's twilio info, used for testing
-// var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
+var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -67,29 +67,24 @@ app.post('/submit', function(req, res) {
     var refresh_token = req.cookies.refresh;
     spotifyApi.setAccessToken(access_token);
     spotifyApi.setRefreshToken(refresh_token);
-    spotifyApi.refreshAccessToken()
+    spotifyApi.getMe()
     .then(function(data) {
-        spotifyApi.getMe()
-        .then(function(data) {
-            var username = data.body.id;
-            //console.log(username);
-            if(newPlaylistName.length !== 0) { // if the user entered a new playlist
-                spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
-                .then(function(data) {
-                    res.redirect('/success.html'); // show success page on screen
-                    postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
-                }, function(err) {
-                    console.log('Something went wrong in create playlist!', err);
-                });
-            } else { // the user chose an existing playlist
+        var username = data.body.id;
+        //console.log(username);
+        if(newPlaylistName.length !== 0) { // if the user entered a new playlist
+            spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
+            .then(function(data) {
                 res.redirect('/success.html'); // show success page on screen
-                postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token, false);
-            }
-        }, function(err) {
-            console.log('Something went wrong in submit getme!', err);
-        });
+                postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
+            }, function(err) {
+                console.log('Something went wrong in create playlist!', err);
+            });
+        } else { // the user chose an existing playlist
+            res.redirect('/success.html'); // show success page on screen
+            postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token, false);
+        }
     }, function(err) {
-        console.log('Something went wrong in submit refresh token!', err);
+        console.log('Something went wrong in submit getme!', err);
     });
 });
 
@@ -193,7 +188,7 @@ app.post('/SMS', function(req, res){
             db.get('parties', partyCode) // search the parties collection for this code
             .then(function(data){
                 playlist = data.body; // get the playlist for this party
-                getSong(req.body, playlist);
+                getSong(req.body, playlist, partyCode);
             })
             .fail(function(err){
                 console.log('error conecting to playlist');
@@ -227,12 +222,25 @@ app.post('/SMS', function(req, res){
 });
 
 // getSong from text message, calls addSongToPlayList
-function getSong(text, playlist){
+function getSong(text, playlist, partyCode){
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
     spotifyApi.refreshAccessToken()
     .then(function(data){
-        console.log("Refresh acces token data: "+JSON.stringify(data));
+        // saving new access token for spotifyApi
+        spotifyApi.setAccessToken(data.body.access_token);
+        playlist.access_token = data.body.access_token;
+        // saving new access token in database
+        db.newPatchBuilder('parties', partyCode)
+        .replace('access_token', data.body.access_token)
+        .apply()
+        .then(function(result){
+            console.log("Successful reset of access_token");
+        })
+        .fail(function(err){
+            console.log("Error: "+err);
+        });
+
         spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
             if(error || data.body.tracks.items.length === 0){
                 sendText("Sorry, there was an error", text.From);
@@ -265,10 +273,7 @@ function addSongToPlaylist(song, playlist, number){
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
-    spotifyApi.refreshAccessToken()
-    .then(function(data){
-        return spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'});
-    })
+    spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'})
     .then(function(playlistTracks){
         return playlistTracks.body.items.map(function(item){return item.track.id;});
     })
@@ -297,10 +302,7 @@ app.get('/playlists', function(req, res) {
     var refresh_token = req.cookies.refresh;
     spotifyApi.setAccessToken(access_token);
     spotifyApi.setRefreshToken(refresh_token);
-    spotifyApi.refreshAccessToken()
-    .then(function(data){
-        return spotifyApi.getMe();
-    })
+    spotifyApi.getMe()
     .then(function(me){
         var user = me.body.id;
         spotifyApi.getUserPlaylists(user)
