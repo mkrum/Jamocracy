@@ -182,7 +182,6 @@ app.post('/SMS', function(req, res){
             db.remove('numbers', req.body.From.substring(2))
             .then(function(data) {
                 sendText("Playlist exited", req.body.From);
-                res.end();
             })
             .fail(function(err) {
                 console.log(err);
