@@ -160,11 +160,13 @@ function putNumberAndPartyInCollections(req, partyCode){
     });
 
     // add creator's number to numbers collection in database
-    db.put('numbers', req.body.number, {
-        'party' : partyCode
-    }).fail(function(err) {
-        console.log('Database failure: '+JSON.stringify(err));
-    });
+	addToUserBase(req.body.number, partyCode, null);
+    //db.put('numbers', req.body.number, {
+      //  'party' : partyCode,
+
+   // }).fail(function(err) {
+     //   console.log('Database failure: '+JSON.stringify(err));
+    //});
 }
 
 // This is executed when the twilio number receives a text
@@ -342,6 +344,16 @@ function sendText(textMessage, number){
         }
     });
 }
+
+function addToUserBase(number, partyCode, songUID){
+	 db.put('numbers', req.body.number, {
+        'party' : partyCode,
+		'lastSong' : songUID
+    }).fail(function(err) {
+        console.log('Database failure: '+JSON.stringify(err));
+    });
+}
+
 
 // function createSimilar(item, type, partyCode) {
 // 	var API_KEY = 'QJKQ71MJKFV2OJMIQ';
