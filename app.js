@@ -183,10 +183,27 @@ app.post('/SMS', function(req, res){
                 console.log(err);
                 sendText("Playlist exit error", req.body.From);
             });
+		} else if (req.body.Body.substring(0,6).toLowerCase() == 'cancel'){
+			db.get('numbers', req.body.From)
+			.then(function(res){
+				song = res.body.lastsong;
+				if (song !== 'null'){
+					partyCode = res.body.party;
+					db.get('parties', partyCode) // search the parties collection for this code
+					.then(function(data){
+						playlist = data.body; // get the playlist for this party
+						removeSong(song, playlist, partyCode);
+					})
+					.fail(function(err){
+						console.log('error conecting to playlist');
+					});
+				}
+			});
         } else { // if not !, then it is a song
             partyCode = res.body.party;
             db.get('parties', partyCode) // search the parties collection for this code
             .then(function(data){
+				updateSong('null', number);
                 playlist = data.body; // get the playlist for this party
                 getSong(req.body, playlist, partyCode);
             })
@@ -358,7 +375,32 @@ function updateSong(number, songURI){
 			console.log('Database failure: '+JSON.stringify(err));
 		});
 }
+//song is passed in only as a uri
+function removeSong(song, playlist, number){
 
+	// set the credentials for the right playlist
+    spotifyApi.setAccessToken(playlist.access_token);
+    spotifyApi.setRefreshToken(playlist.refresh_token);
+    spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'})
+    .then(function(playlistTracks){
+        return playlistTracks.body.items.map(function(item){return item.track.id;});
+    })
+    .then(function(trackIds){
+        if(trackIds.indexOf(song.id) !== -1){
+            spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id, [song])
+            .then(function(data) {
+                sendText("Song removed", number);
+            }, function(err) {
+                console.log('Something went wrong! '+err);
+            });
+        } else {
+            sendText("Song already deleted", number);
+        }
+    })
+    .catch(function(err){
+        console.log(err.messsage);
+    });
+}
 
 // function createSimilar(item, type, partyCode) {
 // 	var API_KEY = 'QJKQ71MJKFV2OJMIQ';
