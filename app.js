@@ -160,13 +160,12 @@ function putNumberAndPartyInCollections(req, partyCode){
     });
 
     // add creator's number to numbers collection in database
-	addToUserBase(req.body.number, partyCode, null);
-    //db.put('numbers', req.body.number, {
-      //  'party' : partyCode,
-
-   // }).fail(function(err) {
-     //   console.log('Database failure: '+JSON.stringify(err));
-    //});
+    db.put('numbers', req.body.number, {
+        'party' : partyCode,
+		'lastSong' : null
+    }).fail(function(err) {
+        console.log('Database failure: '+JSON.stringify(err));
+    });
 }
 
 // This is executed when the twilio number receives a text
@@ -204,6 +203,7 @@ app.post('/SMS', function(req, res){
         .then(function(data){
             db.put('numbers', req.body.From.substring(2), { // link the number
                 'party' : partyCode
+				'lastSong' : null
             },true)
             .then(function(data) {
                 sendText("Connected", req.body.From);
@@ -257,6 +257,8 @@ function getSong(text, playlist, partyCode){
 }
 
 function addSongToPlaylist(song, playlist, number){
+
+	updateSong(number, song.uri);
 
     db.newPatchBuilder('songs', song.name)
     .inc('playCount', 1)
@@ -346,13 +348,15 @@ function sendText(textMessage, number){
     });
 }
 
-function addToUserBase(number, partyCode, songUID){
-	 db.put('numbers', req.body.number, {
-        'party' : partyCode,
-		'lastSong' : songUID
-    }).fail(function(err) {
-        console.log('Database failure: '+JSON.stringify(err));
-    });
+function updateSong(number, songURI){
+	 db.get('numbers', number)
+		.then(function(req, res){
+			db.newPatchBuilder('numbers', number)
+				.replace('lastSong', songURI);
+		})
+		.fail(function(req, res){
+			console.log('Database failure: '+JSON.stringify(err));
+		});
 }
 
 
