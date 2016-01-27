@@ -178,6 +178,7 @@ app.post('/SMS', function(req, res){
             db.remove('numbers', req.body.From.substring(2))
             .then(function(data) {
                 sendText("Playlist exited", req.body.From);
+				updateSong('null', number);
                 res.end();
             })
             .fail(function(err) {
@@ -193,6 +194,7 @@ app.post('/SMS', function(req, res){
 					partyCode = res.body.party;
 					db.get('parties', partyCode) // search the parties collection for this code
 					.then(function(data){
+						updateSong('null', number);
 						playlist = data.body; // get the playlist for this party
 						removeSong(song, playlist, partyCode);
 					})
@@ -205,7 +207,6 @@ app.post('/SMS', function(req, res){
             partyCode = numRes.body.party;
             db.get('parties', partyCode) // search the parties collection for this code
             .then(function(data){
-				updateSong(number, 'null');
                 playlist = data.body; // get the playlist for this party
                 getSong(req.body, playlist, partyCode);
             })
