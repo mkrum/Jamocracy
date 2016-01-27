@@ -172,18 +172,20 @@ app.post('/SMS', function(req, res){
     var playlist, partyCode;
     // check if sender is in numbers collection
     db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
-    .then(function(res){ // if it is found in numbers
+    .then(function(numRes){ // if it is found in numbers
         if(req.body.Body[0] === '!'){ // leave playlist with exclamation point
             db.remove('numbers', req.body.From.substring(2))
             .then(function(data) {
                 sendText("Playlist exited", req.body.From);
+                res.end();
             })
             .fail(function(err) {
                 console.log(err);
                 sendText("Playlist exit error", req.body.From);
+                res.end();
             });
         } else { // if not !, then it is a song
-            partyCode = res.body.party;
+            partyCode = numRes.body.party;
             db.get('parties', partyCode) // search the parties collection for this code
             .then(function(data){
                 playlist = data.body; // get the playlist for this party
@@ -191,6 +193,7 @@ app.post('/SMS', function(req, res){
             })
             .fail(function(err){
                 console.log('error conecting to playlist');
+                res.end();
             });
         }
     })
@@ -306,7 +309,7 @@ app.get('/playlists', function(req, res) {
     spotifyApi.getMe()
     .then(function(me){
         var user = me.body.id;
-        spotifyApi.getUserPlaylists(user)
+        spotifyApi.getUserPlaylists(user, {limit : 50})
         .then(function(data){
             var playlists = data.body.items;
             // remove playlists that the user does not own

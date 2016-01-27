@@ -12,13 +12,17 @@
 				<form action="/submit" method="post" class="form-signin">
 					<h2 class="form-signin-heading">Jamocracy</h2>
 					<div class="form-group">
+							<label>Enter your phone number:</label>
 							<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number">
 					</div>
 					<div class="form-group">
+							<label>Enter the name of a new playlist:</label>
 							<input type="text" id="newPlaylistName" class="form-control" name="newPlaylistName" placeholder="New playlist name">
 					</div>
-					<div id="radios">
+					<div class="form-group">
 						<label>Or choose one of your playlists:</label>
+						<select class="form-control" id="playlist-select" name="existingPlaylistId">
+						</select>
 					</div>
 					<button type="submit" class="btn btn-lg btn-success btn-block">Submit</button>
 				</form>
@@ -29,19 +33,14 @@
 <script>
 	$.getJSON( "/playlists", function(playlists) {
 		if(playlists.length === 0){
-			$("#radios").remove();
+			$("#select-playlist").remove();
 		}
-
+		var select = document.getElementById('playlist-select')
 		for(var i = 0; i < playlists.length; i++){
-			var radioButton = $("\
-				<div class='radio'>\
-  					<label>\
-    					<input type='radio' name='existingPlaylistId' value='"+playlists[i].id+"'>\
-    						"+playlists[i].name+"\
-  					</label>\
-				</div>\
-			");
-			$('#radios').append(radioButton);
+			var selectOption = document.createElement('option');
+			selectOption.value = playlists[i].id;
+			selectOption.text = playlists[i].name;
+			select.appendChild(selectOption);
 		}
 	});
 </script>
