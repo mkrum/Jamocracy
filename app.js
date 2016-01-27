@@ -187,6 +187,7 @@ app.post('/SMS', function(req, res){
                 res.end();
             });
 		} else if (req.body.Body[0] === '/'){
+			console.log("caught");
 			db.get('numbers', req.body.From)
 			.then(function(res){
 				song = res.body.lastsong;
@@ -382,6 +383,7 @@ function updateSong(number, songURI){
 }
 //song is passed in only as a uri
 function removeSong(song, playlist, number){
+	console.log("In remove");
 
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
