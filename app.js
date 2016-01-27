@@ -187,7 +187,6 @@ app.post('/SMS', function(req, res){
                 res.end();
             });
 		} else if (req.body.Body[0] === '/'){
-			console.log("caught");
 			db.get('numbers', req.body.From.substring(2))
 			.then(function(res){
 				song = res.body.lastSong;
@@ -195,7 +194,6 @@ app.post('/SMS', function(req, res){
 					partyCode = res.body.party;
 					db.get('parties', partyCode) // search the parties collection for this code
 					.then(function(data){
-                        console.log("inside get parties");
 						playlist = data.body; // get the playlist for this party
 						removeSong(song, playlist, req.body.From);
 					})
@@ -228,7 +226,7 @@ app.post('/SMS', function(req, res){
 				'lastSong' : null
             },true)
             .then(function(data) {
-                sendText("Connected", req.body.From);
+                sendText("Connected! You can now search for songs and artists to add. To exit the playlist, text '!'. To remove your last song, text '/'.", req.body.From);
                 res.end();
             })
             .fail(function(err) {
@@ -308,7 +306,7 @@ function addSongToPlaylist(song, playlist, number){
             spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
             .then(function(data) {
                 console.log('Added track to playlist!');
-                sendText("Song added: "+song.name+" by "+song.artists[0].name, number);
+                sendText("Song added: "+song.name+" by "+song.artists[0].name+". To remove, text '/'.", number);
             }, function(err) {
                 console.log('Something went wrong! '+err);
             });
@@ -382,8 +380,6 @@ function updateSong(number, songURI){
 }
 //song is passed in only as a uri
 function removeSong(song, playlist, number){
-	console.log("In remove");
-
 	// set the credentials for the right playlist
     spotifyApi.setAccessToken(playlist.access_token);
     spotifyApi.setRefreshToken(playlist.refresh_token);
@@ -392,7 +388,6 @@ function removeSong(song, playlist, number){
         return playlistTracks.body.items.map(function(item){return item.track.id;});
     })
     .then(function(trackIds){
-        console.log(number);
 		spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id,
             [{
                 'uri' : song
