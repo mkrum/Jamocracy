@@ -196,7 +196,6 @@ app.post('/SMS', function(req, res){
 					db.get('parties', partyCode) // search the parties collection for this code
 					.then(function(data){
                         console.log("inside get parties");
-						updateSong('null', number);
 						playlist = data.body; // get the playlist for this party
 						removeSong(song, playlist, partyCode);
 					})
