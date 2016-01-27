@@ -222,7 +222,7 @@ app.post('/SMS', function(req, res){
         db.get('parties', partyCode) // search for this party
         .then(function(data){
             db.put('numbers', req.body.From.substring(2), { // link the number
-                'party' : partyCode
+                'party' : partyCode,
 				'lastSong' : null
             },true)
             .then(function(data) {
