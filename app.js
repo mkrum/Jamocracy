@@ -186,7 +186,7 @@ app.post('/SMS', function(req, res){
                 sendText("Playlist exit error", req.body.From);
                 res.end();
             });
-		} else if (req.body.Body.substring(0).toLowerCase() == '/'){
+		} else if (req.body.Body[0] === '/'){
 			db.get('numbers', req.body.From)
 			.then(function(res){
 				song = res.body.lastsong;
