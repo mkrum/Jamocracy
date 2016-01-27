@@ -188,7 +188,7 @@ app.post('/SMS', function(req, res){
             });
 		} else if (req.body.Body[0] === '/'){
 			console.log("caught");
-			db.get('numbers', req.body.From)
+			db.get('numbers', req.body.From.substring(2))
 			.then(function(res){
 				song = res.body.lastsong;
 				if (song !== 'null'){
