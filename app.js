@@ -161,7 +161,8 @@ function putNumberAndPartyInCollections(req, partyCode){
 
     // add creator's number to numbers collection in database
     db.put('numbers', req.body.number, {
-        'party' : partyCode
+        'party' : partyCode,
+		'lastSong' : null
     }).fail(function(err) {
         console.log('Database failure: '+JSON.stringify(err));
     });
@@ -184,10 +185,27 @@ app.post('/SMS', function(req, res){
                 sendText("Playlist exit error", req.body.From);
                 res.end();
             });
+		} else if (req.body.Body.substring(0,6).toLowerCase() == 'cancel'){
+			db.get('numbers', req.body.From)
+			.then(function(res){
+				song = res.body.lastsong;
+				if (song !== 'null'){
+					partyCode = res.body.party;
+					db.get('parties', partyCode) // search the parties collection for this code
+					.then(function(data){
+						playlist = data.body; // get the playlist for this party
+						removeSong(song, playlist, partyCode);
+					})
+					.fail(function(err){
+						console.log('error conecting to playlist');
+					});
+				}
+			});
         } else { // if not !, then it is a song
             partyCode = numRes.body.party;
             db.get('parties', partyCode) // search the parties collection for this code
             .then(function(data){
+				updateSong('null', number);
                 playlist = data.body; // get the playlist for this party
                 getSong(req.body, playlist, partyCode);
             })
@@ -205,6 +223,7 @@ app.post('/SMS', function(req, res){
         .then(function(data){
             db.put('numbers', req.body.From.substring(2), { // link the number
                 'party' : partyCode
+				'lastSong' : null
             },true)
             .then(function(data) {
                 sendText("Connected", req.body.From);
@@ -258,6 +277,8 @@ function getSong(text, playlist, partyCode){
 }
 
 function addSongToPlaylist(song, playlist, number){
+
+	updateSong(number, song.uri);
 
     db.newPatchBuilder('songs', song.name)
     .inc('playCount', 1)
@@ -344,6 +365,43 @@ function sendText(textMessage, number){
         if(err){
             console.log("error: "+JSON.stringify(err));
         }
+    });
+}
+
+function updateSong(number, songURI){
+	 db.get('numbers', number)
+		.then(function(req, res){
+			db.newPatchBuilder('numbers', number)
+				.replace('lastSong', songURI);
+		})
+		.fail(function(req, res){
+			console.log('Database failure: '+JSON.stringify(err));
+		});
+}
+//song is passed in only as a uri
+function removeSong(song, playlist, number){
+
+	// set the credentials for the right playlist
+    spotifyApi.setAccessToken(playlist.access_token);
+    spotifyApi.setRefreshToken(playlist.refresh_token);
+    spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'})
+    .then(function(playlistTracks){
+        return playlistTracks.body.items.map(function(item){return item.track.id;});
+    })
+    .then(function(trackIds){
+        if(trackIds.indexOf(song.id) !== -1){
+            spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id, [song])
+            .then(function(data) {
+                sendText("Song removed", number);
+            }, function(err) {
+                console.log('Something went wrong! '+err);
+            });
+        } else {
+            sendText("Song already deleted", number);
+        }
+    })
+    .catch(function(err){
+        console.log(err.messsage);
     });
 }
 
