@@ -200,7 +200,7 @@ app.post('/SMS', function(req, res){
 						removeSong(song, playlist, partyCode);
 					})
 					.fail(function(err){
-						console.log('error conecting to playlist 1: '+JSON.strigify(err));
+						console.log('error conecting to playlist 1: '+JSON.stringify(err));
 					});
 				}
 			});
