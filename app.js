@@ -396,14 +396,14 @@ function removeSong(song, playlist, number){
             .then(function(data) {
                 sendText("Song removed", number);
             }, function(err) {
-                console.log('Something went wrong! '+err);
+                console.log('Something went wrong! RS '+err);
             });
         } else {
-            sendText("Song already deleted", number);
+            sendText("RS Song already deleted", number);
         }
     })
     .catch(function(err){
-        console.log(err.messsage);
+        console.log("RS" + err.messsage);
     });
 	updateSong(number, 'null');
 }
