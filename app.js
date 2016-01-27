@@ -395,7 +395,7 @@ function removeSong(song, playlist, number){
     .then(function(trackIds){
 		console.log(song);
 		var tracks = { tracks : [{ uri : song }] };
-		spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id, tracks)
+		spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id, [song])
 		.then(function(data) {
 			sendText("Song removed", number);
 		}, function(err) {
