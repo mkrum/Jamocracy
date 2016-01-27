@@ -279,7 +279,8 @@ function getSong(text, playlist, partyCode){
 }
 
 function addSongToPlaylist(song, playlist, number){
-
+    console.log("number: "+number);
+    console.log("uri: "+song.uri);
 	updateSong(number, song.uri);
 
     db.newPatchBuilder('songs', song.name)
