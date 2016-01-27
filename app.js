@@ -403,6 +403,7 @@ function removeSong(song, playlist, number){
     .catch(function(err){
         console.log(err.messsage);
     });
+	updateSong('null', number);
 }
 
 // function createSimilar(item, type, partyCode) {
