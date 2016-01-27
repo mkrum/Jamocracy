@@ -405,7 +405,8 @@ function removeSong(song, playlist, number){
         }
     })
     .catch(function(err){
-        console.log("RS" + err.messsage);
+        console.log("RS "+err);
+        console.log("JSON: "+JSON.stringify(err));
     });
 	updateSong(number, 'null');
 }
