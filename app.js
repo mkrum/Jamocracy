@@ -393,25 +393,12 @@ function removeSong(song, playlist, number){
         return playlistTracks.body.items.map(function(item){return item.track.id;});
     })
     .then(function(trackIds){
-<<<<<<< HEAD
 		spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id, [song])
 		.then(function(data) {
 			sendText("Song removed", number);
 		}, function(err) {
 			console.log('Something went wrong! RS '+err);
 		});
-=======
-        if(trackIds.indexOf(song.id) !== -1){
-            spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id, [song])
-            .then(function(data) {
-                sendText("Song removed", number);
-            }, function(err) {
-                console.log('Something went wrong! RS '+JSON.stringify(err));
-            });
-        } else {
-            sendText("RS Song already deleted", number);
-        }
->>>>>>> 675b1a510602b4254f5e29ab6cd675460281c6c7
     })
     .catch(function(err){
         console.log("RS "+err);
