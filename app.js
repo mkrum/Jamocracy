@@ -194,7 +194,7 @@ app.post('/SMS', function(req, res){
 					db.get('parties', partyCode) // search the parties collection for this code
 					.then(function(data){
 						playlist = data.body; // get the playlist for this party
-						//removeSong(song, playlist, partyCode);
+						removeSong(song, playlist, partyCode);
 					})
 					.fail(function(err){
 						console.log('error conecting to playlist');
@@ -205,7 +205,7 @@ app.post('/SMS', function(req, res){
             partyCode = numRes.body.party;
             db.get('parties', partyCode) // search the parties collection for this code
             .then(function(data){
-				//updateSong('null', number);
+				updateSong(number, 'null');
                 playlist = data.body; // get the playlist for this party
                 getSong(req.body, playlist, partyCode);
             })
@@ -403,7 +403,7 @@ function removeSong(song, playlist, number){
     .catch(function(err){
         console.log(err.messsage);
     });
-	updateSong('null', number);
+	updateSong(number, 'null');
 }
 
 // function createSimilar(item, type, partyCode) {
