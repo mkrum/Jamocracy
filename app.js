@@ -398,7 +398,7 @@ function removeSong(song, playlist, number){
             .then(function(data) {
                 sendText("Song removed", number);
             }, function(err) {
-                console.log('Something went wrong! RS '+err);
+                console.log('Something went wrong! RS '+JSON.stringify(err));
             });
         } else {
             sendText("RS Song already deleted", number);
