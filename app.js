@@ -190,7 +190,7 @@ app.post('/SMS', function(req, res){
 			console.log("caught");
 			db.get('numbers', req.body.From.substring(2))
 			.then(function(res){
-				song = res.body.lastsong;
+				song = res.body.lastSong;
 				if (song !== 'null'){
 					partyCode = res.body.party;
 					db.get('parties', partyCode) // search the parties collection for this code
