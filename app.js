@@ -197,7 +197,7 @@ app.post('/SMS', function(req, res){
 						removeSong(song, playlist, partyCode);
 					})
 					.fail(function(err){
-						console.log('error conecting to playlist');
+						console.log('error conecting to playlist 1');
 					});
 				}
 			});
@@ -210,7 +210,7 @@ app.post('/SMS', function(req, res){
                 getSong(req.body, playlist, partyCode);
             })
             .fail(function(err){
-                console.log('error conecting to playlist');
+                console.log('error conecting to playlist 2');
                 res.end();
             });
         }
