@@ -373,7 +373,8 @@ function updateSong(number, songURI){
 	 db.get('numbers', number)
 		.then(function(req, res){
 			db.newPatchBuilder('numbers', number)
-				.replace('lastSong', songURI);
+				.replace('lastSong', songURI)
+                .apply();
 		})
 		.fail(function(req, res){
 			console.log('Database failure: '+JSON.stringify(err));
