@@ -197,7 +197,7 @@ app.post('/SMS', function(req, res){
 					.then(function(data){
                         console.log("inside get parties");
 						playlist = data.body; // get the playlist for this party
-						removeSong(song, playlist, partyCode);
+						removeSong(song, playlist, req.body.From);
 					})
 					.fail(function(err){
 						console.log('error conecting to playlist 1: '+err);
@@ -392,7 +392,7 @@ function removeSong(song, playlist, number){
         return playlistTracks.body.items.map(function(item){return item.track.id;});
     })
     .then(function(trackIds){
-        console.log(playlist.creatorName);
+        console.log(number);
 		spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id,
             [{
                 'uri' : song
