@@ -183,7 +183,6 @@ app.post('/SMS', function(req, res){
             .fail(function(err) {
                 console.log(err);
                 sendText("Playlist exit error", req.body.From);
-                res.end();
             });
 		} else if (req.body.Body[0] === '/'){
 			db.get('numbers', req.body.From.substring(2))
