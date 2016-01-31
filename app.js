@@ -179,7 +179,6 @@ app.post('/SMS', function(req, res){
             .then(function(data) {
                 sendText("Playlist exited", req.body.From);
 				updateSong('null', number);
-                res.end();
             })
             .fail(function(err) {
                 console.log(err);
@@ -211,7 +210,6 @@ app.post('/SMS', function(req, res){
             })
             .fail(function(err){
                 console.log('error conecting to playlist 2');
-                res.end();
             });
         }
     })
