@@ -178,12 +178,12 @@ app.post('/SMS', function(req, res){
             db.remove('numbers', req.body.From.substring(2))
             .then(function(data) {
                 sendText("Playlist exited", req.body.From);
-				updateSong('null', number);
+				updateSong('null', req.body.From.substring(2));
             })
             .fail(function(err) {
                 console.log(err);
                 sendText("Playlist exit error", req.body.From);
-            });
+				});
 		} else if (req.body.Body[0] === '/'){
 			db.get('numbers', req.body.From.substring(2))
 			.then(function(res){

@@ -17,7 +17,6 @@ def mostPopularSong():
 
     print "Most Popular Song: ", songName
     print "Plays: ", max
-    print getAreaCodes(song)
 
 def displayNumSongs():
     songs = client.list('songs').all()
@@ -44,7 +43,7 @@ if __name__ == '__main__':
     print " JAMOCRACY STATS"
     displayNumUsers()
     mostPopularSong()
-    #displayNumSongs()
+    displayNumSongs()
     #printSongs()
 
      
