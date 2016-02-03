@@ -1,23 +1,217 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Jamocracy: Bring the Jams</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="style.css">
-		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
-  </head>
-  <body>
-    <div class="container">
-      <div class="jumbotron">
-        <h1>Jamocracy</h1>
-        <p class="lead">
-          Jamocracy is a web service that enables users to add songs to Spotify playlists via text message.
-        </p>
-        <p>
-          <a class="btn btn-lg btn-success" href="/login" role="button">Log in with Spotify</a>
-        </p>
-      </div>
-    </div>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Jamocracy - Send the Jams</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+
+    <!-- Custom Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="css/animate.min.css" type="text/css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/creative.css" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top">
+
+    <header>
+        <div class="header-content">
+            <div class="header-content-inner">
+                <h1>Jamocracy</h1>
+                <br><br>
+                <p>If you've never used Jamocracy before click 'Get Started' and we'll quickly show you how it works, otherwise go ahead and make your playlists collaberative</p>
+                <a href="/login" class="btn btn-primary btn-xl page-scroll">Build Playlist</a><br><br><br>
+                <a href="#firstStop" class="btn btn-primary btn-xl page-scroll">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-primary" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h2 class="section-heading" id="firstStop">Here's how it works</h2>
+                    <hr class="light">
+                    <div>
+                        <span>You set up a playlist here</span><br>
+                        <span>Your guests text songs to us</span><br>
+                        <span>We ensure your social gathering is both democratic and #bumpin</span><br>
+                    </div>
+                    <br>
+                    <a href="#stepTwo" class="btn btn-default btn-xl wow page-scroll">Got it</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <aside class="bg-dark">
+        <div class="container text-center">
+            <div class="call-to-action">
+                <h2>How the host uses it:</h2>
+            </div>
+        </div>
+    </aside> 
+
+    <section id="services">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" id="stepTwo">Playlist Set Up</h2>
+                    <hr class="primary">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-unlock wow text-primary"></i>
+                        <h3>Login to Spotify</h3>
+                        <p class="text-muted">You'll be redirected upon clicking 'Build Playlist'</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-phone-square wow text-primary"></i>
+                        <h3>Input Phone #</h3>
+                        <p class="text-muted">So we can eventually text you the party code</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-music wow text-primary" data-wow-delay=".2s"></i>
+                        <h3>Assign Playlist</h3>
+                        <p class="text-muted">We'll give you the option to use an existing playlist or create a new one</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-check wow text-primary" data-wow-delay=".3s"></i>
+                        <h3>Get Playlist Code</h3>
+                        <p class="text-muted">Jamocracy will text you the code to distribute to your guests.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </br></br>
+        <center><a href="#stepThree" class="btn btn-primary btn-xl page-scroll">Got it</a></center>
+    </section>
+
+    <aside class="bg-dark">
+        <div class="container text-center">
+            <div class="call-to-action">
+                <h2>How your guests use it:</h2>
+            </div>
+        </div>
+    </aside>    
+
+    <section id="setup">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading" id="stepThree">Everyone adds songs</h2>
+                    <hr class="primary">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-mobile-phone wow text-primary"></i>
+                        <h3>Text code to the Jamocracy Phone #</h3>
+                        <p class="text-muted">Host will have the number and code</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-check wow text-primary"></i>
+                        <h3>Receive Connection Messasge</h3>
+                        <p class="text-muted">We'll text you back saying you're in</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-music wow text-primary" data-wow-delay=".2s"></i>
+                        <h3>Send Request</h3>
+                        <p class="text-muted">Text the name of the song you want to hear, include artist name if it's a generic song title</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-smile-o wow text-primary" data-wow-delay=".2s"></i>
+                        <h3>Boogie</h3>
+                        <p class="text-muted">You've now made sure that the playlist is killer, so you have no choice but to bust a move</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </br></br>
+        <center><a href="#back" class="btn btn-primary btn-xl page-scroll">Got it</a></center>
+    </section>
+
+    <aside class="bg-dark">
+        <div class="container text-center">
+            <div class="call-to-action">
+                <a href="#" id="back" class="btn btn-default btn-xl wow ">Get Started</a>
+            </div>
+        </div>
+    </aside>
+
+
+
+    <section id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h2 class="section-heading">Let's Get In Touch!</h2>
+                    <hr class="primary">
+                    <p>Anything you think we should hear? Questions, bugs, unrelenting praise for this incredible serice? All are welcome.</p>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fa fa-envelope-o fa-3x wow " data-wow-delay=".1s"></i>
+                    <p><a href="mailto:rbrannin@nd.edu,dkerriga@nd.edu,mkdrumdi1@nd.edu">team@jamocracy.com</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="js/jquery.easing.min.js"></script>
+    <script src="js/jquery.fittext.js"></script>
+    <script src="js/wow.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/creative.js"></script>
+
+</body>
+
 </html>
