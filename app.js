@@ -402,19 +402,3 @@ function removeSong(song, playlist, number){
 	updateSong(number, 'null');
 }
 
-//BOT TEST
-
-var bot = require('fancy-groupme-bot');
-
-var botConfig = { token:'wtZdFDWIYe3EiphTq28ICzsUuap5BX9NATKFk2iK',
-                  group:'19536316',
-                  name:'test',
-                  url:'jamocracy.xyz/SMS' };
-
-var myBot = bot(botConfig);
-
-
-myBot.on('botRegistered', function(bot) {
-  console.log('I am regitered');
-  }
-);
