@@ -110,7 +110,14 @@ function randomString(){
     for(var i = 0; i < 4;i++){
         string += letters[Math.floor(Math.random() * 26)];
     }
-    return string;
+	var valid = 0;
+	db.get('parties', code)		//check out this recursion
+	.then(function(res) {
+		 return randomString();
+	})
+	.fail(function(res) {
+		return string;
+	});
 }
 
 // Create playlist code, store playlist in database
@@ -134,20 +141,9 @@ app.post('/success', function(req, res) {
         })
         .fail(function (err) {
             console.log("Error in search: "+err);
-            putNumberAndPartyInCollections(req, randomString());
+            putNumberAndPartyInCollections(req, randomString()); 
         });
     } else { // default party code is 4 random letters
-		var valid = 0;
-		do{
-			var code = randomString();
-			db.get('parties', code)
-				.then(function(res) {
-					 valid = 0;
-				})
-				.fail(function(res) {
-					valid = 1;
-				});
-		}while(!valid);
         putNumberAndPartyInCollections(req, code);
     }
     res.end();
