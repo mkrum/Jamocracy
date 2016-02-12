@@ -113,11 +113,15 @@ function randomString(){
 	var valid = 0;
 	db.get('parties', code)		//check out this recursion
 	.then(function(res) {
-		 return randomString();
+		 valid = 0;
 	})
 	.fail(function(res) {
-		return string;
+		valid = 1;
 	});
+	if(valid)
+		return string;
+	else
+		return randomString();
 }
 
 // Create playlist code, store playlist in database
