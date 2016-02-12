@@ -110,6 +110,21 @@ function randomString(){
     for(var i = 0; i < 4;i++){
         string += letters[Math.floor(Math.random() * 26)];
     }
+<<<<<<< HEAD
+=======
+	var valid = 0;
+	db.get('parties', code)		//check out this recursion
+	.then(function(res) {
+		 valid = 0;
+	})
+	.fail(function(res) {
+		valid = 1;
+	});
+	if(valid)
+		return string;
+	else
+		return randomString();
+>>>>>>> db85c9671307c53a1bdc75d3811a744e22376bcb
 	return string;
 }
 
