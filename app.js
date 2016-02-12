@@ -137,7 +137,7 @@ app.post('/success', function(req, res) {
             putNumberAndPartyInCollections(req, randomString());
         });
     } else { // default party code is 4 random letters
-        putNumberAndPartyInCollections(req, code);
+        putNumberAndPartyInCollections(req, randomString());
     }
     res.end();
 });
