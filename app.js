@@ -177,21 +177,19 @@ app.post('/SMS', function(req, res){
         if(req.body.Body[0] === '!'){ // leave playlist with exclamation point
             db.remove('numbers', req.body.From.substring(2))
             .then(function(data) {
-                //sendText("Playlist exited", req.body.From);
-                respondToText("Playlist exited", res);
+                sendText("Playlist exited", req.body.From);
 				updateSong('null', req.body.From.substring(2));
             })
             .fail(function(err) {
                 console.log(err);
-                //sendText("Playlist exit error", req.body.From);
-                respondToText("Playlist exited", res);
+                sendText("Playlist exit error", req.body.From);
 				});
 		} else if (req.body.Body[0] === '/'){
 			db.get('numbers', req.body.From.substring(2))
-			.then(function(result){
-				song = result.body.lastSong;
+			.then(function(res){
+				song = res.body.lastSong;
 				if (song !== 'null'){
-					partyCode = result.body.party;
+					partyCode = res.body.party;
 					db.get('parties', partyCode) // search the parties collection for this code
 					.then(function(data){
 						playlist = data.body; // get the playlist for this party
@@ -225,15 +223,13 @@ app.post('/SMS', function(req, res){
 				'lastSong' : null
             },true)
             .then(function(data) {
-                //sendText("Connected! You can now search for songs and artists to add. To exit the playlist, text '!'. To remove your last song, text '/'.", req.body.From);
-                //res.end();
-                respondToText("Connected! You can now search for songs and artists to add. To exit the playlist, text '!'. To remove your last song, text '/'.", res);
+                sendText("Connected! You can now search for songs and artists to add. To exit the playlist, text '!'. To remove your last song, text '/'.", req.body.From);
+                res.end();
             })
             .fail(function(err) {
                 console.log("Error putting number: "+err);
-                //sendText("Sorry! There was an error. Try submitting the party code again.", req.body.From);
-                respondToText("Sorry! There was an error. Try submitting the party code again.", res);
-                //res.end();
+                sendText("Sorry! There was an error. Try submitting the party code again.", req.body.From);
+                res.end();
             });
         })
         .fail(function(err){
@@ -366,13 +362,6 @@ function sendText(textMessage, number){
             console.log("error: "+JSON.stringify(err));
         }
     });
-}
-
-function respondToText(message, res){
-    var twiml = new twilio.TwimlResponse();
-    twiml.message(message);
-    res.type('text/xml');
-    res.send(twiml.toString());
 }
 
 function updateSong(number, songURI){
