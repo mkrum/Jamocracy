@@ -20,8 +20,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 // Set credentials, scope, and state
 var redirectUri = port === '5000' ? 'http://127.0.0.1:5000/auth':'http://jamocracy.herokuapp.com/auth';
 var credentials = {
-    clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
-    clientSecret : '967795bf432646f69797a1a7e7d97a0e',
+    clientId : 'CLIENT ID',
+    clientSecret : 'CLIENT SECRET',
     redirectUri : redirectUri
 };
 
