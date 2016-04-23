@@ -146,7 +146,7 @@ app.post('/success', function(req, res) {
 // add number and party to database
 function putNumberAndPartyInCollections(req, partyCode){
     //  send text response to playlist creator
-    sendText('This is your Jamocracy Number! Party Code: '+partyCode, req.body.number);
+    sendText('This is your Jamocracy Number! Text "!" to exit this playlist. Party Code: '+partyCode, req.body.number);
 
     // create or update party in parties collection in database
     db.put('parties', partyCode, {
