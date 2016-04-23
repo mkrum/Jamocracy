@@ -1,7 +1,5 @@
 // include node modules
-//var twilio = require('twilio')('ACdc7d3faac00d72c93a830191947c999a', 'dccfe5571db0d393c727cee38b68a730');
-// Dan's twilio info, used for testing
-var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
+var twilio = require('twilio')('API CREDENTIALS', 'API CREDENTIALS');
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -9,7 +7,7 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
-var db = require('orchestrate')('f61515c7-8df9-4003-ab45-2f3e259610ff');
+var db = require('orchestrate')('API CREDENTIALS');
 // Set up node app and server
 var app = express();
 var port = (process.env.PORT || 5000);
