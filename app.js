@@ -23,7 +23,7 @@ var credentials = {
     clientSecret : '967795bf432646f69797a1a7e7d97a0e',
     redirectUri : redirectUri
 
-};)
+};
 
 var scopes = ['playlist-read-private', 'playlist-modify-public', 'playlist-modify-private', 'user-read-private'];
 var stateKey = 'spotify_auth_state';
