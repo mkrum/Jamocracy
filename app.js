@@ -1,4 +1,7 @@
-var twilio = require('twilio')('ACe51cb73194af06d1048ce2b11ffb8cb1', '437e0f5d041b542c58f09b814b7e5639');//D3PRqy1WEm9fdZ2OcoluwYU70BpawbHJ
+// load config file to get api credentials
+var config = require('./config.json')
+// include node modules
+var twilio = require('twilio')(config.twilio_account_sid, config.twilio_auth_token);
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -6,7 +9,9 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
-var db = require('orchestrate')('f61515c7-8df9-4003-ab45-2f3e259610ff');
+var db = require('orchestrate')(config.orchestrate);
+
+// set up node app and server
 var app = express();
 var port = (process.env.PORT || 5000);
 var server = app.listen(port);
@@ -15,12 +20,11 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-
-
+// Set up credentials, scope, and state
 var redirectUri = port === '5000' ? 'http://127.0.0.1:5000/auth':'http://jamocracy.herokuapp.com/auth';
 var credentials = {
-    clientId : '0095976fe9c24fc5a6e4a7559e01f37e',
-    clientSecret : '967795bf432646f69797a1a7e7d97a0e',
+    clientId : config.spotify_id,
+    clientSecret : config.spotify_secret,
     redirectUri : redirectUri
 
 };
