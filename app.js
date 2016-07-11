@@ -1,9 +1,5 @@
-<<<<<<< 2f0083d4c7349cf20403d06d15f51d101a7d424e
 // include node modules
 var twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-=======
-var twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
->>>>>>> Use environment variables for secrets
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -11,13 +7,9 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
-<<<<<<< 2f0083d4c7349cf20403d06d15f51d101a7d424e
 var db = require('orchestrate')(process.env.ORCHESTRATE);
 
 // set up node app and server
-=======
-var db = require('orchestrate')(process.env.ORCHESTRATE_API_KEY);
->>>>>>> Use environment variables for secrets
 var app = express();
 var port = (process.env.PORT || '5000');
 var server = app.listen(port);
@@ -27,7 +19,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 // Set up credentials, scope, and state
-var redirectUri = port === '5000' ? 'http://127.0.0.1:5000/auth':'http://jamocracy.herokuapp.com/auth';
+function makeUri(path) {
+    var base = port === '5000' ?
+        'http://127.0.0.1:5000/' : 'http://jamocracy.herokuapp.com/';
+    return base + path;
+}
+
+var redirectUri = makeUri('auth');
 var credentials = {
     clientId : process.env.SPOTIFY_CLIENT_ID,
     clientSecret : process.env.SPOTIFY_CLIENT_SECRET,
@@ -98,7 +96,7 @@ app.post('/submit', function(req, res) {
 
 // send number, name, and playlist id to app.post('/success')
 function postToSuccess(phoneNumber, username, playlistId, access, refresh, isNew){
-    var success = port === '5000' ? 'http://127.0.0.1:5000/success':'http://jamocracy.herokuapp.com/success';
+    var success = makeUri('success');
     request.post(success, {
         form: {
             number:phoneNumber,
