@@ -8,6 +8,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "arrow-spacing": "error",
         "indent": [
             "error",
             4
@@ -17,6 +18,9 @@
             "unix"
         ],
         "no-console": "off",
+        "no-const-assign": "error",
+        "no-var": "error",
+        "prefer-arrow-callback": "error",
         "quotes": [
             "error",
             "single"
