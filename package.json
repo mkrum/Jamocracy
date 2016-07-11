@@ -5,7 +5,10 @@
   "dependencies": {
     "body-parser": "^1.14.1",
     "compression": "^1.6.0",
+    "cookie-parser": "^1.4.0",
     "express": "^4.13.3",
+    "orchestrate": "^0.6.0",
+    "request": "^2.65.0",
     "spotify-web-api-node": "^2.2.0",
     "twilio": "^2.5.1"
   },
