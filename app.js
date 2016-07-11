@@ -11,8 +11,11 @@ var db = require('orchestrate')(process.env.ORCHESTRATE);
 
 // set up node app and server
 var app = express();
+var host = (process.env.HOST || 'http://localhost:5000');
 var port = (process.env.PORT || '5000');
-var server = app.listen(port);
+var server = app.listen(port, function () {
+    console.log('Jamocracy started on port', port);
+});
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -20,9 +23,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // Set up credentials, scope, and state
 function makeUri(path) {
-    var base = port === '5000' ?
-        'http://127.0.0.1:5000/' : 'http://jamocracy.herokuapp.com/';
-    return base + path;
+    return host + '/' + path;
 }
 
 var redirectUri = makeUri('auth');
