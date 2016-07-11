@@ -1,10 +1,11 @@
 // include node modules
-var twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+var twilio = require('twilio')(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+);
 var bodyParser = require('body-parser');
-var path = require('path');
 var express = require('express');
 var request = require('request');
-var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
 var db = require('orchestrate')(process.env.ORCHESTRATE);
@@ -13,7 +14,8 @@ var db = require('orchestrate')(process.env.ORCHESTRATE);
 var app = express();
 var host = (process.env.HOST || 'http://localhost:5000');
 var port = (process.env.PORT || '5000');
-var server = app.listen(port, function () {
+
+app.listen(port, function() {
     console.log('Jamocracy started on port', port);
 });
 app.use(express.static(__dirname + '/public'));
@@ -112,7 +114,7 @@ function postToSuccess(phoneNumber, username, playlistId, access, refresh, isNew
 
 //Generates a random string of four capital letters
 function randomString(){
-    letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var string = '';
     for(var i = 0; i < 4;i++){
         string += letters[Math.floor(Math.random() * 26)];
@@ -133,14 +135,14 @@ app.post('/success', function(req, res) {
             .query(req.body.playlist)
             .then(function (data) {
                 if(data.body.count !== 0){
-                    partyCode = data.body.results[0].path.key;
+                    var partyCode = data.body.results[0].path.key;
                     putNumberAndPartyInCollections(req, partyCode);
                 } else {
                     putNumberAndPartyInCollections(req, randomString());
                 }
             })
         .fail(function (err) {
-            console.log("Error in search: "+err);
+            console.log('Error in search: ' + err);
             putNumberAndPartyInCollections(req, randomString());
         });
     } else { // default party code is 4 random letters
@@ -183,18 +185,18 @@ app.post('/SMS', function(req, res){
         .then(function(numRes){ // if it is found in numbers
             if(req.body.Body[0] === '!'){ // leave playlist with exclamation point
                 db.remove('numbers', req.body.From.substring(2))
-                    .then(function(data) {
-                        sendText("Playlist exited", req.body.From);
+                    .then(function() {
+                        sendText('Playlist exited', req.body.From);
                         updateSong('null', req.body.From.substring(2));
                     })
                 .fail(function(err) {
                     console.log(err);
-                    sendText("Playlist exit error", req.body.From);
+                    sendText('Playlist exit error', req.body.From);
                 });
             } else if (req.body.Body[0] === '/'){
                 db.get('numbers', req.body.From.substring(2))
                     .then(function(res){
-                        song = res.body.lastSong;
+                        var song = res.body.lastSong;
                         if (song !== 'null'){
                             partyCode = res.body.party;
                             db.get('parties', partyCode) // search the parties collection for this code
@@ -215,32 +217,32 @@ app.post('/SMS', function(req, res){
                         getSong(req.body, playlist, partyCode);
                     })
                 .fail(function(err){
-                    console.log('error conecting to playlist 2');
+                    console.log('error conecting to playlist 2', err);
                 });
             }
         })
     // the number is not in the collection
-    .fail(function(err){
+    .fail(function(){
         // get the first four characters, which is the party code
         partyCode = (req.body.Body).toUpperCase().substring(0,4);
         db.get('parties', partyCode) // search for this party
-            .then(function(data){
+            .then(function(){
                 db.put('numbers', req.body.From.substring(2), { // link the number
                     'party' : partyCode,
                     'lastSong' : null
                 },true)
-                .then(function(data) {
-                    sendText("Connected! You can now search for songs and artists to add. To exit the playlist, text '!'. To remove your last song, text '/'.", req.body.From);
+                .then(function() {
+                    sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', req.body.From);
                     res.end();
                 })
                 .fail(function(err) {
-                    console.log("Error putting number: "+err);
-                    sendText("Sorry! There was an error. Try submitting the party code again.", req.body.From);
+                    console.log('Error putting number: ' + err);
+                    sendText('Sorry! There was an error. Try submitting the party code again.', req.body.From);
                     res.end();
                 });
             })
         .fail(function(err){
-            console.log("Error getting party: "+JSON.stringify(err));
+            console.log('Error getting party: ' + JSON.stringify(err));
             res.end();
         });
     });
@@ -259,19 +261,19 @@ function getSong(text, playlist, partyCode){
             db.newPatchBuilder('parties', partyCode)
                 .replace('access_token', data.body.access_token)
                 .apply()
-                .then(function(result){
-                    console.log("Successful reset of access_token");
+                .then(function(){
+                    console.log('Successful reset of access_token');
                 })
             .fail(function(err){
-                console.log("Error: "+err);
+                console.log('Error: ' + err);
             });
 
             spotifyApi.searchTracks(text.Body, {limit: 1}, function(error, data) {
                 if(error){
-                    sendText("Sorry, there was an error", text.From);
-                    console.log("********* "+error+" *********");
+                    sendText('Sorry, there was an error', text.From);
+                    console.log('********* ' + error + ' *********');
                 } else if(data.body.tracks.items.length === 0){
-                    sendText("No song found.", text.From);
+                    sendText('No song found.', text.From);
                 } else {
                     var song = data.body.tracks.items[0];
                     addSongToPlaylist(song, playlist, text.From);
@@ -287,11 +289,11 @@ function addSongToPlaylist(song, playlist, number){
         .inc('playCount', 1)
         .append('numbers', number)
         .apply()
-        .then(function(result){
+        .then(function(){
             // success
-            console.log("successful patch");
+            console.log('successful patch');
         })
-    .fail(function(err){
+    .fail(function(){
         db.put('songs', song.name, {
             'playCount' : 1,
             'numbers' : [number]
@@ -308,14 +310,14 @@ function addSongToPlaylist(song, playlist, number){
     .then(function(trackIds){
         if(trackIds.indexOf(song.id) === -1){
             spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
-                .then(function(data) {
+                .then(function() {
                     console.log('Added track to playlist!');
-                    sendText("Song added: "+song.name+" by "+song.artists[0].name+". To remove, text '/'.", number);
+                    sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', number);
                 }, function(err) {
                     console.log('Something went wrong! '+err);
                 });
         } else {
-            sendText("Playlist already contains "+song.name+" by "+song.artists[0].name, number);
+            sendText('Playlist already contains ' + song.name + ' by ' + song.artists[0].name, number);
         }
     })
     .catch(function(err){
@@ -362,24 +364,24 @@ function sendText(textMessage, number){
         to: number,
         //from: "+16305818347",
         // Dan's twilio number, used for testing
-        from: "+19784010087",
+        from: '+19784010087',
         body: textMessage
-    }, function(err, message) {
+    }, function(err) {
         if(err){
-            console.log("error: "+JSON.stringify(err));
+            console.log('error: ' + JSON.stringify(err));
         }
     });
 }
 
 function updateSong(number, songURI){
     db.get('numbers', number)
-        .then(function(req, res){
+        .then(function(){
             db.newPatchBuilder('numbers', number)
                 .replace('lastSong', songURI)
                 .apply();
         })
-    .fail(function(req, res){
-        console.log('Database failure: '+JSON.stringify(err));
+    .fail(function(err){
+        console.log('Database failure: ' + JSON.stringify(err));
     });
 }
 //song is passed in only as a uri
@@ -391,20 +393,20 @@ function removeSong(song, playlist, number){
         .then(function(playlistTracks){
             return playlistTracks.body.items.map(function(item){return item.track.id;});
         })
-    .then(function(trackIds){
+    .then(function(){
         spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id,
                 [{
                     'uri' : song
                 }])
-        .then(function(data) {
-            sendText("Song removed", number);
+        .then(function() {
+            sendText('Song removed', number);
         }, function(err) {
-            console.log('Something went wrong! RS '+err);
+            console.log('Something went wrong! RS ' + err);
         });
     })
     .catch(function(err){
-        console.log("RS "+err);
-        console.log("JSON: "+JSON.stringify(err));
+        console.log('RS ' + err);
+        console.log('JSON: ' + JSON.stringify(err));
     });
     updateSong(number, 'null');
 }
