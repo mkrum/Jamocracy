@@ -1,5 +1,9 @@
+<<<<<<< 2f0083d4c7349cf20403d06d15f51d101a7d424e
 // include node modules
 var twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+=======
+var twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+>>>>>>> Use environment variables for secrets
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -7,11 +11,15 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
+<<<<<<< 2f0083d4c7349cf20403d06d15f51d101a7d424e
 var db = require('orchestrate')(process.env.ORCHESTRATE);
 
 // set up node app and server
+=======
+var db = require('orchestrate')(process.env.ORCHESTRATE_API_KEY);
+>>>>>>> Use environment variables for secrets
 var app = express();
-var port = (process.env.PORT || 5000);
+var port = (process.env.PORT || '5000');
 var server = app.listen(port);
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
