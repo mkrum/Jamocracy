@@ -1,7 +1,5 @@
-// load config file to get api credentials
-var config = require('./config.json')
 // include node modules
-var twilio = require('twilio')(config.twilio_account_sid, config.twilio_auth_token);
+var twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 var bodyParser = require('body-parser');
 var path = require('path');
 var express = require('express');
@@ -9,7 +7,7 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var SpotifyWebApi = require('spotify-web-api-node');
-var db = require('orchestrate')(config.orchestrate);
+var db = require('orchestrate')(process.env.ORCHESTRATE);
 
 // set up node app and server
 var app = express();
@@ -23,8 +21,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 // Set up credentials, scope, and state
 var redirectUri = port === '5000' ? 'http://127.0.0.1:5000/auth':'http://jamocracy.herokuapp.com/auth';
 var credentials = {
-    clientId : config.spotify_id,
-    clientSecret : config.spotify_secret,
+    clientId : process.env.SPOTIFY_CLIENT_ID,
+    clientSecret : process.env.SPOTIFY_CLIENT_SECRET,
     redirectUri : redirectUri
 
 };
