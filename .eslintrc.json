@@ -8,19 +8,30 @@
         "sourceType": "module"
     },
     "rules": {
+        "array-bracket-spacing": "error",
         "arrow-spacing": "error",
+        "block-spacing": "error",
+        "comma-dangle": "error",
+        "comma-spacing": "error",
         "indent": [
             "error",
             4
         ],
+        "key-spacing": "error",
+        "keyword-spacing": "error",
         "linebreak-style": [
             "error",
             "unix"
         ],
         "no-console": "off",
         "no-const-assign": "error",
+        "no-negated-condition": "error",
+        "no-unneeded-ternary": "error",
         "no-var": "error",
+        "one-var": "error",
+        "operator-assignment": "error",
         "prefer-arrow-callback": "error",
+        "prefer-const": "error",
         "quotes": [
             "error",
             "single"
@@ -28,6 +39,7 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "space-infix-ops": "error"
     }
 }

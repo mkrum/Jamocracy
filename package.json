@@ -16,7 +16,7 @@
     "eslint": "*"
   },
   "scripts": {
-    "test": "eslint app.js"
+    "test": "eslint app.js routes/*.js services/*.js"
   },
   "author": "michael krumdick",
   "license": "ISC",
