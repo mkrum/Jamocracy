@@ -1,7 +1,7 @@
 'use strict';
 
 const DBService = require('../services/db_service'),
-      MessengerService = require('../services/messenger_service');
+    MessengerService = require('../services/messenger_service');
 exports.setup = (app) => {
     // Create playlist code, store playlist in database
     // TODO: Refractor this. I really don't like how I wrote this, but I don't

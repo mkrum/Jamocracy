@@ -64,7 +64,7 @@ function addSongToPlaylist(song, playlist)  {
             return Promise.reject('duplicate song');
         }
     })
-    .catch(err => { console.log(err.message) });
+    .catch(err => { console.log(err.message); });
 }
 
 function getUserPlaylists(access_token, refresh_token) {
@@ -82,7 +82,7 @@ function getUserPlaylists(access_token, refresh_token) {
             });
     })
     .catch(err => {
-        console.log('SpotifyService', 'getUserPlaylists', err)
+        console.log('SpotifyService', 'getUserPlaylists', err);
     });
 }
 
