@@ -2,14 +2,10 @@
 
 const SpotifyWebApi = require('spotify-web-api-node');
 
-// TODO: Refactor these into their own Service
-const host = (process.env.HOST || 'http://localhost:5000');
-function makeUri(path) {
-    return host + '/' + path;
-}
+const HostService = require('../services/host_service');
 
 // Set up the Spotify API
-const redirectUri = makeUri('auth');
+const redirectUri = HostService.makeUri('auth');
 const credentials = {
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
