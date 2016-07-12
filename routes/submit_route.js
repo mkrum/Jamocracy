@@ -1,6 +1,5 @@
-const request = require('request');
-
-const HostService = require('../services/host_service'),
+const request = require('request'),
+    HostService = require('../services/host_service'),
     SpotifyService = require('../services/spotify_api_service');
 
 exports.setup = (app) => {

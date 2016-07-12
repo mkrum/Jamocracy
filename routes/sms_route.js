@@ -33,7 +33,7 @@ exports.setup = (app) => {
                                         removeSong(song, playlist, req.body.From);
                                     })
                                 .fail((err) => {
-                                    console.log('error conecting to playlist 1: '+err);
+                                    console.log('error conecting to playlist 1:', err);
                                 });
                             }
                         });

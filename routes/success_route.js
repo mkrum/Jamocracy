@@ -43,7 +43,7 @@ function randomString(){
 // add number and party to database
 function putNumberAndPartyInCollections(req, partyCode){
     //  send text response to playlist creator
-    MessengerService.sendText('This is your Jamocracy Number! Text "!" to exit this playlist. Party Code: '+partyCode, req.body.number);
+    MessengerService.sendText('This is your Jamocracy Number! Text "!" to exit this playlist. Party Code: ' + partyCode, req.body.number);
 
     // create or update party in parties collection in database
     DBService.update('parties', partyCode, {
@@ -53,7 +53,7 @@ function putNumberAndPartyInCollections(req, partyCode){
         'access_token': req.body.access_token,
         'refresh_token': req.body.refresh_token
     }).fail((err) => {
-        console.log('Database failure: '+JSON.stringify(err));
+        console.log('Database failure: ', JSON.stringify(err));
     });
 
     // add creator's number to numbers collection in database
@@ -61,7 +61,7 @@ function putNumberAndPartyInCollections(req, partyCode){
         'party': partyCode,
         'lastSong': null
     }).fail((err) => {
-        console.log('Database failure: '+JSON.stringify(err));
+        console.log('Database failure: ', JSON.stringify(err));
     });
 }
 

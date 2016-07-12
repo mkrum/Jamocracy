@@ -1,23 +1,20 @@
 'use strict';
 
-const SpotifyWebApi = require('spotify-web-api-node');
-
-const HostService = require('../services/host_service');
-
-// Set up the Spotify API
-const redirectUri = HostService.makeUri('auth');
-const credentials = {
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: redirectUri
-};
-const scopes = [
-    'playlist-read-private', 'playlist-modify-public',
-    'playlist-modify-private', 'user-read-private'
-];
-const stateKey = 'spotify_auth_state';
-const spotifyApi = new SpotifyWebApi(credentials);
-const authorizeURL = spotifyApi.createAuthorizeURL(scopes, stateKey);
+const SpotifyWebApi = require('spotify-web-api-node'),
+    HostService = require('../services/host_service'),
+    redirectUri = HostService.makeUri('auth'),
+    credentials = {
+        clientId: process.env.SPOTIFY_CLIENT_ID,
+        clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+        redirectUri: redirectUri
+    },
+    scopes = [
+        'playlist-read-private', 'playlist-modify-public',
+        'playlist-modify-private', 'user-read-private'
+    ],
+    stateKey = 'spotify_auth_state',
+    spotifyApi = new SpotifyWebApi(credentials),
+    authorizeURL = spotifyApi.createAuthorizeURL(scopes, stateKey);
 
 function authorizationCodeGrant(code) {
     return spotifyApi.authorizationCodeGrant(code);
