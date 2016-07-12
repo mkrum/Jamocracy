@@ -1,4 +1,4 @@
-const SpotifyService = require('./services/spotify_api_service');
+const SpotifyService = require('../services/spotify_api_service');
 
 exports.setup = (app) => {
     // called client side to get user's playlists

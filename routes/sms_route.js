@@ -1,6 +1,9 @@
+'use strict';
+
 const DBService = require('../services/db_service'),
     MessengerService = require('../services/messenger_service'),
     SpotifyService = require('../services/spotify_api_service');
+
 exports.setup = (app) => {
     // This is executed when the twilio number receives a text
     app.post('/SMS', (req, res) => {
