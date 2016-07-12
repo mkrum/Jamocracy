@@ -11,7 +11,7 @@ function sendText(textMessage, number){
         from: '+19784010087',
         body: textMessage
     }, (err) => {
-        if(err){
+        if (err) {
             console.log('error: ' + JSON.stringify(err));
         }
     });

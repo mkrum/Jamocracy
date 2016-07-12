@@ -8,15 +8,15 @@ exports.setup = (app) => {
     // know enough about closures and scope in order to properly write it.
     app.post('/success', (req, res) => {
         // check to see if this playlist already has a party code
-        if(req.body.isNewPlaylist === 'false'){
+        if (req.body.isNewPlaylist === 'false') {
             // check to see if this playlist exits in the parties collection
             DBService.find('parties', req.body.playlist)
                 .then((data) => {
-                    if(data.body.count !== 0){
+                    if (data.body.count === 0) {
+                        putNumberAndPartyInCollections(req, randomString());
+                    } else {
                         const partyCode = data.body.results[0].path.key;
                         putNumberAndPartyInCollections(req, partyCode);
-                    } else {
-                        putNumberAndPartyInCollections(req, randomString());
                     }
                 })
                 .fail((err) => {
@@ -34,7 +34,7 @@ exports.setup = (app) => {
 function randomString(){
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let i, string = '';
-    for(i = 0; i < 4; i++){
+    for (i = 0; i < 4; i++) {
         string += letters[Math.floor(Math.random() * 26)];
     }
     return string;

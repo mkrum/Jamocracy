@@ -11,7 +11,7 @@ exports.setup = (app) => {
         // check if sender is in numbers collection
         DBService.findOne('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
             .then((numRes) => { // if it is found in numbers
-                if(req.body.Body[0] === '!'){ // leave playlist with exclamation point
+                if (req.body.Body[0] === '!') { // leave playlist with exclamation point
                     DBService.remove('numbers', req.body.From.substring(2))
                         .then(() => {
                             MessengerService.sendText('Playlist exited', req.body.From);

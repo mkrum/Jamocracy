@@ -15,17 +15,19 @@ exports.setup = (app) => {
         SpotifyService.setTokens(access_token, refresh_token);
         SpotifyService.getCurrentUser()
             .then(username => {
-                if(newPlaylistName.length !== 0) { // if the user entered a new playlist
+                if (newPlaylistName.length === 0) {
+                    // the user chose an existing playlist
+                    res.redirect('/success.html');
+                    postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token, false);
+                } else {
+                    // if the user entered a new playlist
                     SpotifyService.createPlaylist(username, newPlaylistName, { 'public': false })
                         .then((data) => {
-                            res.redirect('/success.html'); // show success page on screen
+                            res.redirect('/success.html');
                             postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
                         }, (err) => {
                             console.log('Something went wrong in create playlist!', err);
                         });
-                } else { // the user chose an existing playlist
-                    res.redirect('/success.html'); // show success page on screen
-                    postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token, false);
                 }
             }, (err) => {
                 console.log('Something went wrong in submit getme!', err);

@@ -18,12 +18,14 @@
             4
         ],
         "key-spacing": "error",
+        "keyword-spacing": "error",
         "linebreak-style": [
             "error",
             "unix"
         ],
         "no-console": "off",
         "no-const-assign": "error",
+        "no-negated-condition": "error",
         "no-var": "error",
         "prefer-arrow-callback": "error",
         "prefer-const": "error",
