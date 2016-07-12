@@ -33,7 +33,7 @@ function setTokens(accessToken, refreshToken) {
 }
 
 function getCurrentUser() {
-    return spotifyApi.getMe();
+    return spotifyApi.getMe().then(data => data.body.id);
 }
 
 function createPlaylist(username, playlistName, opts) {
@@ -69,8 +69,7 @@ function addSongToPlaylist(song, playlist)  {
 
 function getUserPlaylists(access_token, refresh_token) {
     setTokens(access_token, refresh_token);
-    return getCurrentUser().then(userData => {
-        const user = userData.body.id;
+    return getCurrentUser().then(user => {
         return spotifyApi.getUserPlaylists(user, { limit: 50 })
             .then(playlistsData => {
                 return playlistsData.body.items

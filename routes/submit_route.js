@@ -14,8 +14,7 @@ exports.setup = (app) => {
             refresh_token = req.cookies.refresh;
         SpotifyService.setTokens(access_token, refresh_token);
         SpotifyService.getCurrentUser()
-            .then((data) => {
-                const username = data.body.id;
+            .then(username => {
                 if(newPlaylistName.length !== 0) { // if the user entered a new playlist
                     SpotifyService.createPlaylist(username, newPlaylistName, { 'public' : false })
                         .then((data) => {
