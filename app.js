@@ -9,7 +9,6 @@ const twilio = require('twilio')(
     express = require('express'),
     request = require('request'),
     cookieParser = require('cookie-parser'),
-    SpotifyWebApi = require('spotify-web-api-node'),
     db = require('orchestrate')(process.env.ORCHESTRATE_API_KEY),
     app = express(),
     host = (process.env.HOST || 'http://localhost:5000'),
@@ -28,34 +27,23 @@ function makeUri(path) {
     return host + '/' + path;
 }
 
-const redirectUri = makeUri('auth');
-const credentials = {
-    clientId : process.env.SPOTIFY_CLIENT_ID,
-    clientSecret : process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri : redirectUri
-
-};
-
-const scopes = ['playlist-read-private', 'playlist-modify-public', 'playlist-modify-private', 'user-read-private'];
-const stateKey = 'spotify_auth_state';
-
-// Create the spotifyApi object and theauthorization URL
-const spotifyApi = new SpotifyWebApi(credentials);
-const authorizeURL = spotifyApi.createAuthorizeURL(scopes, stateKey);
+const SpotifyService = require('./services/spotify_api_service');
 
 // Redirect to Spotify authortization when user presses login
 app.get('/login', (req, res) => {
-    res.redirect(authorizeURL);
+    res.redirect(SpotifyService.authorizeURL);
 });
 
 // After the user logs in through Spotify, save access and refresh tokens and
 // redirect user to info.html, which contains the form
 app.get('/auth', (req, res) => {
-    spotifyApi.authorizationCodeGrant(req.query.code)
+    SpotifyService.authorizationCodeGrant(req.query.code)
         .then((data) => {
             // Set the access token on the API object to use it in later calls
-            spotifyApi.setAccessToken(data.body.access_token);
-            spotifyApi.setRefreshToken(data.body.refresh_token);
+            SpotifyService.setTokens(
+                    data.body.access_token,
+                    data.body.refresh_token
+            );
             res.cookie('access',  data.body.access_token, {httpOnly: true});
             res.cookie('refresh', data.body.refresh_token, {httpOnly: true});
             //createSimilar('jump', 'artist', 'aaa');
@@ -74,14 +62,13 @@ app.post('/submit', (req, res) => {
         existingPlaylistId = req.body.existingPlaylistId,
         access_token = req.cookies.access,
         refresh_token = req.cookies.refresh;
-    spotifyApi.setAccessToken(access_token);
-    spotifyApi.setRefreshToken(refresh_token);
-    spotifyApi.getMe()
+    SpotifyService.setTokens(access_token, refresh_token);
+    SpotifyService.getCurrentUser()
         .then((data) => {
             const username = data.body.id;
             //console.log(username);
             if(newPlaylistName.length !== 0) { // if the user entered a new playlist
-                spotifyApi.createPlaylist(username, newPlaylistName, { 'public' : false })
+                SpotifyService.createPlaylist(username, newPlaylistName, { 'public' : false })
                     .then((data) => {
                         res.redirect('/success.html'); // show success page on screen
                         postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
@@ -250,25 +237,22 @@ app.post('/SMS', (req, res) => {
 
 // getSong from text message, calls addSongToPlayList
 function getSong(text, playlist, partyCode){
-    spotifyApi.setAccessToken(playlist.access_token);
-    spotifyApi.setRefreshToken(playlist.refresh_token);
-    spotifyApi.refreshAccessToken()
-        .then((data) => {
-            // saving new access token for spotifyApi
-            spotifyApi.setAccessToken(data.body.access_token);
-            playlist.access_token = data.body.access_token;
+    SpotifyService.setTokens(playlist.access_token, playlist.refresh_token);
+    SpotifyService.refreshAccessToken()
+        .then(token => {
+            playlist.access_token = token;
             // saving new access token in database
             db.newPatchBuilder('parties', partyCode)
-                .replace('access_token', data.body.access_token)
+                .replace('access_token', token)
                 .apply()
                 .then(() => {
                     console.log('Successful reset of access_token');
                 })
-            .fail((err) => {
-                console.log('Error: ' + err);
-            });
+                .fail((err) => {
+                    console.log('Error: ' + err);
+                });
 
-            spotifyApi.searchTracks(text.Body, {limit: 1}, (error, data) => {
+            SpotifyService.searchTracks(text.Body, (error, data) => {
                 if(error){
                     sendText('Sorry, there was an error', text.From);
                     console.log('********* ' + error + ' *********');
@@ -301,28 +285,17 @@ function addSongToPlaylist(song, playlist, number){
     });
 
     // set the credentials for the right playlist
-    spotifyApi.setAccessToken(playlist.access_token);
-    spotifyApi.setRefreshToken(playlist.refresh_token);
-    spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'})
-        .then((playlistTracks) => {
-            return playlistTracks.body.items.map(item => item.track.id);
-        })
-    .then((trackIds) => {
-        if(trackIds.indexOf(song.id) === -1){
-            spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri])
-                .then(() => {
-                    console.log('Added track to playlist!');
-                    sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', number);
-                }, (err) => {
-                    console.log('Something went wrong! '+err);
-                });
-        } else {
-            sendText('Playlist already contains ' + song.name + ' by ' + song.artists[0].name, number);
-        }
-    })
-    .catch((err) => {
-        console.log(err.messsage);
-    });
+    SpotifyService.addSongToPlaylist(song, playlist)
+        .then(() => {
+            console.log('Added track to playlist!');
+            sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', number);
+        }, (err) => {
+            if (err === 'duplicate song') {
+                sendText('Playlist already contains ' + song.name + ' by ' + song.artists[0].name, number);
+            } else {
+                console.log('Something went wrong!', err);
+            }
+        });
 }
 
 // called client side to get user's playlists
@@ -330,31 +303,11 @@ app.get('/playlists', (req, res) => {
     // set the credentials for the right playlist
     const access_token = req.cookies.access,
         refresh_token = req.cookies.refresh;
-    spotifyApi.setAccessToken(access_token);
-    spotifyApi.setRefreshToken(refresh_token);
-    spotifyApi.getMe()
-        .then((me) => {
-            const user = me.body.id;
-            spotifyApi.getUserPlaylists(user, {limit : 50})
-                .then((data) => {
-                    let playlists = data.body.items;
-                    // remove playlists that the user does not own
-                    // only save playlist name and id
-                    playlists = playlists
-                        .filter(element => element.owner.id === user)
-                        .map(playlist => ({
-                            name:  playlist.name,
-                            id: playlist.id
-                        }));
-                    res.send(playlists);
-                })
-            .catch((err) => {
-                console.log(err);
-            });
-        })
-    .catch((err) => {
-        console.log(err);
-    });
+    console.log(access_token, refresh_token);
+    SpotifyService.getUserPlaylists(access_token, refresh_token)
+        .then(playlists => {
+            res.send(playlists);
+        });
 });
 
 function sendText(textMessage, number){
@@ -385,23 +338,12 @@ function updateSong(number, songURI){
 //song is passed in only as a uri
 function removeSong(song, playlist, number){
     // set the credentials for the right playlist
-    spotifyApi.setAccessToken(playlist.access_token);
-    spotifyApi.setRefreshToken(playlist.refresh_token);
-    spotifyApi.getPlaylistTracks(playlist.creatorName, playlist.id, {fields: 'items(track(id))'})
-        .then((playlistTracks) => {
-            return playlistTracks.body.items.map(item => item.track.id);
-        })
-    .then(() => {
-        spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id,
-                [{
-                    'uri' : song
-                }])
+    SpotifyService.removeSong(song, playlist)
         .then(() => {
             sendText('Song removed', number);
         }, (err) => {
             console.log('Something went wrong! RS ' + err);
-        });
-    })
+        })
     .catch((err) => {
         console.log('RS ' + err);
         console.log('JSON: ' + JSON.stringify(err));
