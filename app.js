@@ -1,10 +1,11 @@
 // include node modules
 'use strict';
 
-const twilio = require('twilio')(
+const fs = require('fs'),
+    twilio = require('twilio')(
         process.env.TWILIO_ACCOUNT_SID,
         process.env.TWILIO_AUTH_TOKEN
-),
+    ),
     bodyParser = require('body-parser'),
     express = require('express'),
     request = require('request'),
@@ -29,29 +30,14 @@ function makeUri(path) {
 
 const SpotifyService = require('./services/spotify_api_service');
 
-// Redirect to Spotify authortization when user presses login
-app.get('/login', (req, res) => {
-    res.redirect(SpotifyService.authorizeURL);
-});
+const routeFiles = fs.readdirSync('routes');
+routeFiles.forEach(routeFile => {
+    if (routeFile.indexOf('.js') === -1) {
+        return;
+    }
 
-// After the user logs in through Spotify, save access and refresh tokens and
-// redirect user to info.html, which contains the form
-app.get('/auth', (req, res) => {
-    SpotifyService.authorizationCodeGrant(req.query.code)
-        .then((data) => {
-            // Set the access token on the API object to use it in later calls
-            SpotifyService.setTokens(
-                    data.body.access_token,
-                    data.body.refresh_token
-            );
-            res.cookie('access',  data.body.access_token, {httpOnly: true});
-            res.cookie('refresh', data.body.refresh_token, {httpOnly: true});
-            //createSimilar('jump', 'artist', 'aaa');
-            res.redirect('/info.html');
-        }, (err) => {
-            console.log('Something went wrong in callback get!');
-            console.log(JSON.stringify(err));
-        });
+    const route = require('./routes/' + routeFile.replace('.js', ''));
+    route.setup(app);
 });
 
 // When the user sumbits the form, create the new playlist and redirect user
@@ -303,7 +289,6 @@ app.get('/playlists', (req, res) => {
     // set the credentials for the right playlist
     const access_token = req.cookies.access,
         refresh_token = req.cookies.refresh;
-    console.log(access_token, refresh_token);
     SpotifyService.getUserPlaylists(access_token, refresh_token)
         .then(playlists => {
             res.send(playlists);
