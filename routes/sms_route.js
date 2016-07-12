@@ -92,16 +92,16 @@ function getSong(text, playlist, partyCode){
                     console.log('Error: ' + err);
                 });
 
-            SpotifyService.searchTracks(text.Body, (error, data) => {
-                if(error){
-                    MessengerService.sendText('Sorry, there was an error', text.From);
-                    console.log('********* ' + error + ' *********');
-                } else if(data.body.tracks.items.length === 0){
+            SpotifyService.searchTracks(text.Body).then(tracks => {
+                if (tracks.length === 0) {
                     MessengerService.sendText('No song found.', text.From);
                 } else {
-                    const song = data.body.tracks.items[0];
+                    const song = tracks[0];
                     addSongToPlaylist(song, playlist, text.From);
                 }
+            }).fail((err) => {
+                MessengerService.sendText('Sorry, there was an error', text.From);
+                console.log(err);
             });
         });
 }

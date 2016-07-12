@@ -48,8 +48,8 @@ function refreshAccessToken() {
     });
 }
 
-function searchTracks(name, callback) {
-    spotifyApi.searchTracks(name, { limit: 1 }, callback);
+function searchTracks(name) {
+    return spotifyApi.searchTracks(name, { limit: 1 }).then(data => data.body.tracks.items);
 }
 
 function addSongToPlaylist(song, playlist)  {
