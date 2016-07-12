@@ -8,11 +8,16 @@
         "sourceType": "module"
     },
     "rules": {
+        "array-bracket-spacing": "error",
         "arrow-spacing": "error",
+        "block-spacing": "error",
+        "comma-dangle": "error",
+        "comma-spacing": "error",
         "indent": [
             "error",
             4
         ],
+        "key-spacing": "error",
         "linebreak-style": [
             "error",
             "unix"
@@ -21,6 +26,7 @@
         "no-const-assign": "error",
         "no-var": "error",
         "prefer-arrow-callback": "error",
+        "prefer-const": "error",
         "quotes": [
             "error",
             "single"

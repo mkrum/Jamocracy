@@ -47,9 +47,9 @@ function putNumberAndPartyInCollections(req, partyCode){
 
     // create or update party in parties collection in database
     DBService.update('parties', partyCode, {
-        'creatorNumber' : req.body.number,
-        'creatorName' : req.body.name,
-        'id' : req.body.playlist,
+        'creatorNumber': req.body.number,
+        'creatorName': req.body.name,
+        'id': req.body.playlist,
         'access_token': req.body.access_token,
         'refresh_token': req.body.refresh_token
     }).fail((err) => {
@@ -58,8 +58,8 @@ function putNumberAndPartyInCollections(req, partyCode){
 
     // add creator's number to numbers collection in database
     DBService.update('numbers', req.body.number, {
-        'party' : partyCode,
-        'lastSong' : null
+        'party': partyCode,
+        'lastSong': null
     }).fail((err) => {
         console.log('Database failure: '+JSON.stringify(err));
     });

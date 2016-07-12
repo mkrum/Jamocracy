@@ -52,13 +52,13 @@ exports.setup = (app) => {
         // the number is not in the collection
         .fail(() => {
             // get the first four characters, which is the party code
-            partyCode = (req.body.Body).toUpperCase().substring(0,4);
+            partyCode = (req.body.Body).toUpperCase().substring(0, 4);
             DBService.findOne('parties', partyCode) // search for this party
                 .then(() => {
                     DBService.update('numbers', req.body.From.substring(2), { // link the number
-                        'party' : partyCode,
-                        'lastSong' : null
-                    },true)
+                        'party': partyCode,
+                        'lastSong': null
+                    }, true)
                     .then(() => {
                         MessengerService.sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', req.body.From);
                         res.end();
@@ -119,8 +119,8 @@ function addSongToPlaylist(song, playlist, number){
         })
         .fail(() => {
             DBService.update('songs', song.name, {
-                'playCount' : 1,
-                'numbers' : [number]
+                'playCount': 1,
+                'numbers': [number]
             });
         });
 

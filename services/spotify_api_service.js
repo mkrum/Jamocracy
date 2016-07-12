@@ -55,7 +55,7 @@ function addSongToPlaylist(song, playlist)  {
     }).then(playlistTracks => {
         const trackIds = playlistTracks.body.items.map(item => item.track.id);
         if (trackIds.indexOf(song.id) === -1) {
-            return spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [ song.uri ]);
+            return spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri]);
         } else {
             return Promise.reject('duplicate song');
         }

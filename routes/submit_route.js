@@ -16,7 +16,7 @@ exports.setup = (app) => {
         SpotifyService.getCurrentUser()
             .then(username => {
                 if(newPlaylistName.length !== 0) { // if the user entered a new playlist
-                    SpotifyService.createPlaylist(username, newPlaylistName, { 'public' : false })
+                    SpotifyService.createPlaylist(username, newPlaylistName, { 'public': false })
                         .then((data) => {
                             res.redirect('/success.html'); // show success page on screen
                             postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
@@ -38,9 +38,9 @@ function postToSuccess(phoneNumber, username, playlistId, access, refresh, isNew
     const success = HostService.makeUri('success');
     request.post(success, {
         form: {
-            number:phoneNumber,
-            name:username,
-            playlist:playlistId,
+            number: phoneNumber,
+            name: username,
+            playlist: playlistId,
             access_token: access,
             refresh_token: refresh,
             isNewPlaylist: isNew
