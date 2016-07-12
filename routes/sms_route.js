@@ -58,7 +58,7 @@ exports.setup = (app) => {
                     DBService.update('numbers', req.body.From.substring(2), { // link the number
                         'party': partyCode,
                         'lastSong': null
-                    }, true)
+                    })
                     .then(() => {
                         MessengerService.sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', req.body.From);
                         res.end();
