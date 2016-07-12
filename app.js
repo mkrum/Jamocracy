@@ -8,11 +8,8 @@ const fs = require('fs'),
     ),
     bodyParser = require('body-parser'),
     express = require('express'),
-    request = require('request'),
     cookieParser = require('cookie-parser'),
-    db = require('orchestrate')(process.env.ORCHESTRATE_API_KEY),
     app = express(),
-    host = (process.env.HOST || 'http://localhost:5000'),
     port = (process.env.PORT || '5000');
 
 app.listen(port, () => {
@@ -23,12 +20,9 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-// Set up credentials, scope, and state
-function makeUri(path) {
-    return host + '/' + path;
-}
-
 const SpotifyService = require('./services/spotify_api_service');
+const DBService = require('./services/db_service');
+const MessengerService = require('./services/messenger_service');
 
 const routeFiles = fs.readdirSync('routes');
 routeFiles.forEach(routeFile => {
@@ -57,10 +51,7 @@ app.post('/success', (req, res) => {
     // check to see if this playlist already has a party code
     if(req.body.isNewPlaylist === 'false'){
         // check to see if this playlist exits in the parties collection
-        db.newSearchBuilder()
-            .collection('parties')
-            .limit(1)
-            .query(req.body.playlist)
+        DBService.find('parties', req.body.playlist)
             .then((data) => {
                 if(data.body.count !== 0){
                     const partyCode = data.body.results[0].path.key;
@@ -69,10 +60,10 @@ app.post('/success', (req, res) => {
                     putNumberAndPartyInCollections(req, randomString());
                 }
             })
-        .fail((err) => {
-            console.log('Error in search: ' + err);
-            putNumberAndPartyInCollections(req, randomString());
-        });
+            .fail((err) => {
+                console.log('Error in search: ' + err);
+                putNumberAndPartyInCollections(req, randomString());
+            });
     } else { // default party code is 4 random letters
         putNumberAndPartyInCollections(req, randomString());
     }
@@ -83,10 +74,10 @@ app.post('/success', (req, res) => {
 // add number and party to database
 function putNumberAndPartyInCollections(req, partyCode){
     //  send text response to playlist creator
-    sendText('This is your Jamocracy Number! Text "!" to exit this playlist. Party Code: '+partyCode, req.body.number);
+    MessengerService.sendText('This is your Jamocracy Number! Text "!" to exit this playlist. Party Code: '+partyCode, req.body.number);
 
     // create or update party in parties collection in database
-    db.put('parties', partyCode, {
+    DBService.update('parties', partyCode, {
         'creatorNumber' : req.body.number,
         'creatorName' : req.body.name,
         'id' : req.body.playlist,
@@ -97,7 +88,7 @@ function putNumberAndPartyInCollections(req, partyCode){
     });
 
     // add creator's number to numbers collection in database
-    db.put('numbers', req.body.number, {
+    DBService.update('numbers', req.body.number, {
         'party' : partyCode,
         'lastSong' : null
     }).fail((err) => {
@@ -109,25 +100,25 @@ function putNumberAndPartyInCollections(req, partyCode){
 app.post('/SMS', (req, res) => {
     let playlist, partyCode;
     // check if sender is in numbers collection
-    db.get('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
+    DBService.findOne('numbers', req.body.From.substring(2)) // ignore the '+1' prefix
         .then((numRes) => { // if it is found in numbers
             if(req.body.Body[0] === '!'){ // leave playlist with exclamation point
-                db.remove('numbers', req.body.From.substring(2))
+                DBService.remove('numbers', req.body.From.substring(2))
                     .then(() => {
-                        sendText('Playlist exited', req.body.From);
+                        MessengerService.sendText('Playlist exited', req.body.From);
                         updateSong('null', req.body.From.substring(2));
                     })
                 .fail((err) => {
                     console.log(err);
-                    sendText('Playlist exit error', req.body.From);
+                    MessengerService.sendText('Playlist exit error', req.body.From);
                 });
             } else if (req.body.Body[0] === '/'){
-                db.get('numbers', req.body.From.substring(2))
+                DBService.findOne('numbers', req.body.From.substring(2))
                     .then((res) => {
                         const song = res.body.lastSong;
                         if (song !== 'null'){
                             partyCode = res.body.party;
-                            db.get('parties', partyCode) // search the parties collection for this code
+                            DBService.findOne('parties', partyCode) // search the parties collection for this code
                                 .then((data) => {
                                     playlist = data.body; // get the playlist for this party
                                     removeSong(song, playlist, req.body.From);
@@ -139,7 +130,7 @@ app.post('/SMS', (req, res) => {
                     });
             } else { // if not !, then it is a song
                 partyCode = numRes.body.party;
-                db.get('parties', partyCode) // search the parties collection for this code
+                DBService.findOne('parties', partyCode) // search the parties collection for this code
                     .then((data) => {
                         playlist = data.body; // get the playlist for this party
                         getSong(req.body, playlist, partyCode);
@@ -153,19 +144,19 @@ app.post('/SMS', (req, res) => {
     .fail(() => {
         // get the first four characters, which is the party code
         partyCode = (req.body.Body).toUpperCase().substring(0,4);
-        db.get('parties', partyCode) // search for this party
+        DBService.findOne('parties', partyCode) // search for this party
             .then(() => {
-                db.put('numbers', req.body.From.substring(2), { // link the number
+                DBService.update('numbers', req.body.From.substring(2), { // link the number
                     'party' : partyCode,
                     'lastSong' : null
                 },true)
                 .then(() => {
-                    sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', req.body.From);
+                    MessengerService.sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', req.body.From);
                     res.end();
                 })
                 .fail((err) => {
                     console.log('Error putting number: ' + err);
-                    sendText('Sorry! There was an error. Try submitting the party code again.', req.body.From);
+                    MessengerService.sendText('Sorry! There was an error. Try submitting the party code again.', req.body.From);
                     res.end();
                 });
             })
@@ -183,9 +174,7 @@ function getSong(text, playlist, partyCode){
         .then(token => {
             playlist.access_token = token;
             // saving new access token in database
-            db.newPatchBuilder('parties', partyCode)
-                .replace('access_token', token)
-                .apply()
+            DBService.update('parties', partyCode, 'access_token', token)
                 .then(() => {
                     console.log('Successful reset of access_token');
                 })
@@ -195,10 +184,10 @@ function getSong(text, playlist, partyCode){
 
             SpotifyService.searchTracks(text.Body, (error, data) => {
                 if(error){
-                    sendText('Sorry, there was an error', text.From);
+                    MessengerService.sendText('Sorry, there was an error', text.From);
                     console.log('********* ' + error + ' *********');
                 } else if(data.body.tracks.items.length === 0){
-                    sendText('No song found.', text.From);
+                    MessengerService.sendText('No song found.', text.From);
                 } else {
                     const song = data.body.tracks.items[0];
                     addSongToPlaylist(song, playlist, text.From);
@@ -210,29 +199,29 @@ function getSong(text, playlist, partyCode){
 function addSongToPlaylist(song, playlist, number){
     updateSong(number.substring(2), song.uri);
 
-    db.newPatchBuilder('songs', song.name)
-        .inc('playCount', 1)
-        .append('numbers', number)
-        .apply()
+    DBService.increment('songs', song.name, 'playCount', 1)
         .then(() => {
-            // success
-            console.log('successful patch');
+            DBService.append('songs', song.name, 'numbers', number)
+            .then(() => {
+                // success
+                console.log('successful patch');
+            });
         })
-    .fail(() => {
-        db.put('songs', song.name, {
-            'playCount' : 1,
-            'numbers' : [number]
+        .fail(() => {
+            DBService.update('songs', song.name, {
+                'playCount' : 1,
+                'numbers' : [number]
+            });
         });
-    });
 
     // set the credentials for the right playlist
     SpotifyService.addSongToPlaylist(song, playlist)
         .then(() => {
             console.log('Added track to playlist!');
-            sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', number);
+            MessengerService.sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', number);
         }, (err) => {
             if (err === 'duplicate song') {
-                sendText('Playlist already contains ' + song.name + ' by ' + song.artists[0].name, number);
+                MessengerService.sendText('Playlist already contains ' + song.name + ' by ' + song.artists[0].name, number);
             } else {
                 console.log('Something went wrong!', err);
             }
@@ -250,26 +239,10 @@ app.get('/playlists', (req, res) => {
         });
 });
 
-function sendText(textMessage, number){
-    twilio.messages.create({
-        to: number,
-        //from: "+16305818347",
-        // Dan's twilio number, used for testing
-        from: '+19784010087',
-        body: textMessage
-    }, (err) => {
-        if(err){
-            console.log('error: ' + JSON.stringify(err));
-        }
-    });
-}
-
 function updateSong(number, songURI){
-    db.get('numbers', number)
+    DBService.findOne('numbers', number)
         .then(() => {
-            db.newPatchBuilder('numbers', number)
-                .replace('lastSong', songURI)
-                .apply();
+            DBService.update('numbers', number, 'lastSong', songURI);
         })
     .fail((err) => {
         console.log('Database failure: ' + JSON.stringify(err));
@@ -280,7 +253,7 @@ function removeSong(song, playlist, number){
     // set the credentials for the right playlist
     SpotifyService.removeSong(song, playlist)
         .then(() => {
-            sendText('Song removed', number);
+            MessengerService.sendText('Song removed', number);
         }, (err) => {
             console.log('Something went wrong! RS ' + err);
         })

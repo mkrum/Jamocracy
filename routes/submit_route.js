@@ -1,3 +1,5 @@
+const request = require('request');
+
 const HostService = require('../services/host_service'),
       SpotifyService = require('../services/spotify_api_service');
 
@@ -14,7 +16,6 @@ exports.setup = (app) => {
         SpotifyService.getCurrentUser()
             .then((data) => {
                 const username = data.body.id;
-                //console.log(username);
                 if(newPlaylistName.length !== 0) { // if the user entered a new playlist
                     SpotifyService.createPlaylist(username, newPlaylistName, { 'public' : false })
                         .then((data) => {
