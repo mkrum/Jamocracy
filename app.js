@@ -8,10 +8,6 @@ const fs = require('fs'),
     app = express(),
     port = (process.env.PORT || '5000'),
     routeFiles = fs.readdirSync('routes');
-
-app.listen(port, () => {
-    console.log('Jamocracy started on port', port);
-});
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -24,5 +20,9 @@ routeFiles.forEach(routeFile => {
 
     const route = require('./routes/' + routeFile.replace('.js', ''));
     route.setup(app);
+});
+
+app.listen(port, () => {
+    console.log('Jamocracy started on port', port);
 });
 
