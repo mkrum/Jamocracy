@@ -43,6 +43,7 @@ exports.setup = (app) => {
                         .then((data) => {
                             playlist = data.body; // get the playlist for this party
                             getSong(req.body, playlist, partyCode);
+                            res.sendStatus(200);
                         })
                     .fail((err) => {
                         console.log('error conecting to playlist 2', err);
@@ -62,8 +63,7 @@ exports.setup = (app) => {
                         .then(() => {
                             MessengerService.sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', req.body.From);
                             res.end();
-                        })
-                        .fail((err) => {
+                        }, (err) => {
                             console.log('Error putting number: ' + err);
                             MessengerService.sendText('Sorry! There was an error. Try submitting the party code again.', req.body.From);
                             res.end();
@@ -84,13 +84,7 @@ function getSong(text, playlist, partyCode){
         .then(token => {
             playlist.access_token = token;
             // saving new access token in database
-            DBService.update('parties', partyCode, 'access_token', token)
-                .then(() => {
-                    console.log('Successful reset of access_token');
-                })
-                .fail((err) => {
-                    console.log('Error: ' + err);
-                });
+            DBService.update('parties', partyCode, 'access_token', token);
 
             SpotifyService.searchTracks(text.Body).then(tracks => {
                 if (tracks.length === 0) {
@@ -111,13 +105,8 @@ function addSongToPlaylist(song, playlist, number){
 
     DBService.increment('songs', song.name, 'playCount', 1)
         .then(() => {
-            DBService.append('songs', song.name, 'numbers', number)
-            .then(() => {
-                // success
-                console.log('successful patch');
-            });
-        })
-        .fail(() => {
+            DBService.append('songs', song.name, 'numbers', number);
+        }, () => {
             DBService.update('songs', song.name, {
                 'playCount': 1,
                 'numbers': [number]
@@ -127,7 +116,6 @@ function addSongToPlaylist(song, playlist, number){
     // set the credentials for the right playlist
     SpotifyService.addSongToPlaylist(song, playlist)
         .then(() => {
-            console.log('Added track to playlist!');
             MessengerService.sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', number);
         }, (err) => {
             if (err === 'duplicate song') {

@@ -23,7 +23,16 @@ describe('POST /SMS', () => {
         song,
         playlist;
     beforeEach(() => {
-        song = { id: 1, uri: 'song1 uri' };
+        song = {
+            id: 1,
+            uri: 'song1 uri',
+            name: 'test song',
+            artists: [
+                {
+                    name: 'Test Artist'
+                }
+            ]
+        };
 
         playlist = {
             access_token: 'playlist_access_token',
@@ -68,7 +77,8 @@ describe('POST /SMS', () => {
                     }
                 }
             }),
-            update: sinon.spy()
+            update: sinon.stub().returns(Promise.resolve()),
+            increment: sinon.stub().returns(Promise.resolve())
         };
 
         messengerMock = {
@@ -76,7 +86,27 @@ describe('POST /SMS', () => {
         };
 
         spotifyMock = {
-            removeSong: sinon.stub().returns(Promise.resolve())
+            removeSong: sinon.stub().returns(Promise.resolve()),
+            setTokens: sinon.spy(),
+            refreshAccessToken: sinon.stub().returns(Promise.resolve('new_token')),
+            searchTracks: sinon.spy(search => {
+                if (search === 'song search') {
+                    return Promise.resolve([ song ]);
+                } else if (search === 'duplicate song search') {
+                    return Promise.resolve([ { name: 'duplicate song' } ]);
+                }
+
+                return Promise.resolve([]);
+            }),
+            addSongToPlaylist: sinon.spy((song) => {
+                if (song.name === 'test song') {
+                    return Promise.resolve();
+                } else if (song.name === 'duplicate song') {
+                    return Promise.reject('duplicate song');
+                }
+
+                return Promise.reject();
+            })
         };
 
         mockery.registerMock('../services/db_service', dbMock);
@@ -130,6 +160,96 @@ describe('POST /SMS', () => {
                     // Tells MessengerService to send text
                     expect(messengerMock.sendText.called).to.be.ok();
                     expect(messengerMock.sendText.args[0]).to.eql(['Song removed', '+11234567890']);
+
+                    done();
+                });
+        });
+
+        it('reports that it did not find any songs', (done) => {
+            request(app)
+                .post('/SMS')
+                .send({ Body: 'wrong search', From: '+11234567890' })
+                .end((err, req) => {
+                    if (err) {
+                        done(err);
+                    }
+
+                    // Tells MessengerService to send text
+                    expect(messengerMock.sendText.called).to.be.ok();
+                    expect(messengerMock.sendText.args[0][0]).to.be('No song found.');
+
+                    done();
+                });
+        });
+
+        it('recognizes duplicate songs', (done) => {
+            request(app)
+                .post('/SMS')
+                .send({ Body: 'duplicate song search', From: '+11234567890' })
+                .end((err, req) => {
+                    if (err) {
+                        done(err);
+                    }
+
+                    // Tells SpotifyService to add song
+                    expect(spotifyMock.addSongToPlaylist.called).to.be.ok();
+                    expect(spotifyMock.addSongToPlaylist.args[0][1]).to.eql(playlist);
+
+                    // Sends confirmation message
+                    // TODO: Doesn't work because we end the response too early
+                    //expect(messengerMock.sendText.called).to.be.ok();
+                    //expect(messengerMock.sendText.args[0][0]).to.match(/^Playlist already contains/);
+
+                    done();
+                });
+        });
+
+        it('searches for and adds a song', (done) => {
+            request(app)
+                .post('/SMS')
+                .send({ Body: 'song search', From: '+11234567890' })
+                .end((err, req) => {
+                    if (err) {
+                        done(err);
+                    }
+
+                    // Tells SpotifyService to add song
+                    expect(spotifyMock.addSongToPlaylist.called).to.be.ok();
+                    expect(spotifyMock.addSongToPlaylist.args[0]).to.eql([ song, playlist ]);
+
+                    // Sends confirmation message
+                    expect(messengerMock.sendText.called).to.be.ok();
+                    expect(messengerMock.sendText.args[0][0]).to.match(/^Song added/);
+
+                    done();
+                });
+        });
+    });
+
+    context('does not already have a playlist', () => {
+        it('joins a party code', (done) => {
+            request(app)
+                .post('/SMS')
+                .send({ Body: 'ABCD', From: '+10987654321' })
+                .end((err, req) => {
+                    if (err) {
+                        done(err);
+                    }
+
+                    // Tells DBService to remember entering party
+                    expect(dbMock.update.called).to.be.ok();
+                    expect(dbMock.update.args[0]).to.eql([
+                            'numbers',
+                            '0987654321',
+                            {
+                                'party': 'ABCD',
+                                'lastSong': null
+                            }
+                    ]);
+
+                    // Tells MessengerService to send text
+                    expect(messengerMock.sendText.called).to.be.ok();
+                    expect(messengerMock.sendText.args[0][0]).to.match(/^Connected!/);
 
                     done();
                 });
