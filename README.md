@@ -18,4 +18,4 @@
 
 ## Run the tests
 
-> make test
+    make test
