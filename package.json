@@ -17,6 +17,7 @@
     "expect.js": "^0.3.1",
     "mocha": "^2.5.3",
     "mockery": "^1.7.0",
+    "sinon": "^1.17.4",
     "supertest": "^1.2.0"
   },
   "scripts": {

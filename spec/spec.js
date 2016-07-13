@@ -7,4 +7,5 @@ describe('Routes', () => {
 
 describe('Services', () => {
     require('./services/host_service_spec');
+    require('./services/spotify_api_service_spec');
 });
