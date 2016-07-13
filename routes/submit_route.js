@@ -14,7 +14,7 @@ exports.setup = (app) => {
         SpotifyService.setTokens(access_token, refresh_token);
         SpotifyService.getCurrentUser()
             .then(username => {
-                if (newPlaylistName.length === 0) {
+                if (!newPlaylistName || newPlaylistName.length === 0) {
                     // the user chose an existing playlist
                     res.redirect('/success.html');
                     postToSuccess(phoneNumber, username, existingPlaylistId, access_token, refresh_token, false);

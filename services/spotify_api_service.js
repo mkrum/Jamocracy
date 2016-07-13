@@ -56,8 +56,7 @@ function addSongToPlaylist(song, playlist)  {
         } else {
             return Promise.reject('duplicate song');
         }
-    })
-    .catch(err => { console.log(err.message); });
+    });
 }
 
 function getUserPlaylists(access_token, refresh_token) {

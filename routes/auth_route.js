@@ -1,5 +1,6 @@
+const SpotifyService = require('../services/spotify_api_service');
+
 exports.setup = (app) => {
-    const SpotifyService = require('../services/spotify_api_service');
 
     // After the user logs in through Spotify, save access and refresh tokens and
     // redirect user to info.html, which contains the form
