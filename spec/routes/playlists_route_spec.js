@@ -14,8 +14,8 @@ describe('GET /playlists', () => {
         mockery.disable();
     });
 
-    it('asks SpotifyService for playlists', (done) => {
-        var access_token, refresh_token;
+    var app, access_token, refresh_token;
+    beforeEach(() => {
         const spotifyMock = {
             getUserPlaylists: (access, refresh) => {
                 access_token = access;
@@ -30,7 +30,13 @@ describe('GET /playlists', () => {
         app = require('../mock_app');
         playlistsRoute = require('../../routes/playlists_route');
         playlistsRoute.setup(app);
+    });
 
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    it('asks SpotifyService for playlists', (done) => {
         request(app)
             .get('/playlists')
             .set('Cookie', 'access=access_token;refresh=refresh_token;')

@@ -14,7 +14,8 @@ describe('GET /login', () => {
         mockery.disable();
     });
 
-    it('redirects to authorizeURL', (done) => {
+    var app;
+    beforeEach(() => {
         const spotifyMock = {
             authorizeURL: 'SpotifyAuthorizeURL'
         };
@@ -24,7 +25,13 @@ describe('GET /login', () => {
         app = require('../mock_app');
         loginRoute = require('../../routes/login_route');
         loginRoute.setup(app);
+    });
 
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    it('redirects to authorizeURL', (done) => {
         request(app)
             .get('/login')
             .expect(302)

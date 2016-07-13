@@ -14,8 +14,8 @@ describe('GET /auth', () => {
         mockery.disable();
     });
 
-    it('should accept an authorization code', (done) => {
-        var code, access_token, refresh_token;
+    var app, code, access_token, refresh_token;
+    beforeEach(() => {
         const spotifyMock = {
             authorizationCodeGrant: (partyCode => {
                 code = partyCode;
@@ -39,7 +39,13 @@ describe('GET /auth', () => {
         app = require('../mock_app');
         authRoute = require('../../routes/auth_route');
         authRoute.setup(app);
+    });
 
+    afterEach(() => {
+        mockery.resetCache();
+    });
+
+    it('should accept an authorization code', (done) => {
         request(app)
             .get('/auth')
             .query({ code: 'code' })
