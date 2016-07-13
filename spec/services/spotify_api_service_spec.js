@@ -15,8 +15,18 @@ describe('SpotifyService', () => {
         mockery.disable();
     });
 
-    var SpotifyService, spotifyApiMock, funcs;
+    var SpotifyService, spotifyApiMock, funcs, song1, song2, playlist;
     beforeEach(() => {
+        song1 = { id: 1, uri: 'song1 uri' };
+        song2 = { id: 2, uri: 'song2 uri' };
+
+        playlist = {
+            access_token: 'playlist_access_token',
+            refresh_token: 'playlist_refresh_token',
+            creatorName: 'Testa Roni',
+            id: 1
+        }
+
         spotifyApiMock = function SpotifyWebApi(credentials) {
             funcs = {
                 createAuthorizeURL: () => 'authorize url',
@@ -41,7 +51,14 @@ describe('SpotifyService', () => {
                                     items: [ 'testTrack1', 'testTrack2' ]
                                 }
                             }
-                        }))
+                        })),
+                getPlaylistTracks: sinon.stub().returns(
+                        Promise.resolve({
+                            body: {
+                                items: [ { track: song1 } ]
+                            }
+                        })),
+                addTracksToPlaylist: sinon.stub().returns(Promise.resolve())
             }
 
             return funcs;
@@ -82,7 +99,6 @@ describe('SpotifyService', () => {
         });
     });
 
-
     describe('.refreshAccessToken', () => {
         it('recieves and keeps a refreshed access token', (done) => {
             SpotifyService.refreshAccessToken().then(token => {
@@ -109,6 +125,33 @@ describe('SpotifyService', () => {
             .catch(err => {
                 done(err);
             });
+        });
+    });
+
+    describe('.addSongToPlaylist', () => {
+        it('recognizes duplicate songs', (done) => {
+            SpotifyService.addSongToPlaylist(song1, playlist)
+                .then(() => {
+                    done('should have failed for duplicate');
+                }, () => {
+                    done();
+                })
+                .catch(err => {
+                    done(err);
+                });
+        });
+
+        it('adds a new song', (done) => {
+            SpotifyService.addSongToPlaylist(song2, playlist)
+                .then(() => {
+                    expect(funcs.addTracksToPlaylist.called).to.be.ok();
+                    expect(funcs.addTracksToPlaylist.args[0][2]).to.eql([song2.uri]);
+
+                    done();
+                })
+                .catch(err => {
+                    done(err);
+                });
         });
     });
 });
