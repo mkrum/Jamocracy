@@ -2,7 +2,7 @@ const request = require('supertest'),
     expect = require('expect.js'),
     mockery = require('mockery');
 
-describe('GET /submit', () => {
+describe('POST /submit', () => {
     before(() => {
         mockery.enable({
             warnOnReplace: false,
