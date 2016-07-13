@@ -16,25 +16,25 @@ exports.setup = (app) => {
                         .then(() => {
                             MessengerService.sendText('Playlist exited', req.body.From);
                             updateSong('null', req.body.From.substring(2));
-                        })
-                    .fail((err) => {
-                        console.log(err);
-                        MessengerService.sendText('Playlist exit error', req.body.From);
-                    });
+                            res.sendStatus(200);
+                        }, (err) => {
+                            console.log(err);
+                            MessengerService.sendText('Playlist exit error', req.body.From);
+                        });
                 } else if (req.body.Body[0] === '/'){
                     DBService.findOne('numbers', req.body.From.substring(2))
-                        .then((res) => {
-                            const song = res.body.lastSong;
+                        .then((qres) => {
+                            const song = qres.body.lastSong;
                             if (song !== 'null'){
-                                partyCode = res.body.party;
+                                partyCode = qres.body.party;
                                 DBService.findOne('parties', partyCode) // search the parties collection for this code
                                     .then((data) => {
                                         playlist = data.body; // get the playlist for this party
                                         removeSong(song, playlist, req.body.From);
-                                    })
-                                .fail((err) => {
-                                    console.log('error conecting to playlist 1:', err);
-                                });
+                                        res.sendStatus(200);
+                                    }, (err) => {
+                                        console.log('error conecting to playlist 1:', err);
+                                    });
                             }
                         });
                 } else { // if not !, then it is a song
@@ -48,32 +48,32 @@ exports.setup = (app) => {
                         console.log('error conecting to playlist 2', err);
                     });
                 }
-            })
-        // the number is not in the collection
-        .fail(() => {
-            // get the first four characters, which is the party code
-            partyCode = (req.body.Body).toUpperCase().substring(0, 4);
-            DBService.findOne('parties', partyCode) // search for this party
-                .then(() => {
-                    DBService.update('numbers', req.body.From.substring(2), { // link the number
-                        'party': partyCode,
-                        'lastSong': null
-                    })
+            },
+            // the number is not in the collection
+            () => {
+                // get the first four characters, which is the party code
+                partyCode = (req.body.Body).toUpperCase().substring(0, 4);
+                DBService.findOne('parties', partyCode) // search for this party
                     .then(() => {
-                        MessengerService.sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', req.body.From);
-                        res.end();
+                        DBService.update('numbers', req.body.From.substring(2), { // link the number
+                            'party': partyCode,
+                            'lastSong': null
+                        })
+                        .then(() => {
+                            MessengerService.sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', req.body.From);
+                            res.end();
+                        })
+                        .fail((err) => {
+                            console.log('Error putting number: ' + err);
+                            MessengerService.sendText('Sorry! There was an error. Try submitting the party code again.', req.body.From);
+                            res.end();
+                        });
                     })
-                    .fail((err) => {
-                        console.log('Error putting number: ' + err);
-                        MessengerService.sendText('Sorry! There was an error. Try submitting the party code again.', req.body.From);
-                        res.end();
-                    });
-                })
-            .fail((err) => {
-                console.log('Error getting party: ' + JSON.stringify(err));
-                res.end();
+                .fail((err) => {
+                    console.log('Error getting party: ' + JSON.stringify(err));
+                    res.end();
+                });
             });
-        });
     });
 };
 
@@ -142,10 +142,9 @@ function updateSong(number, songURI){
     DBService.findOne('numbers', number)
         .then(() => {
             DBService.update('numbers', number, 'lastSong', songURI);
-        })
-    .fail((err) => {
-        console.log('Database failure: ' + JSON.stringify(err));
-    });
+        }, (err) => {
+            console.log('Database failure: ' + JSON.stringify(err));
+        });
 }
 
 //song is passed in only as a uri
@@ -161,5 +160,5 @@ function removeSong(song, playlist, number){
         console.log('RS ' + err);
         console.log('JSON: ' + JSON.stringify(err));
     });
-    updateSong(number, 'null');
+    updateSong(number.substring(2), 'null');
 }
