@@ -11,10 +11,12 @@ describe('HostService', () => {
         process.env.HOST = cachedHost;
     });
 
-    it('uses process.env.HOST', () => {
-        var HostService = require('../../services/host_service');
-        var uri = HostService.makeUri('path');
+    describe('.makeUri', () => {
+        it('uses process.env.HOST', () => {
+            var HostService = require('../../services/host_service');
+            var uri = HostService.makeUri('path');
 
-        expect(uri).to.be('HostServiceTest/path');
+            expect(uri).to.be('HostServiceTest/path');
+        });
     });
 });
