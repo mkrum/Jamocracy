@@ -16,3 +16,6 @@
 - SPOTIFY_CLIENT_ID: The API ID for Spotify
 - SPOTIFY_CLIENT_SECRET: The secret for the Spotify API
 
+## Run the tests
+
+> make test
