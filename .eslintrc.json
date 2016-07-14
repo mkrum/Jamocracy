@@ -13,6 +13,10 @@
         "block-spacing": "error",
         "comma-dangle": "error",
         "comma-spacing": "error",
+        "dot-location": [
+            "error",
+            "property"
+        ],
         "indent": [
             "error",
             4
