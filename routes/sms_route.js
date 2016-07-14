@@ -66,7 +66,7 @@ exports.setup = (app) => {
                     .then(() => {
                         MessengerService.sendText('Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".', from);
                         res.sendStatus(200);
-                    }, (err) => {
+                    }, () => {
                         MessengerService.sendText('Not able to find party: ' + code + '. Please try again.');
                         res.sendStatus(404);
                     });

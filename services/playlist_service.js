@@ -1,6 +1,5 @@
 const SpotifyService = require('../services/spotify_api_service'),
-    DBService = require('../services/db_service'),
-    MessengerService = require('../services/messenger_service');
+    DBService = require('../services/db_service');
 
 // getSong from text message, calls addSongToPlayList
 function getSong(text, playlist, partyCode){
