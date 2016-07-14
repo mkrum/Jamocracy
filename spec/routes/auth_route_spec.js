@@ -46,7 +46,7 @@ describe('GET /auth', () => {
         mockery.resetCache();
     });
 
-    it('should accept an authorization code', (done) => {
+    it('accepts an authorization code', (done) => {
         request(app)
             .get('/auth')
             .query({ code: 'code' })
