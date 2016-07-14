@@ -11,7 +11,8 @@ function getSong(text, playlist, partyCode){
             DBService.update('parties', partyCode, 'access_token', token);
 
             return SpotifyService.searchTracks(text);
-        });
+        })
+        .then(tracks => ({ tracks: tracks, playlist: playlist }));
 }
 
 function addSongToPlaylist(song, playlist, number){

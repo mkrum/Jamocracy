@@ -36,26 +36,25 @@ exports.setup = (app) => {
                     }
                 } else {
                     PartyService.findParty(code)
-                        .then(playlist => {
-                            PlaylistService.getSong(command, playlist, code).
-                                then(tracks => {
-                                    if (tracks.length === 0) {
-                                        MessengerService.sendText('No song found.');
-                                    } else {
-                                        const song = tracks[0];
-                                        PlaylistService.addSongToPlaylist(song, playlist, fromShort)
-                                            .then(() => {
-                                                MessengerService.sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', from);
-                                            }, (err) => {
-                                                if (err === 'duplicate song') {
-                                                    MessengerService.sendText('Playlist already contains ' + song.name + ' by ' + song.artists[0].name, from);
-                                                } else {
-                                                    console.log('Error in SMS route:', err);
-                                                }
-                                            });
-                                    }
-                                });
-                            res.sendStatus(200);
+                        .then(playlist => PlaylistService.getSong(command, playlist, code))
+                        .then(data => {
+                            const tracks = data.tracks,
+                                playlist = data.playlist;
+                            if (tracks.length === 0) {
+                                MessengerService.sendText('No song found.');
+                            } else {
+                                const song = tracks[0];
+                                PlaylistService.addSongToPlaylist(song, playlist, fromShort)
+                                    .then(() => {
+                                        MessengerService.sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', from);
+                                    }, (err) => {
+                                        if (err === 'duplicate song') {
+                                            MessengerService.sendText('Playlist already contains ' + song.name + ' by ' + song.artists[0].name, from);
+                                        } else {
+                                            console.log('Error in SMS route:', err);
+                                        }
+                                    });
+                            }
                         });
                 }
             },
