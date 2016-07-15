@@ -227,6 +227,23 @@ describe('POST /SMS', () => {
     });
 
     context('does not already have a playlist', () => {
+        it('does not recognize a bad party code', (done) => {
+            request(app)
+                .post('/SMS')
+                .send({ Body: 'DEFG', From: '+10987654321' })
+                .end((err, req) => {
+                    if (err) {
+                        done(err);
+                    }
+
+                    // Tells MessengerService to send text
+                    expect(messengerMock.sendText.called).to.be.ok();
+                    expect(messengerMock.sendText.args[0][0]).to.match(/^Not able to find party/);
+
+                    done();
+                });
+        });
+
         it('joins a party code', (done) => {
             request(app)
                 .post('/SMS')
