@@ -42,14 +42,17 @@ exports.setup = (app) => {
                                 playlist = data.playlist;
                             if (tracks.length === 0) {
                                 MessengerService.sendText('No song found.');
+                                res.sendStatus(404);
                             } else {
                                 const song = tracks[0];
                                 PlaylistService.addSongToPlaylist(song, playlist, fromShort)
                                     .then(() => {
                                         MessengerService.sendText('Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".', from);
+                                        res.sendStatus(201);
                                     }, (err) => {
                                         if (err === 'duplicate song') {
                                             MessengerService.sendText('Playlist already contains ' + song.name + ' by ' + song.artists[0].name, from);
+                                            res.sendStatus(400);
                                         } else {
                                             console.log('Error in SMS route:', err);
                                         }
@@ -70,6 +73,5 @@ exports.setup = (app) => {
                         res.sendStatus(404);
                     });
             });
-        res.end();
     });
 };

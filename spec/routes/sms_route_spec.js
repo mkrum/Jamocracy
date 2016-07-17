@@ -93,7 +93,7 @@ describe('POST /SMS', () => {
                 if (search === 'song search') {
                     return Promise.resolve([ song ]);
                 } else if (search === 'duplicate song search') {
-                    return Promise.resolve([ { name: 'duplicate song' } ]);
+                    return Promise.resolve([ { name: 'duplicate song', artists: [ { name: 'copycat' } ] } ]);
                 }
 
                 return Promise.resolve([]);
@@ -197,8 +197,8 @@ describe('POST /SMS', () => {
 
                     // Sends confirmation message
                     // TODO: Doesn't work because we end the response too early
-                    //expect(messengerMock.sendText.called).to.be.ok();
-                    //expect(messengerMock.sendText.args[0][0]).to.match(/^Playlist already contains/);
+                    expect(messengerMock.sendText.called).to.be.ok();
+                    expect(messengerMock.sendText.args[0][0]).to.match(/^Playlist already contains/);
 
                     done();
                 });
@@ -227,7 +227,7 @@ describe('POST /SMS', () => {
     });
 
     context('does not already have a playlist', () => {
-        it('does not recognize a bad party code', (done) => {
+        it('recognizes a bad party code', (done) => {
             request(app)
                 .post('/SMS')
                 .send({ Body: 'DEFG', From: '+10987654321' })
