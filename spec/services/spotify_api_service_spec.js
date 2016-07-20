@@ -29,7 +29,7 @@ describe('SpotifyService', () => {
 
         spotifyApiMock = function SpotifyWebApi(credentials) {
             funcs = {
-                createAuthorizeURL: () => 'authorize url',
+                createAuthorizeURL: sinon.stub().returns('authorize url'),
                 setAccessToken: sinon.spy(),
                 setRefreshToken: sinon.spy(),
                 getMe: sinon.stub().returns(
