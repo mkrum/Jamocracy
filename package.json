@@ -1,7 +1,9 @@
 {
-  "name": "test",
+  "name": "Jamocracy",
   "version": "1.0.0",
-  "main": "add.js",
+  "main": "app.js",
+  "homepage": "http://www.jamocracy.xyz/",
+  "repository": "mkrum/Jamocracy",
   "dependencies": {
     "body-parser": "^1.14.1",
     "compression": "^1.6.0",
@@ -23,7 +25,7 @@
   "scripts": {
     "test": "make test"
   },
-  "author": "michael krumdick",
+  "author": "Michael Krumdick",
   "license": "ISC",
-  "description": "Dan is weak"
+  "description": "A web service that allows parties to interact with a spotify playlist through SMS"
 }
