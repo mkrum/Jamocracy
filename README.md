@@ -1,4 +1,4 @@
-# Jamocracy ![build status](https://travis-ci.org/mkrum/Jamocracy.svg?branch=master)
+# Jamocracy [![build status](https://travis-ci.org/mkrum/Jamocracy.svg?branch=master)](https://travis-ci.org/mkrum/Jamocracy)
 
 ## Installation steps
 
