@@ -35,7 +35,7 @@ exports.setup = (app) => {
 };
 
 // send number, name, and playlist id to app.post('/success')
-function postToSuccess(phoneNumber, username, playlistId, access, refresh, isNew){
+function postToSuccess(phoneNumber, username, playlistId, access, refresh, isNew) {
     const success = HostService.makeUri('success');
     request.post(success, {
         form: {

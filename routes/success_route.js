@@ -31,7 +31,7 @@ exports.setup = (app) => {
 };
 
 //Generates a random string of four capital letters
-function randomString(){
+function randomString() {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let i, string = '';
     for (i = 0; i < 4; i++) {
@@ -41,7 +41,7 @@ function randomString(){
 }
 
 // add number and party to database
-function putNumberAndPartyInCollections(req, partyCode){
+function putNumberAndPartyInCollections(req, partyCode) {
     //  send text response to playlist creator
     MessengerService.sendText('This is your Jamocracy Number! Text "!" to exit this playlist. Party Code: ' + partyCode, req.body.number);
 

@@ -10,13 +10,17 @@
     "rules": {
         "array-bracket-spacing": "error",
         "arrow-spacing": "error",
+        "block-scoped-var": "error",
         "block-spacing": "error",
+        "brace-style": "error",
         "comma-dangle": "error",
         "comma-spacing": "error",
+        "curly": "error",
         "dot-location": [
             "error",
             "property"
         ],
+        "eqeqeq": "error",
         "indent": [
             "error",
             4
@@ -30,6 +34,7 @@
         "no-console": "off",
         "no-const-assign": "error",
         "no-negated-condition": "error",
+        "no-shadow": "error",
         "no-unneeded-ternary": "error",
         "no-var": "error",
         "one-var": "error",
@@ -44,6 +49,9 @@
             "error",
             "always"
         ],
-        "space-infix-ops": "error"
+        "space-before-blocks": "error",
+        "space-infix-ops": "error",
+        "vars-on-top": "error",
+        "yoda": "error"
     }
 }

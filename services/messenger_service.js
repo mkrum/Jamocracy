@@ -3,7 +3,7 @@ const twilio = require('twilio')(
     process.env.TWILIO_AUTH_TOKEN
 );
 
-function sendText(textMessage, number){
+function sendText(textMessage, number) {
     twilio.messages.create({
         to: number,
         //from: "+16305818347",
