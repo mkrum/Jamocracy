@@ -6,7 +6,8 @@ describe('GET /login', () => {
     before(() => {
         mockery.enable({
             warnOnReplace: false,
-            warnOnUnregistered: false
+            warnOnUnregistered: false,
+            useCleanCache: true
         });
     });
 

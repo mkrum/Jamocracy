@@ -1,12 +1,14 @@
 const request = require('supertest'),
     expect = require('expect.js'),
+    sinon = require('sinon');
     mockery = require('mockery');
 
 describe('GET /auth', () => {
     before(() => {
         mockery.enable({
             warnOnReplace: false,
-            warnOnUnregistered: false
+            warnOnUnregistered: false,
+            useCleanCache: true
         });
     });
 
@@ -14,24 +16,19 @@ describe('GET /auth', () => {
         mockery.disable();
     });
 
-    var app, code, access_token, refresh_token;
+    var app, spotifyMock;
     beforeEach(() => {
-        const spotifyMock = {
-            authorizationCodeGrant: (partyCode => {
-                code = partyCode;
-
-                return Promise.resolve({
+        spotifyMock = {
+            authorizationCodeGrant: sinon.stub().returns(
+                Promise.resolve({
                     body: {
                         access_token: 'access_token',
                         refresh_token: 'refresh_token'
                     }
-                });
-            }),
+                })
+            ),
 
-            setTokens: (access, refresh) => {
-                access_token = access;
-                refresh_token = refresh;
-            }
+            setTokens: sinon.spy()
         };
 
         mockery.registerMock('../services/spotify_api_service', spotifyMock);
@@ -45,14 +42,16 @@ describe('GET /auth', () => {
         mockery.resetCache();
     });
 
-    it('should accept an authorization code', (done) => {
+    it('accepts an authorization code', (done) => {
         request(app)
             .get('/auth')
             .query({ code: 'code' })
             .end((err, res) => {
-                expect(code).to.be('code');
-                expect(access_token).to.be('access_token');
-                expect(refresh_token).to.be('refresh_token');
+                expect(spotifyMock.authorizationCodeGrant.called).to.be.ok();
+                expect(spotifyMock.authorizationCodeGrant.args[0]).to.eql(['code']);
+
+                expect(spotifyMock.setTokens.called).to.be.ok();
+                expect(spotifyMock.setTokens.args[0]).to.eql(['access_token', 'refresh_token']);
 
                 done();
             });
