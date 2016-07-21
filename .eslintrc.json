@@ -21,6 +21,10 @@
             "property"
         ],
         "eqeqeq": "error",
+        "func-style": [
+            "error",
+            "declaration"
+        ],
         "indent": [
             "error",
             4
@@ -37,6 +41,7 @@
         "no-negated-condition": "error",
         "no-shadow": "error",
         "no-unneeded-ternary": "error",
+        "no-unreachable": "error",
         "no-var": "error",
         "one-var": "error",
         "operator-assignment": "error",

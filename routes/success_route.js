@@ -12,12 +12,9 @@ exports.setup = (app) => {
             // check to see if this playlist exits in the parties collection
             DBService.find('parties', req.body.playlist)
                 .then((data) => {
-                    if (data.body.count === 0) {
-                        putNumberAndPartyInCollections(req, randomString());
-                    } else {
-                        const partyCode = data.body.results[0].path.key;
-                        putNumberAndPartyInCollections(req, partyCode);
-                    }
+                    const partyCode = data.body.count === 0 ?
+                        randomString() : data.body.results[0].path.key;
+                    putNumberAndPartyInCollections(req, partyCode);
                 })
                 .fail((err) => {
                     console.log('Error in search: ' + err);
@@ -33,8 +30,8 @@ exports.setup = (app) => {
 //Generates a random string of four capital letters
 function randomString() {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let i, string = '';
-    for (i = 0; i < 4; i++) {
+    let string = '';
+    while (string.length < 4) {
         string += letters[Math.floor(Math.random() * 26)];
     }
     return string;
