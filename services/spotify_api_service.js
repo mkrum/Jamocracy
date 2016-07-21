@@ -51,11 +51,11 @@ function addSongToPlaylist(song, playlist)  {
         fields: 'items(track(id))'
     }).then(playlistTracks => {
         const trackIds = playlistTracks.body.items.map(item => item.track.id);
-        if (trackIds.indexOf(song.id) === -1) {
-            return spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri]);
-        } else {
+        if (trackIds.indexOf(song.id) >= 0) {
             return Promise.reject('duplicate song');
         }
+
+        return spotifyApi.addTracksToPlaylist(playlist.creatorName, playlist.id, [song.uri]);
     });
 }
 

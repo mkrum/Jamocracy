@@ -33,6 +33,7 @@
         ],
         "no-console": "off",
         "no-const-assign": "error",
+        "no-else-return": "error",
         "no-negated-condition": "error",
         "no-shadow": "error",
         "no-unneeded-ternary": "error",
