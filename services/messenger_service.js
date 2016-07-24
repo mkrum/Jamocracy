@@ -1,10 +1,8 @@
-const twilio = require('twilio')(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_AUTH_TOKEN
-);
+const twilio = require('twilio'),
+    client = new twilio.RestClient(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 function sendText(textMessage, number) {
-    twilio.messages.create({
+    client.messages.create({
         to: number,
         from: '+19784010087',
         body: textMessage
