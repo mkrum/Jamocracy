@@ -82,7 +82,9 @@ describe('POST /SMS', () => {
         };
 
         messengerMock = {
-            sendText: sinon.spy()
+            sendText: sinon.spy(),
+            validate: sinon.stub().returns(true),
+            getTwiMLString: sinon.spy((msg) => { return 'twiml'; } )
         };
 
         spotifyMock = {
@@ -137,8 +139,8 @@ describe('POST /SMS', () => {
                     expect(dbMock.remove.args[0]).to.eql(['numbers', '1234567890']);
 
                     // Tells MessengerService to send a confirmation text
-                    expect(messengerMock.sendText.called).to.be.ok();
-                    expect(messengerMock.sendText.args[0]).to.eql(['Playlist exited', '+11234567890']);
+                    expect(messengerMock.getTwiMLString.called).to.be.ok();
+                    expect(messengerMock.getTwiMLString.args[0][0]).to.be('Playlist exited');
 
                     done();
                 });
@@ -158,8 +160,8 @@ describe('POST /SMS', () => {
                     expect(spotifyMock.removeSong.args[0]).to.eql(['song', playlist]);
 
                     // Tells MessengerService to send text
-                    expect(messengerMock.sendText.called).to.be.ok();
-                    expect(messengerMock.sendText.args[0]).to.eql(['Song removed', '+11234567890']);
+                    expect(messengerMock.getTwiMLString.called).to.be.ok();
+                    expect(messengerMock.getTwiMLString.args[0][0]).to.be('Song removed');
 
                     done();
                 });
@@ -175,8 +177,8 @@ describe('POST /SMS', () => {
                     }
 
                     // Tells MessengerService to send text
-                    expect(messengerMock.sendText.called).to.be.ok();
-                    expect(messengerMock.sendText.args[0][0]).to.be('No song found.');
+                    expect(messengerMock.getTwiMLString.called).to.be.ok();
+                    expect(messengerMock.getTwiMLString.args[0][0]).to.be('No song found.');
 
                     done();
                 });
@@ -197,8 +199,8 @@ describe('POST /SMS', () => {
 
                     // Sends confirmation message
                     // TODO: Doesn't work because we end the response too early
-                    expect(messengerMock.sendText.called).to.be.ok();
-                    expect(messengerMock.sendText.args[0][0]).to.match(/^Playlist already contains/);
+                    expect(messengerMock.getTwiMLString.called).to.be.ok();
+                    expect(messengerMock.getTwiMLString.args[0][0]).to.match(/^Playlist already contains/);
 
                     done();
                 });
@@ -218,8 +220,8 @@ describe('POST /SMS', () => {
                     expect(spotifyMock.addSongToPlaylist.args[0]).to.eql([ song, playlist ]);
 
                     // Sends confirmation message
-                    expect(messengerMock.sendText.called).to.be.ok();
-                    expect(messengerMock.sendText.args[0][0]).to.match(/^Song added/);
+                    expect(messengerMock.getTwiMLString.called).to.be.ok();
+                    expect(messengerMock.getTwiMLString.args[0][0]).to.match(/^Song added/);
 
                     done();
                 });
@@ -237,8 +239,8 @@ describe('POST /SMS', () => {
                     }
 
                     // Tells MessengerService to send text
-                    expect(messengerMock.sendText.called).to.be.ok();
-                    expect(messengerMock.sendText.args[0][0]).to.match(/^Not able to find party/);
+                    expect(messengerMock.getTwiMLString.called).to.be.ok();
+                    expect(messengerMock.getTwiMLString.args[0][0]).to.match(/^Not able to find party/);
 
                     done();
                 });
@@ -265,12 +267,11 @@ describe('POST /SMS', () => {
                     ]);
 
                     // Tells MessengerService to send text
-                    expect(messengerMock.sendText.called).to.be.ok();
-                    expect(messengerMock.sendText.args[0][0]).to.match(/^Connected!/);
+                    expect(messengerMock.getTwiMLString.called).to.be.ok();
+                    expect(messengerMock.getTwiMLString.args[0][0]).to.match(/^Connected!/);
 
                     done();
                 });
         });
     });
 });
-
