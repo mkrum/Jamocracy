@@ -17,7 +17,8 @@ const SpotifyWebApi = require('spotify-web-api-node'),
     authorizeURL = spotifyApi.createAuthorizeURL(scopes, stateKey);
 
 function authorizationCodeGrant(code) {
-    return spotifyApi.authorizationCodeGrant(code);
+    return spotifyApi.authorizationCodeGrant(code)
+        .then(data => data.body);
 }
 
 function setTokens(accessToken, refreshToken) {
