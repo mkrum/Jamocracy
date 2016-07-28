@@ -31,7 +31,8 @@ function getCurrentUser() {
 }
 
 function createPlaylist(username, playlistName, opts) {
-    return spotifyApi.createPlaylist(username, playlistName, opts);
+    return spotifyApi.createPlaylist(username, playlistName, opts)
+        .then(data => data.body.id);
 }
 
 function refreshAccessToken() {
