@@ -78,7 +78,8 @@ describe('POST /SMS', () => {
                 }
             }),
             update: sinon.stub().returns(Promise.resolve()),
-            increment: sinon.stub().returns(Promise.resolve())
+            increment: sinon.stub().returns(Promise.resolve()),
+            append: sinon.stub().returns(Promise.resolve())
         };
 
         messengerMock = {
