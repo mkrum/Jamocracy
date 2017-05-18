@@ -85,7 +85,7 @@ describe('POST /SMS', () => {
         messengerMock = {
             sendText: sinon.spy(),
             validate: sinon.stub().returns(true),
-            getTwiMLString: sinon.spy((msg) => { return 'twiml'; } )
+            getTwiMLString: sinon.stub().returns('twiml')
         };
 
         spotifyMock = {

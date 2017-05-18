@@ -30,7 +30,7 @@ describe('POST /submit', () => {
                 playlistName = newPlaylistName;
                 playlistOpts = opts;
 
-                return Promise.resolve({ body: { id: 1111 } });
+                return Promise.resolve(1111);
             },
 
             setTokens: (access, refresh) => {
