@@ -8,7 +8,7 @@ function getSong(text, playlist, partyCode) {
         .then(token => {
             playlist.access_token = token;
             // saving new access token in database
-            DBService.update('parties', partyCode, 'access_token', token);
+            DBService.update('parties', partyCode, {'key': partyCode, 'access_token': token});
 
             return SpotifyService.searchTracks(text);
         })
@@ -22,7 +22,8 @@ function addSongToPlaylist(song, playlist, number) {
         .then(() => {
             DBService.append('songs', song.name, 'numbers', number);
         }, () => {
-            DBService.update('songs', song.name, {
+            DBService.create('songs', {
+                'key': song.name,
                 'playCount': 1,
                 'numbers': [number]
             });
@@ -35,7 +36,7 @@ function addSongToPlaylist(song, playlist, number) {
 function updateSong(number, songURI) {
     DBService.findOne('numbers', number)
         .then(() => {
-            DBService.update('numbers', number, 'lastSong', songURI);
+            DBService.update('numbers', number, {'key': number, 'lastSong': songURI});
         }, (err) => {
             console.log('Database failure: ' + JSON.stringify(err));
         });

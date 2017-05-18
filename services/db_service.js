@@ -1,41 +1,53 @@
-const db = require('orchestrate')(process.env.ORCHESTRATE_API_KEY);
+const MongoClient = require('mongodb').MongoClient;
+let db;
+
+MongoClient.connect(process.env.MONGODB_URI, (err, database) => {
+    if (err) {
+        throw err;
+    }
+    db = database;
+    console.log('connected to database');
+});
 
 function find(collection, query) {
-    return db.search(collection, query);
+    return db.collection(collection).find({key: query});
 }
 
 function findOne(collection, key) {
-    return db.get(collection, key);
+    return db.collection(collection).findOne({key: key});
 }
 
-function create(collection, key, value) {
-    return update(collection, key, value);
+function create(collection, doc) {
+    return db.collection(collection).insertOne(doc);
 }
 
-function update(collection, key, value, newValue) {
-    if (newValue !== undefined) {
-        return db.newPatchBuilder(collection, key)
-            .replace(value, newValue)
-            .apply();
-    }
-
-    return db.put(collection, key, value);
+function update(collection, key, dict) {
+    return db.collection(collection)
+        .findAndModify({
+            query: {key: key},
+            update: {$set: dict},
+            upsert: true
+        });
 }
 
 function remove(collection, key) {
-    return db.remove(collection, key);
+    return db.collection(collection).deleteOne({key: key});
 }
 
 function increment(collection, key, property, inc) {
-    return db.newPatchBuilder(collection, key)
-        .inc(property, inc)
-        .apply();
+    return db.collection(collection)
+        .findAndModify({
+            query: {key: key},
+            update: {$inc: {property: inc}}
+        });
 }
 
 function append(collection, key, property, value) {
-    return db.newPatchBuilder(collection, key)
-        .append(property, value)
-        .apply();
+    return db.collection(collection)
+        .findAndModify({
+            query: {key: key},
+            update: {$push: {property: value}}
+        });
 }
 
 exports.find = find;
