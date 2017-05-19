@@ -1,11 +1,7 @@
 const DBService = require('../services/db_service');
 
 function findPartyForNumber(number) {
-    return DBService.findOne('numbers', number)
-        .then(res => {
-            console.log(res);
-            return res.body
-        });
+    return DBService.findOne('numbers', number);
 }
 
 function removeFromParty(number) {
@@ -13,8 +9,7 @@ function removeFromParty(number) {
 }
 
 function findParty(code) {
-    return DBService.findOne('parties', code)
-        .then(res => res.body);
+    return DBService.findOne('parties', code);
 }
 
 function addNumberToParty(number, code) {
