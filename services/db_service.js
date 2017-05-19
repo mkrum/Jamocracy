@@ -10,7 +10,7 @@ MongoClient.connect(process.env.MONGODB_URI, (err, database) => {
 });
 
 function find(collection, query) {
-    return db.collection(collection).find({key: query});
+    return db.collection(collection).findOne({key: query});
 }
 
 function findOne(collection, key) {
