@@ -26,6 +26,7 @@ function update(collection, key, dict) {
         .findAndModify({
             query: {key: key},
             update: {$set: dict},
+            new: true,
             upsert: true
         });
 }

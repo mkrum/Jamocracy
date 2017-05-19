@@ -13,6 +13,7 @@ exports.setup = (app) => {
                 fromShort = from.substring(2);
             PartyService.findPartyForNumber(fromShort)
                 .then(body => {
+                    console.log("*****"+body+"*****");
                     const code = body.party;
                     if (command[0] === '!') {
                         PartyService.removeFromParty(fromShort)
