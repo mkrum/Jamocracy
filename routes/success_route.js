@@ -55,7 +55,7 @@ function putNumberAndPartyInCollections(req, partyCode) {
     });
 
     // add creator's number to numbers collection in database
-    DBService.create('numbers', {
+    DBService.update('numbers', req.body.number, {
         'key': req.body.number,
         'party': partyCode,
         'lastSong': null

@@ -78,6 +78,7 @@ describe('POST /SMS', () => {
                 }
             }),
             update: sinon.stub().returns(Promise.resolve()),
+            create: sinon.stub().returns(Promise.resolve()),
             increment: sinon.stub().returns(Promise.resolve()),
             append: sinon.stub().returns(Promise.resolve())
         };
@@ -259,9 +260,9 @@ describe('POST /SMS', () => {
                     // Tells DBService to remember entering party
                     expect(dbMock.update.called).to.be.ok();
                     expect(dbMock.update.args[0]).to.eql([
-                            'numbers',
-                            '0987654321',
+                            'numbers', '0987654321',
                             {
+                                'key': '0987654321', 
                                 'party': 'ABCD',
                                 'lastSong': null
                             }

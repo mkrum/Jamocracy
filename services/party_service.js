@@ -15,7 +15,7 @@ function findParty(code) {
 }
 
 function addNumberToParty(number, code) {
-    return DBService.create('numbers', {
+    return DBService.update('numbers', number, {
         key: number,
         party: code,
         lastSong: null
