@@ -16,7 +16,9 @@ exports.setup = (app) => {
                     const code = body.party;
                     if (command[0] === '!') {
                         PartyService.removeFromParty(fromShort)
-                            .then(() => {
+                            .then((res) => {
+                                console.log('res.ok: ' + res.ok);
+                                console.log('res.n: ' + res.n);
                                 respondToText(res, 'Playlist exited');
                                 PlaylistService.updateSong(fromShort, 'null');
                             });
@@ -57,7 +59,8 @@ exports.setup = (app) => {
                             });
                     }
                 },
-                () => {
+                (err) => {
+                    console.log(':::::::::::::::::' + err);
                     const code = command.toUpperCase().substring(0, 4);
                     PartyService.findParty(code)
                         .then(() => PartyService.addNumberToParty(fromShort, code))

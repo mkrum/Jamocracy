@@ -17,33 +17,40 @@ function getSong(text, playlist, partyCode) {
 
 function addSongToPlaylist(song, playlist, number) {
     updateSong(number, song.uri);
-    DBService.findOne('songs', song.name)
+    /*DBService.findOne('songs', song.name)
         .then((doc) => {
-            console.log('addSongToPlaylist doc: ' + doc);
-            DBService.increment('songs', song.name, 'playCount', 1)
-                .then( () => {
-                    DBService.append('songs', song.name, 'numbers', number);
-                }, () => {
-                    console.log('error incrementing song');
+            if (doc)
+                DBService.increment('songs', song.name, 'playCount', 1)
+                    .then( () => {
+                        DBService.append('songs', song.name, 'numbers', number);
+                    }, () => {
+                        console.log('error incrementing song');
+                    });
+            else {
+                DBService.create('songs', {
+                    'key': song.name,
+                    'playCount': 1,
+                    'numbers': [number]
                 });
-        }, () => {
-            console.log('~~~~~~~~~~~~ create ~~~~~~~~~~~~');
-            DBService.create('songs', {
-                'key': song.name,
-                'playCount': 1,
-                'numbers': [number]
-            });
-        });
-    /*DBService.increment('songs', song.name, 'playCount', 1)
-        .then(() => {
-            DBService.append('songs', song.name, 'numbers', number);
-        }, () => {
-            DBService.create('songs', {
-                'key': song.name,
-                'playCount': 1,
-                'numbers': [number]
-            });
+            }
+        }, (err) => {
+            console.log('playlist service addSongToPlaylist error: ' + err);    
         });*/
+    DBService.increment('songs', song.name, 'playCount', 1)
+        .then((r) => {
+            console.log('r.value: ' + r.value);
+            if (r.value) {
+                DBService.append('songs', song.name, 'numbers', number);
+            } else {
+                DBService.create('songs', {
+                    'key': song.name,
+                    'playCount': 1,
+                    'numbers': [number]
+                });
+            }
+        }, (err) => {
+            console.log('error in increment: ' + err);
+        });
     // set the credentials for the right playlist
     return SpotifyService.addSongToPlaylist(song, playlist);
 }
