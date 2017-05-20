@@ -10,13 +10,12 @@ exports.setup = (app) => {
         // check to see if this playlist already has a party code
         if (req.body.isNewPlaylist === 'false') {
             // check to see if this playlist exits in the parties collection
-            DBService.find('parties', req.body.playlist)
+            DBService.findOne('parties', req.body.playlist)
                 .then((data) => {
                     const partyCode = data.body.count === 0 ?
                         randomString() : data.body.results[0].path.key;
                     putNumberAndPartyInCollections(req, partyCode);
-                })
-                .fail((err) => {
+                }, (err) => {
                     console.log('Error in search: ' + err);
                     putNumberAndPartyInCollections(req, randomString());
                 });
@@ -50,7 +49,7 @@ function putNumberAndPartyInCollections(req, partyCode) {
         'id': req.body.playlist,
         'access_token': req.body.access_token,
         'refresh_token': req.body.refresh_token
-    }).fail((err) => {
+    }).catch((err) => {
         console.log('Database failure: ', JSON.stringify(err));
     });
 
@@ -59,7 +58,7 @@ function putNumberAndPartyInCollections(req, partyCode) {
         'key': req.body.number,
         'party': partyCode,
         'lastSong': null
-    }).fail((err) => {
+    }).catch((err) => {
         console.log('Database failure: ', JSON.stringify(err));
     });
 }

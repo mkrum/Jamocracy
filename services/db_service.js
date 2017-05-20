@@ -23,10 +23,10 @@ function create(collection, doc) {
 
 function update(collection, key, dict) {
     return db.collection(collection)
-        .findAndModify(
+        .findOneAndUpdate(
             {'key': key},
             {$set: dict},
-            { new: true, upsert: true}
+            {upsert: true}
         );
 }
 
@@ -36,7 +36,7 @@ function remove(collection, key) {
 
 function increment(collection, key, property, inc) {
     return db.collection(collection)
-        .findAndModify(
+        .findOneAndUpdate(
             {'key': key},
             {$inc: {property: inc}}
         );
@@ -44,7 +44,7 @@ function increment(collection, key, property, inc) {
 
 function append(collection, key, property, value) {
     return db.collection(collection)
-        .findAndModify(
+        .findOneAndUpdate(
             {'key': key},
             {$push: {property: value}}
         );
