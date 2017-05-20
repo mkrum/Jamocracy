@@ -26,6 +26,7 @@ function addSongToPlaylist(song, playlist, number) {
                     console.log('error incrementing song');
                 });
         }, () => {
+            console.log('~~~~~~~~~~~~ create ~~~~~~~~~~~~');
             DBService.create('songs', {
                 'key': song.name,
                 'playCount': 1,
