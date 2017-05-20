@@ -61,9 +61,7 @@ describe('POST /SMS', () => {
 
                 var result = db[collection][value];
                 if (result) {
-                    return Promise.resolve({
-                        body: result
-                    });
+                    return Promise.resolve(result);
                 } else {
                     return Promise.reject();
                 }

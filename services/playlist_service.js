@@ -8,7 +8,7 @@ function getSong(text, playlist, partyCode) {
         .then(token => {
             playlist.access_token = token;
             // saving new access token in database
-            DBService.update('parties', partyCode, {'key': partyCode, 'access_token': token});
+            DBService.update('parties', partyCode, {'access_token': token});
 
             return SpotifyService.searchTracks(text);
         })
@@ -17,10 +17,14 @@ function getSong(text, playlist, partyCode) {
 
 function addSongToPlaylist(song, playlist, number) {
     updateSong(number, song.uri);
-
-    DBService.increment('songs', song.name, 'playCount', 1)
+    DBService.findOne('songs', song.name)
         .then(() => {
-            DBService.append('songs', song.name, 'numbers', number);
+            DBService.increment('songs', song.name, 'playCount', 1)
+                .then( () => {
+                    DBService.append('songs', song.name, 'numbers', number);
+                }, () => {
+                    console.log('error incrementing song');
+                });
         }, () => {
             DBService.create('songs', {
                 'key': song.name,
@@ -28,18 +32,30 @@ function addSongToPlaylist(song, playlist, number) {
                 'numbers': [number]
             });
         });
-
+    /*DBService.increment('songs', song.name, 'playCount', 1)
+        .then(() => {
+            console.log('~~~~~~~~~~~ append ~~~~~~~~~~~~');
+            DBService.append('songs', song.name, 'numbers', number);
+        }, () => {
+            console.log('~~~~~~~~~~~~ create ~~~~~~~~~~~~');
+            DBService.create('songs', {
+                'key': song.name,
+                'playCount': 1,
+                'numbers': [number]
+            });
+        });*/
     // set the credentials for the right playlist
     return SpotifyService.addSongToPlaylist(song, playlist);
 }
 
 function updateSong(number, songURI) {
-    DBService.findOne('numbers', number)
+    DBService.update('numbers', number, {'lastSong': songURI});
+    /*DBService.findOne('numbers', number)
         .then(() => {
             DBService.update('numbers', number, {'key': number, 'lastSong': songURI});
         }, (err) => {
             console.log('Database failure: ' + JSON.stringify(err));
-        });
+        });*/
 }
 
 //song is passed in only as a uri
