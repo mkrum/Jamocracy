@@ -10,11 +10,11 @@ MongoClient.connect(process.env.MONGODB_URI, (err, database) => {
 });
 
 function find(collection, query) {
-    return db.collection(collection).findOne({key: query});
+    return db.collection(collection).findOne({'key': query});
 }
 
 function findOne(collection, key) {
-    return db.collection(collection).findOne({key: key});
+    return db.collection(collection).findOne({'key': key});
 }
 
 function create(collection, doc) {
@@ -23,32 +23,31 @@ function create(collection, doc) {
 
 function update(collection, key, dict) {
     return db.collection(collection)
-        .findAndModify({
-            query: {key: key},
-            update: {$set: dict},
-            new: true,
-            upsert: true
-        });
+        .findAndModify(
+            {'key': key},
+            {$set: dict},
+            { new: true, upsert: true}
+        );
 }
 
 function remove(collection, key) {
-    return db.collection(collection).deleteOne({key: key});
+    return db.collection(collection).deleteOne({'key': key});
 }
 
 function increment(collection, key, property, inc) {
     return db.collection(collection)
-        .findAndModify({
-            query: {key: key},
-            update: {$inc: {property: inc}}
-        });
+        .findAndModify(
+            {'key': key},
+            {$inc: {property: inc}}
+        );
 }
 
 function append(collection, key, property, value) {
     return db.collection(collection)
-        .findAndModify({
-            query: {key: key},
-            update: {$push: {property: value}}
-        });
+        .findAndModify(
+            {'key': key},
+            {$push: {property: value}}
+        );
 }
 
 exports.find = find;
