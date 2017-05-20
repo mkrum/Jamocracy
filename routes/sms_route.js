@@ -13,13 +13,12 @@ exports.setup = (app) => {
                 fromShort = from.substring(2);
             PartyService.findPartyForNumber(fromShort)
                 .then(body => {
-                    console.log("*****"+body+"*****");
                     const code = body.party;
                     if (command[0] === '!') {
                         PartyService.removeFromParty(fromShort)
                             .then(() => {
                                 respondToText(res, 'Playlist exited');
-                                PlaylistService.updateSong('null', fromShort);
+                                PlaylistService.updateSong(fromShort, 'null');
                             });
                     } else if (command[0] === '/') {
                         const lastSong = body.lastSong;
@@ -31,7 +30,7 @@ exports.setup = (app) => {
                                             respondToText(res, 'Song removed');
                                         });
                                 }, err => {
-                                    console.log(err);
+                                    console.log('song removeal error: ' + err);
                                 });
                         }
                     } else {

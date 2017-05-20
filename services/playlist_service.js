@@ -17,11 +17,18 @@ function getSong(text, playlist, partyCode) {
 
 function addSongToPlaylist(song, playlist, number) {
     updateSong(number, song.uri);
+    /*DBService.findOne('songs', song.name)
+        .then(() => {
 
+        }, () => {
+
+        });*/
     DBService.increment('songs', song.name, 'playCount', 1)
         .then(() => {
+            console.log('~~~~~~~~~~~ append ~~~~~~~~~~~~');
             DBService.append('songs', song.name, 'numbers', number);
         }, () => {
+            console.log('~~~~~~~~~~~~ create ~~~~~~~~~~~~');
             DBService.create('songs', {
                 'key': song.name,
                 'playCount': 1,
