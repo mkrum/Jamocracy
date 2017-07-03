@@ -17,7 +17,7 @@ function getSong(text, playlist, partyCode) {
 
 function addSongToPlaylist(song, playlist, number) {
     updateSong(number, song.uri);
-    DBService.increment('songs', song.name, 'playCount', 1)
+    DBService.increment('songs', song.name, {playCount: 1})
         .then((r) => {
             if (r.value) {
                 DBService.append('songs', song.name, 'numbers', number);
