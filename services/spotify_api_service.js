@@ -74,15 +74,15 @@ function getUserPlaylists(access_token, refresh_token) {
                     }));
             });
     })
-    .catch(err => {
-        console.log('SpotifyService', 'getUserPlaylists', err);
-    });
+        .catch(err => {
+            console.log('SpotifyService', 'getUserPlaylists', err);
+        });
 }
 
 function removeSong(song, playlist) {
     setTokens(playlist.access_token, playlist.refresh_token);
     return spotifyApi.removeTracksFromPlaylist(playlist.creatorName, playlist.id, [
-            { 'uri': song }
+        { 'uri': song }
     ]);
 }
 
