@@ -22,7 +22,6 @@ exports.setup = (app) => {
                                 });
                         } else if (command[0] === '/') {
                             const lastSong = body.lastSong;
-                            console.log("lastSong: " + lastSong);
                             if (lastSong && lastSong !== 'null') {
                                 PartyService.findParty(code)
                                     .then(playlist => {
