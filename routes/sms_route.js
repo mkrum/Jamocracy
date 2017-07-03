@@ -21,7 +21,7 @@ exports.setup = (app) => {
                                     console.log('r.result.ok: ' + r.result.ok);
                                     console.log('r.result.n: ' + r.result.n);
                                     respondToText(res, 'Playlist exited');
-                                    PlaylistService.updateSong(fromShort, 'null');
+                                    // PlaylistService.updateSong(fromShort, 'null');
                                 });
                         } else if (command[0] === '/') {
                             const lastSong = body.lastSong;
@@ -33,7 +33,7 @@ exports.setup = (app) => {
                                                 respondToText(res, 'Song removed');
                                             });
                                     }, err => {
-                                        console.log('song removeal error: ' + err);
+                                        console.log('song removal error: ' + err);
                                     });
                             }
                         } else {

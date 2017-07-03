@@ -38,7 +38,6 @@ function addSongToPlaylist(song, playlist, number) {
         });*/
     DBService.increment('songs', song.name, 'playCount', 1)
         .then((r) => {
-            console.log('r.value: ' + r.value);
             if (r.value) {
                 DBService.append('songs', song.name, 'numbers', number);
             } else {
