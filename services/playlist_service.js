@@ -20,7 +20,7 @@ function addSongToPlaylist(song, playlist, number) {
     DBService.increment('songs', song.name, {playCount: 1})
         .then((r) => {
             if (r.value) {
-                DBService.append('songs', song.name, 'numbers', number);
+                DBService.append('songs', song.name, {numbers: number});
             } else {
                 DBService.create('songs', {
                     'key': song.name,

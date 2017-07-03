@@ -35,19 +35,19 @@ function remove(collection, key) {
     return db.collection(collection).deleteOne({'key': key});
 }
 
-function increment(collection, key, inc) {
+function increment(collection, key, dict) {
     return db.collection(collection)
         .findOneAndUpdate(
             {'key': key},
-            {$inc: inc}
+            {$inc: dict}
         );
 }
 
-function append(collection, key, property, value) {
+function append(collection, key, dict) {
     return db.collection(collection)
         .findOneAndUpdate(
             {'key': key},
-            {$push: {property: value}}
+            {$push: dict}
         );
 }
 
