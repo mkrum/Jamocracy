@@ -17,11 +17,8 @@ exports.setup = (app) => {
                         const code = body.party;
                         if (command[0] === '!') {
                             PartyService.removeFromParty(fromShort)
-                                .then((r) => {
-                                    console.log('r.result.ok: ' + r.result.ok);
-                                    console.log('r.result.n: ' + r.result.n);
+                                .then(() => {
                                     respondToText(res, 'Playlist exited');
-                                    // PlaylistService.updateSong(fromShort, 'null');
                                 });
                         } else if (command[0] === '/') {
                             const lastSong = body.lastSong;
@@ -79,7 +76,7 @@ exports.setup = (app) => {
                     }
                 },
                 (err) => {
-                    console.log('error in sms route findPartyForNumber: ' + err)
+                    console.log('error in sms route findPartyForNumber: ' + err);
                 });
         } else {
             res.sendStatus(403);

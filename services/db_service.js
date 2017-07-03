@@ -35,11 +35,11 @@ function remove(collection, key) {
     return db.collection(collection).deleteOne({'key': key});
 }
 
-function increment(collection, key, property, inc) {
+function increment(collection, key, inc) {
     return db.collection(collection)
         .findOneAndUpdate(
             {'key': key},
-            {$inc: {property: inc}}
+            {$inc: inc}
         );
 }
 

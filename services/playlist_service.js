@@ -17,25 +17,6 @@ function getSong(text, playlist, partyCode) {
 
 function addSongToPlaylist(song, playlist, number) {
     updateSong(number, song.uri);
-    /*DBService.findOne('songs', song.name)
-        .then((doc) => {
-            if (doc)
-                DBService.increment('songs', song.name, 'playCount', 1)
-                    .then( () => {
-                        DBService.append('songs', song.name, 'numbers', number);
-                    }, () => {
-                        console.log('error incrementing song');
-                    });
-            else {
-                DBService.create('songs', {
-                    'key': song.name,
-                    'playCount': 1,
-                    'numbers': [number]
-                });
-            }
-        }, (err) => {
-            console.log('playlist service addSongToPlaylist error: ' + err);    
-        });*/
     DBService.increment('songs', song.name, 'playCount', 1)
         .then((r) => {
             if (r.value) {
@@ -56,12 +37,6 @@ function addSongToPlaylist(song, playlist, number) {
 
 function updateSong(number, songURI) {
     DBService.update('numbers', number, {'lastSong': songURI});
-    /*DBService.findOne('numbers', number)
-        .then(() => {
-            DBService.update('numbers', number, {'key': number, 'lastSong': songURI});
-        }, (err) => {
-            console.log('Database failure: ' + JSON.stringify(err));
-        });*/
 }
 
 //song is passed in only as a uri

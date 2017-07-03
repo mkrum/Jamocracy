@@ -58,13 +58,8 @@ describe('POST /SMS', () => {
                         'ABCD': playlist
                     }
                 };
-
                 var result = db[collection][value];
-                if (result) {
-                    return Promise.resolve(result);
-                } else {
-                    return Promise.reject();
-                }
+                return Promise.resolve(result);
             }),
             remove: sinon.spy((collection, value) => {
                 if (collection === 'numbers') {
