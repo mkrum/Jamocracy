@@ -21,14 +21,10 @@ describe('GET /auth', () => {
         spotifyMock = {
             authorizationCodeGrant: sinon.stub().returns(
                 Promise.resolve({
-                    body: {
-                        access_token: 'access_token',
-                        refresh_token: 'refresh_token'
-                    }
+                    access_token: 'access_token',
+                    refresh_token: 'refresh_token'
                 })
-            ),
-
-            setTokens: sinon.spy()
+            )
         };
 
         mockery.registerMock('../services/spotify_api_service', spotifyMock);
@@ -49,9 +45,6 @@ describe('GET /auth', () => {
             .end((err, res) => {
                 expect(spotifyMock.authorizationCodeGrant.called).to.be.ok();
                 expect(spotifyMock.authorizationCodeGrant.args[0]).to.eql(['code']);
-
-                expect(spotifyMock.setTokens.called).to.be.ok();
-                expect(spotifyMock.setTokens.args[0]).to.eql(['access_token', 'refresh_token']);
 
                 done();
             });

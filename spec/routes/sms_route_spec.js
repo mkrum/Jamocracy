@@ -58,15 +58,8 @@ describe('POST /SMS', () => {
                         'ABCD': playlist
                     }
                 };
-
                 var result = db[collection][value];
-                if (result) {
-                    return Promise.resolve({
-                        body: result
-                    });
-                } else {
-                    return Promise.reject();
-                }
+                return Promise.resolve(result);
             }),
             remove: sinon.spy((collection, value) => {
                 if (collection === 'numbers') {
@@ -78,6 +71,7 @@ describe('POST /SMS', () => {
                 }
             }),
             update: sinon.stub().returns(Promise.resolve()),
+            create: sinon.stub().returns(Promise.resolve()),
             increment: sinon.stub().returns(Promise.resolve()),
             append: sinon.stub().returns(Promise.resolve())
         };
@@ -85,7 +79,7 @@ describe('POST /SMS', () => {
         messengerMock = {
             sendText: sinon.spy(),
             validate: sinon.stub().returns(true),
-            getTwiMLString: sinon.spy((msg) => { return 'twiml'; } )
+            getTwiMLString: sinon.stub().returns('twiml')
         };
 
         spotifyMock = {
@@ -259,9 +253,9 @@ describe('POST /SMS', () => {
                     // Tells DBService to remember entering party
                     expect(dbMock.update.called).to.be.ok();
                     expect(dbMock.update.args[0]).to.eql([
-                            'numbers',
-                            '0987654321',
+                            'numbers', '0987654321',
                             {
+                                'key': '0987654321', 
                                 'party': 'ABCD',
                                 'lastSong': null
                             }

@@ -13,59 +13,70 @@ exports.setup = (app) => {
                 fromShort = from.substring(2);
             PartyService.findPartyForNumber(fromShort)
                 .then(body => {
-                    const code = body.party;
-                    if (command[0] === '!') {
-                        PartyService.removeFromParty(fromShort)
-                            .then(() => {
-                                respondToText(res, 'Playlist exited');
-                                PlaylistService.updateSong('null', fromShort);
-                            });
-                    } else if (command[0] === '/') {
-                        const lastSong = body.lastSong;
-                        if (lastSong !== 'null') {
+                    if (body) {
+                        const code = body.party;
+                        if (command[0] === '!') {
+                            PartyService.removeFromParty(fromShort)
+                                .then(() => {
+                                    respondToText(res, 'Playlist exited');
+                                });
+                        } else if (command[0] === '/') {
+                            const lastSong = body.lastSong;
+                            if (lastSong && lastSong !== 'null') {
+                                PartyService.findParty(code)
+                                    .then(playlist => {
+                                        PlaylistService.removeSong(lastSong, playlist, fromShort)
+                                            .then(() => {
+                                                respondToText(res, 'Song removed');
+                                            });
+                                    }, err => {
+                                        console.log('song removal error: ' + err);
+                                    });
+                            }
+                        } else {
                             PartyService.findParty(code)
-                                .then(playlist => {
-                                    PlaylistService.removeSong(lastSong, playlist, fromShort)
-                                        .then(() => {
-                                            respondToText(res, 'Song removed');
-                                        });
-                                }, err => {
-                                    console.log(err);
+                                .then(playlist => PlaylistService.getSong(command, playlist, code))
+                                .then(data => {
+                                    const tracks = data.tracks,
+                                        playlist = data.playlist;
+                                    if (tracks.length === 0) {
+                                        respondToText(res, 'No song found.');
+                                    } else {
+                                        const song = tracks[0];
+                                        PlaylistService.addSongToPlaylist(song, playlist, fromShort)
+                                            .then(() => {
+                                                respondToText(res, 'Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".');
+                                            }, (err) => {
+                                                if (err === 'duplicate song') {
+                                                    respondToText(res, 'Playlist already contains ' + song.name + ' by ' + song.artists[0].name);
+                                                } else {
+                                                    console.log('Error in SMS route:', err);
+                                                }
+                                            });
+                                    }
                                 });
                         }
                     } else {
+                        const code = command.toUpperCase().substring(0, 4);
                         PartyService.findParty(code)
-                            .then(playlist => PlaylistService.getSong(command, playlist, code))
-                            .then(data => {
-                                const tracks = data.tracks,
-                                    playlist = data.playlist;
-                                if (tracks.length === 0) {
-                                    respondToText(res, 'No song found.');
-                                } else {
-                                    const song = tracks[0];
-                                    PlaylistService.addSongToPlaylist(song, playlist, fromShort)
+                            .then((party) => {
+                                if (party) {
+                                    PartyService.addNumberToParty(fromShort, code)
                                         .then(() => {
-                                            respondToText(res, 'Song added: ' + song.name + ' by ' + song.artists[0].name + '. To remove, text "/".');
+                                            respondToText(res, 'Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".');
                                         }, (err) => {
-                                            if (err === 'duplicate song') {
-                                                respondToText(res, 'Playlist already contains ' + song.name + ' by ' + song.artists[0].name);
-                                            } else {
-                                                console.log('Error in SMS route:', err);
-                                            }
+                                            console.log('error in addNumberToParty: ' + err);
                                         });
+                                } else {
+                                    respondToText(res, 'Not able to find party: ' + code + '. Please try again.');
                                 }
+                            }, (err) => {
+                                console.log('error in findParty: ' + err);
                             });
                     }
                 },
-                () => {
-                    const code = command.toUpperCase().substring(0, 4);
-                    PartyService.findParty(code)
-                        .then(() => PartyService.addNumberToParty(fromShort, code))
-                        .then(() => {
-                            respondToText(res, 'Connected! You can now search for songs and artists to add. To exit the playlist, text "!". To remove your last song, text "/".');
-                        }, () => {
-                            respondToText(res, 'Not able to find party: ' + code + '. Please try again.');
-                        });
+                (err) => {
+                    console.log('error in sms route findPartyForNumber: ' + err);
                 });
         } else {
             res.sendStatus(403);

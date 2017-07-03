@@ -21,9 +21,9 @@ exports.setup = (app) => {
                 } else {
                     // if the user entered a new playlist
                     SpotifyService.createPlaylist(username, newPlaylistName, { 'public': false })
-                        .then((data) => {
+                        .then(playlistId => {
                             res.redirect('/success.html');
-                            postToSuccess(phoneNumber, username, data.body.id, access_token, refresh_token, true);
+                            postToSuccess(phoneNumber, username, playlistId, access_token, refresh_token, true);
                         }, (err) => {
                             console.log('Something went wrong in create playlist!', err);
                         });
