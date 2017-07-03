@@ -22,7 +22,8 @@ exports.setup = (app) => {
                                 });
                         } else if (command[0] === '/') {
                             const lastSong = body.lastSong;
-                            if (lastSong !== 'null') {
+                            console.log("lastSong: " + lastSong);
+                            if (lastSong && lastSong !== 'null') {
                                 PartyService.findParty(code)
                                     .then(playlist => {
                                         PlaylistService.removeSong(lastSong, playlist, fromShort)

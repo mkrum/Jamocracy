@@ -31,7 +31,6 @@ function update(collection, key, dict) {
 }
 
 function remove(collection, key) {
-    console.log('remove: ' + key);
     return db.collection(collection).deleteOne({'key': key});
 }
 
