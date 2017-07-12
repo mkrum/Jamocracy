@@ -20,7 +20,12 @@ function addNumberToParty(number, code) {
     });
 }
 
+function findNumbersForParty(partyNumber) {
+    return DBService.findAllByValue('numbers', partyNumber);
+}
+
 exports.findPartyForNumber = findPartyForNumber;
 exports.removeFromParty = removeFromParty;
 exports.findParty = findParty;
 exports.addNumberToParty = addNumberToParty;
+exports.findNumbersForParty = findNumbersForParty;

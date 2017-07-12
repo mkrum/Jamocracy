@@ -17,6 +17,10 @@ function findOne(collection, key) {
     return db.collection(collection).findOne({'key': key});
 }
 
+function findAllByValue(collection, value) {
+    return db.collection(collection).findAll({'value': value});
+}
+
 function create(collection, doc) {
     return db.collection(collection).insertOne(doc);
 }
@@ -52,6 +56,7 @@ function append(collection, key, dict) {
 
 exports.find = find;
 exports.findOne = findOne;
+exports.findAllByValue = findAllByValue;
 exports.create = create;
 exports.update = update;
 exports.remove = remove;

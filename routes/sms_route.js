@@ -55,6 +55,14 @@ exports.setup = (app) => {
                                             });
                                     }
                                 });
+
+                            PartyService.findNumbersForParty(code)
+                                .then(partyMemberNumbers => {
+                                    let i;
+                                    for (i = partyMemberNumbers.length - 1; i >= 0; i--) {
+                                        MessengerService.sendText( 'Want to add this song?', partyMemberNumbers[i]); 
+                                    }
+                                });
                         }
                     } else {
                         const code = command.toUpperCase().substring(0, 4);
